@@ -3,22 +3,35 @@ import { User, Settings, Globe, Brain } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { useLanguageStore, languages } from '../../stores/languageStore';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 export const TopBar: React.FC = () => {
+  const navigate = useNavigate();
   const { user, signOut } = useAuthStore();
   const { currentLanguage, setLanguage } = useLanguageStore();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
+  const handleLogoClick = () => {
+    if (user) {
+      navigate('/home');
+    } else {
+      navigate('/');
+    }
+  };
+
   return (
     <div className="flex items-center justify-between p-4 bg-white/80 backdrop-blur-sm border-b border-neutral-200">
       <div className="flex items-center space-x-3">
-        <div className="flex items-center space-x-2">
+        <button 
+          onClick={handleLogoClick}
+          className="flex items-center space-x-2 hover:opacity-80 transition-opacity cursor-pointer"
+        >
           <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center">
             <Brain className="w-5 h-5 text-white" />
           </div>
           <h1 className="text-xl font-bold text-neutral-800">AwakNow</h1>
-        </div>
+        </button>
       </div>
 
       <div className="flex items-center space-x-3">
@@ -28,7 +41,7 @@ export const TopBar: React.FC = () => {
             onClick={() => setShowLanguageMenu(!showLanguageMenu)}
             className="flex items-center space-x-2 px-3 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 transition-colors"
           >
-            <span className="text-lg" style={{ fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif' }}>
+            <span className="text-base" style={{ fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif' }}>
               {currentLanguage.flag}
             </span>
             <span className="text-sm font-medium text-neutral-700">{currentLanguage.code.toUpperCase()}</span>
@@ -41,7 +54,7 @@ export const TopBar: React.FC = () => {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-large border z-50"
+                className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-large border z-50 max-h-64 overflow-y-auto"
               >
                 <div className="p-2">
                   {languages.map((lang) => (
@@ -55,7 +68,7 @@ export const TopBar: React.FC = () => {
                         currentLanguage.code === lang.code ? 'bg-primary-50 text-primary-700' : ''
                       }`}
                     >
-                      <span className="text-lg" style={{ fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif' }}>
+                      <span className="text-base" style={{ fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif' }}>
                         {lang.flag}
                       </span>
                       <span className="text-sm font-medium text-neutral-700">{lang.name}</span>
