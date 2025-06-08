@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Settings, Globe } from 'lucide-react';
+import { User, Settings, Globe, Brain } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { useLanguageStore, languages } from '../../stores/languageStore';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,9 +15,9 @@ export const TopBar: React.FC = () => {
       <div className="flex items-center space-x-3">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center">
-            <span className="text-white font-bold text-sm">A</span>
+            <Brain className="w-5 h-5 text-white" />
           </div>
-          <h1 className="text-xl font-bold text-neutral-800">Awaknow</h1>
+          <h1 className="text-xl font-bold text-neutral-800">AwakNow</h1>
         </div>
       </div>
 
@@ -28,7 +28,9 @@ export const TopBar: React.FC = () => {
             onClick={() => setShowLanguageMenu(!showLanguageMenu)}
             className="flex items-center space-x-2 px-3 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 transition-colors"
           >
-            <span className="text-lg">{currentLanguage.flag}</span>
+            <span className="text-lg" style={{ fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif' }}>
+              {currentLanguage.flag}
+            </span>
             <span className="text-sm font-medium text-neutral-700">{currentLanguage.code.toUpperCase()}</span>
             <Globe className="w-4 h-4 text-neutral-500" />
           </button>
@@ -49,9 +51,13 @@ export const TopBar: React.FC = () => {
                         setLanguage(lang);
                         setShowLanguageMenu(false);
                       }}
-                      className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-neutral-100 transition-colors"
+                      className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-neutral-100 transition-colors ${
+                        currentLanguage.code === lang.code ? 'bg-primary-50 text-primary-700' : ''
+                      }`}
                     >
-                      <span className="text-lg">{lang.flag}</span>
+                      <span className="text-lg" style={{ fontFamily: 'Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif' }}>
+                        {lang.flag}
+                      </span>
                       <span className="text-sm font-medium text-neutral-700">{lang.name}</span>
                     </button>
                   ))}

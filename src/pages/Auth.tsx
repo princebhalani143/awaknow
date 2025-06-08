@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, ArrowRight, Check } from 'lucide-react';
+import { Mail, Phone, ArrowRight, Check, Brain } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { Input } from '../components/UI/Input';
@@ -74,10 +74,10 @@ export const Auth: React.FC = () => {
           <Card className="text-center">
             <div className="mb-8">
               <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-                <span className="text-white font-bold text-xl">A</span>
+                <Brain className="w-8 h-8 text-white" />
               </div>
               <h1 className="text-2xl font-bold text-neutral-800 mb-2">
-                {step === 'input' ? 'Welcome to Awaknow' : 'Verify Your Account'}
+                {step === 'input' ? 'Welcome to AwakNow' : 'Verify Your Account'}
               </h1>
               <p className="text-neutral-600">
                 {step === 'input' 

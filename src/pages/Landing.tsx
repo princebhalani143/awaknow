@@ -50,7 +50,7 @@ export const Landing: React.FC = () => {
               </span>
             </h1>
             <p className="text-xl text-neutral-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Awaknow combines AI-powered conversations with personalized insights to help you reflect privately 
+              AwakNow combines AI-powered conversations with personalized insights to help you reflect privately 
               or resolve conflicts with others in a safe, supportive environment.
             </p>
           </div>
@@ -79,14 +79,21 @@ export const Landing: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="relative mx-auto max-w-4xl"
           >
-            <div className="aspect-video bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-3xl shadow-large border-8 border-white overflow-hidden">
-              <div className="h-full flex items-center justify-center">
+            <div className="aspect-video bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-3xl shadow-large border-8 border-white overflow-hidden relative">
+              {/* Background Image */}
+              <div 
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
+                style={{
+                  backgroundImage: `url('https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')`
+                }}
+              />
+              <div className="relative h-full flex items-center justify-center bg-gradient-to-br from-primary-500/10 to-secondary-500/10">
                 <div className="text-center space-y-4">
                   <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full mx-auto flex items-center justify-center">
-                    <Heart className="w-10 h-10 text-white" />
+                    <Brain className="w-10 h-10 text-white" />
                   </div>
                   <h3 className="text-2xl font-semibold text-neutral-700">AI Video Sessions</h3>
-                  <p className="text-neutral-500 max-w-md mx-auto">
+                  <p className="text-neutral-600 max-w-md mx-auto">
                     Experience personalized conversations that understand and respond to your emotions
                   </p>
                 </div>
