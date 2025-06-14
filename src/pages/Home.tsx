@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Brain, Users, Sparkles, TrendingUp, Clock, Star } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
+import { TranslatedText } from '../components/UI/TranslatedText';
 import { TopBar } from '../components/Layout/TopBar';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
@@ -52,10 +53,10 @@ export const Home: React.FC = () => {
         >
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-neutral-800 mb-2">
-              Welcome back, {user?.email?.split('@')[0] || 'Friend'}! 👋
+              <TranslatedText>Welcome back, {user?.email?.split('@')[0] || 'Friend'}! 👋</TranslatedText>
             </h1>
             <p className="text-neutral-600">
-              How would you like to explore your emotional wellness today?
+              <TranslatedText>How would you like to explore your emotional wellness today?</TranslatedText>
             </p>
           </div>
 
@@ -71,7 +72,9 @@ export const Home: React.FC = () => {
                 <Card className="text-center p-4">
                   <stat.icon className="w-6 h-6 text-primary-500 mx-auto mb-2" />
                   <div className="text-2xl font-bold text-neutral-800">{stat.value}</div>
-                  <div className="text-xs text-neutral-500">{stat.label}</div>
+                  <div className="text-xs text-neutral-500">
+                    <TranslatedText>{stat.label}</TranslatedText>
+                  </div>
                 </Card>
               </motion.div>
             ))}
@@ -99,21 +102,27 @@ export const Home: React.FC = () => {
                   </div>
                   
                   <div>
-                    <h3 className="text-xl font-semibold text-neutral-800 mb-2">{option.title}</h3>
-                    <p className="text-neutral-600 mb-4 leading-relaxed">{option.description}</p>
+                    <h3 className="text-xl font-semibold text-neutral-800 mb-2">
+                      <TranslatedText>{option.title}</TranslatedText>
+                    </h3>
+                    <p className="text-neutral-600 mb-4 leading-relaxed">
+                      <TranslatedText>{option.description}</TranslatedText>
+                    </p>
                   </div>
 
                   <div className="space-y-2">
                     {option.features.map((feature, idx) => (
                       <div key={idx} className="flex items-center space-x-2">
                         <Sparkles className="w-4 h-4 text-accent-500" />
-                        <span className="text-sm text-neutral-600">{feature}</span>
+                        <span className="text-sm text-neutral-600">
+                          <TranslatedText>{feature}</TranslatedText>
+                        </span>
                       </div>
                     ))}
                   </div>
 
                   <Button className="w-full" variant={index === 0 ? 'primary' : 'secondary'}>
-                    Start Session
+                    <TranslatedText>Start Session</TranslatedText>
                   </Button>
                 </div>
               </Card>
@@ -130,13 +139,15 @@ export const Home: React.FC = () => {
           <Card className="bg-gradient-to-r from-accent-500 to-accent-600 text-white border-0">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold mb-1">Upgrade to Premium</h3>
+                <h3 className="text-lg font-semibold mb-1">
+                  <TranslatedText>Upgrade to Premium</TranslatedText>
+                </h3>
                 <p className="text-accent-100 text-sm">
-                  Unlock unlimited sessions, advanced insights, and priority support
+                  <TranslatedText>Unlock unlimited sessions, advanced insights, and priority support</TranslatedText>
                 </p>
               </div>
               <Button variant="accent" className="bg-white text-accent-600 hover:bg-accent-50">
-                Upgrade Now
+                <TranslatedText>Upgrade Now</TranslatedText>
               </Button>
             </div>
           </Card>
