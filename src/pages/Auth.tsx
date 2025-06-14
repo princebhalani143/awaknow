@@ -161,14 +161,14 @@ export const Auth: React.FC = () => {
                 <Brain className="w-8 h-8 text-white" />
               </div>
               <h1 className="text-2xl font-bold text-neutral-800 mb-2">
-                {mode === 'login' && 'Welcome Back'}
-                {mode === 'register' && 'Create Account'}
+                {mode === 'login' && 'Sign In to AwakNow'}
+                {mode === 'register' && 'Start Your Wellness Journey'}
                 {mode === 'forgot-password' && 'Reset Password'}
                 {mode === 'verify-email' && 'Check Your Email'}
               </h1>
               <p className="text-neutral-600">
-                {mode === 'login' && 'Sign in to continue your emotional wellness journey'}
-                {mode === 'register' && 'Join AwakNow to start your wellness journey'}
+                {mode === 'login' && 'Access your personalized emotional wellness platform'}
+                {mode === 'register' && 'Create your account and begin exploring emotional wellness with AI'}
                 {mode === 'forgot-password' && 'Enter your email to receive a password reset link'}
                 {mode === 'verify-email' && 'We sent a verification link to your email address'}
               </p>
@@ -210,15 +210,6 @@ export const Auth: React.FC = () => {
                     </button>
                   </div>
 
-                  <div className="flex justify-end">
-                    <button
-                      onClick={() => switchMode('forgot-password')}
-                      className="text-sm text-primary-600 hover:text-primary-700 transition-colors"
-                    >
-                      Forgot password?
-                    </button>
-                  </div>
-
                   <Button
                     onClick={handleLogin}
                     loading={loading}
@@ -229,6 +220,15 @@ export const Auth: React.FC = () => {
                   >
                     Sign In
                   </Button>
+
+                  <div className="text-center">
+                    <button
+                      onClick={() => switchMode('forgot-password')}
+                      className="text-sm text-primary-600 hover:text-primary-700 transition-colors"
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
 
                   <div className="flex items-center space-x-4 text-neutral-400">
                     <div className="flex-1 h-px bg-neutral-200"></div>

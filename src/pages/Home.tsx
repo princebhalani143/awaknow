@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Users, Sparkles, TrendingUp, Clock, Star } from 'lucide-react';
+import { Brain, Users, Sparkles, TrendingUp, Clock, Star, Play } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { TranslatedText } from '../components/UI/TranslatedText';
@@ -82,11 +82,90 @@ export const Home: React.FC = () => {
           </div>
         </motion.div>
 
+        {/* AI Video Sessions Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-8"
+        >
+          <Card className="overflow-hidden">
+            <div className="relative">
+              {/* Video Container */}
+              <div className="aspect-video bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-xl overflow-hidden relative">
+                {/* Background Image */}
+                <div 
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
+                  style={{
+                    backgroundImage: `url('https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')`
+                  }}
+                />
+                
+                {/* Overlay Content */}
+                <div className="relative h-full flex items-center justify-center bg-gradient-to-br from-primary-500/20 to-secondary-500/20">
+                  <div className="text-center space-y-4">
+                    {/* Play Button */}
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-20 h-20 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-large hover:bg-white transition-colors group"
+                    >
+                      <Play className="w-8 h-8 text-primary-600 ml-1 group-hover:text-primary-700" />
+                    </motion.button>
+                    
+                    <div className="space-y-2">
+                      <h3 className="text-2xl font-semibold text-neutral-800">
+                        <TranslatedText>AI Video Sessions</TranslatedText>
+                      </h3>
+                      <p className="text-neutral-600 max-w-md mx-auto">
+                        <TranslatedText>Experience personalized conversations that understand and respond to your emotions</TranslatedText>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Video Duration Badge */}
+                <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-medium">
+                  2:34
+                </div>
+              </div>
+
+              {/* Video Description */}
+              <div className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h4 className="text-lg font-semibold text-neutral-800 mb-2">
+                      <TranslatedText>See How AI Conversations Work</TranslatedText>
+                    </h4>
+                    <p className="text-neutral-600 text-sm leading-relaxed mb-4">
+                      <TranslatedText>
+                        Watch this demo to understand how our AI companion provides personalized emotional support 
+                        through natural video conversations. See real examples of emotion recognition, empathetic responses, 
+                        and personalized insights.
+                      </TranslatedText>
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {['Emotion Recognition', 'Natural Conversations', 'Personalized Insights', 'Safe Environment'].map((feature) => (
+                        <span
+                          key={feature}
+                          className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-xs font-medium"
+                        >
+                          <TranslatedText>{feature}</TranslatedText>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+
         {/* Main Options */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
           className="grid md:grid-cols-2 gap-6 mb-8"
         >
           {options.map((option, index) => (
@@ -94,7 +173,7 @@ export const Home: React.FC = () => {
               key={option.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 + index * 0.2 }}
+              transition={{ duration: 0.6, delay: 0.5 + index * 0.2 }}
             >
               <Card hover onClick={() => navigate(option.route)} className="h-full cursor-pointer">
                 <div className="space-y-6">
@@ -131,11 +210,11 @@ export const Home: React.FC = () => {
           ))}
         </motion.div>
 
-        {/* Quick Actions */}
+        {/* Upgrade CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
+          transition={{ duration: 0.6, delay: 0.9 }}
         >
           <Card className="bg-gradient-to-r from-accent-500 to-accent-600 text-white border-0">
             <div className="flex items-center justify-between">
