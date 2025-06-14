@@ -1,13 +1,14 @@
-import { LingoDotDevEngine } from "lingo.dev";
+// Google Translate API Integration using @vitalets/google-translate-api
+import translate from '@vitalets/google-translate-api';
 
-interface LingoLanguage {
+interface Language {
   code: string;
   name: string;
   nativeName: string;
 }
 
-// Languages supported by Lingo.dev
-export const supportedLanguages: LingoLanguage[] = [
+// Languages supported by Google Translate
+export const supportedLanguages: Language[] = [
   { code: 'en', name: 'English', nativeName: 'English' },
   { code: 'es', name: 'Spanish', nativeName: 'Español' },
   { code: 'fr', name: 'French', nativeName: 'Français' },
@@ -44,90 +45,76 @@ export const supportedLanguages: LingoLanguage[] = [
   { code: 'fi', name: 'Finnish', nativeName: 'Suomi' }
 ];
 
-class LingoTranslationService {
-  private static instance: LingoTranslationService;
-  private engine: LingoDotDevEngine | null = null;
-  private apiKey: string;
+class GoogleTranslationService {
+  private static instance: GoogleTranslationService;
   private cache: Map<string, string> = new Map();
-  private isInitialized = false;
-  private initializationPromise: Promise<void> | null = null;
+  private requestQueue: Array<() => Promise<void>> = [];
+  private isProcessing = false;
+  private readonly RATE_LIMIT_DELAY = 100; // 100ms between requests
 
   constructor() {
-    this.apiKey = import.meta.env.VITE_LINGO_API_KEY || 'api_yy9bvofs34f5mlzouxpmny95';
-    this.initializeEngine();
+    // Initialize the service
   }
 
-  static getInstance(): LingoTranslationService {
-    if (!LingoTranslationService.instance) {
-      LingoTranslationService.instance = new LingoTranslationService();
+  static getInstance(): GoogleTranslationService {
+    if (!GoogleTranslationService.instance) {
+      GoogleTranslationService.instance = new GoogleTranslationService();
     }
-    return LingoTranslationService.instance;
-  }
-
-  private async initializeEngine(): Promise<void> {
-    if (this.initializationPromise) {
-      return this.initializationPromise;
-    }
-
-    this.initializationPromise = (async () => {
-      try {
-        if (!this.apiKey) {
-          console.warn('Lingo.dev API key not found. Translation will be disabled.');
-          return;
-        }
-
-        this.engine = new LingoDotDevEngine({
-          apiKey: this.apiKey,
-          defaultModel: "groq:mistral-saba-24b",
-          caching: {
-            enabled: true,
-            ttl: 3600, // Cache for 1 hour
-          },
-        });
-
-        this.isInitialized = true;
-        console.log('Lingo.dev translation engine initialized successfully');
-      } catch (error) {
-        console.warn('Failed to initialize Lingo.dev engine:', error);
-        this.engine = null;
-      }
-    })();
-
-    return this.initializationPromise;
+    return GoogleTranslationService.instance;
   }
 
   private getCacheKey(text: string, targetLang: string): string {
     return `${text}:${targetLang}`;
   }
 
+  private async processQueue(): Promise<void> {
+    if (this.isProcessing || this.requestQueue.length === 0) {
+      return;
+    }
+
+    this.isProcessing = true;
+
+    while (this.requestQueue.length > 0) {
+      const request = this.requestQueue.shift();
+      if (request) {
+        try {
+          await request();
+          // Add delay between requests to respect rate limits
+          await new Promise(resolve => setTimeout(resolve, this.RATE_LIMIT_DELAY));
+        } catch (error) {
+          console.warn('Translation request failed:', error);
+        }
+      }
+    }
+
+    this.isProcessing = false;
+  }
+
   private validateTranslation(original: string, translated: string): boolean {
     // Basic validation checks
-    const checks = {
-      // Ensure variables are preserved
-      variablesPreserved: () => {
-        const originalVars = original.match(/\{\{.*?\}\}/g) || [];
-        const translatedVars = translated.match(/\{\{.*?\}\}/g) || [];
-        return originalVars.length === translatedVars.length;
-      },
+    if (!translated || translated.trim().length === 0) {
+      return false;
+    }
 
-      // Check for empty translations
-      notEmpty: () => translated.trim().length > 0,
+    // Check if variables are preserved (basic check for {{variable}} patterns)
+    const originalVars = original.match(/\{\{.*?\}\}/g) || [];
+    const translatedVars = translated.match(/\{\{.*?\}\}/g) || [];
+    
+    if (originalVars.length !== translatedVars.length) {
+      console.warn('Translation validation failed: variables not preserved');
+      return false;
+    }
 
-      // Validate HTML preservation
-      htmlPreserved: () => {
-        const originalTags = original.match(/<[^>]+>/g) || [];
-        const translatedTags = translated.match(/<[^>]+>/g) || [];
-        return originalTags.length === translatedTags.length;
-      },
-    };
+    // Check if HTML tags are preserved
+    const originalTags = original.match(/<[^>]+>/g) || [];
+    const translatedTags = translated.match(/<[^>]+>/g) || [];
+    
+    if (originalTags.length !== translatedTags.length) {
+      console.warn('Translation validation failed: HTML tags not preserved');
+      return false;
+    }
 
-    return Object.entries(checks).every(([name, check]) => {
-      const result = check();
-      if (!result) {
-        console.warn(`Translation validation failed: ${name}`);
-      }
-      return result;
-    });
+    return true;
   }
 
   async translateText(text: string, targetLanguage: string, sourceLanguage = 'en'): Promise<string> {
@@ -136,11 +123,8 @@ class LingoTranslationService {
       return text;
     }
 
-    // Ensure engine is initialized
-    await this.initializeEngine();
-
-    if (!this.engine || !this.isInitialized) {
-      console.warn('Translation engine not available, returning original text');
+    // Return empty string if input is empty
+    if (!text || text.trim().length === 0) {
       return text;
     }
 
@@ -150,60 +134,85 @@ class LingoTranslationService {
       return this.cache.get(cacheKey)!;
     }
 
-    try {
-      const translated = await this.engine.translate(text, {
-        sourceLocale: sourceLanguage,
-        targetLocale: targetLanguage,
-        context: "emotional wellness application",
-        tone: "supportive",
-        formality: "casual",
-      });
+    return new Promise((resolve) => {
+      const request = async () => {
+        try {
+          const result = await translate(text, { 
+            from: sourceLanguage, 
+            to: targetLanguage,
+            fetchOptions: {
+              timeout: 5000 // 5 second timeout
+            }
+          });
 
-      // Validate translation
-      if (this.validateTranslation(text, translated)) {
-        // Cache the result
-        this.cache.set(cacheKey, translated);
-        return translated;
-      } else {
-        console.warn('Translation validation failed, returning original text');
-        return text;
-      }
-    } catch (error) {
-      console.warn('Translation failed:', error instanceof Error ? error.message : 'Unknown error');
-      // Return original text as fallback
-      return text;
-    }
+          const translatedText = result.text;
+
+          // Validate translation
+          if (this.validateTranslation(text, translatedText)) {
+            // Cache the result
+            this.cache.set(cacheKey, translatedText);
+            resolve(translatedText);
+          } else {
+            console.warn('Translation validation failed, returning original text');
+            resolve(text);
+          }
+        } catch (error) {
+          console.warn('Translation failed:', error instanceof Error ? error.message : 'Unknown error');
+          // Return original text as fallback
+          resolve(text);
+        }
+      };
+
+      this.requestQueue.push(request);
+      this.processQueue();
+    });
   }
 
   async translateMultiple(texts: string[], targetLanguage: string, sourceLanguage = 'en'): Promise<string[]> {
-    // Ensure engine is initialized
-    await this.initializeEngine();
+    // Filter out empty texts and create a mapping
+    const nonEmptyTexts = texts.filter(text => text && text.trim().length > 0);
+    const textIndexMap = new Map<string, number[]>();
+    
+    // Create mapping of unique texts to their indices
+    texts.forEach((text, index) => {
+      if (text && text.trim().length > 0) {
+        if (!textIndexMap.has(text)) {
+          textIndexMap.set(text, []);
+        }
+        textIndexMap.get(text)!.push(index);
+      }
+    });
 
-    if (!this.engine || !this.isInitialized) {
-      console.warn('Translation engine not available, returning original texts');
-      return texts;
-    }
+    // Translate unique texts
+    const uniqueTexts = Array.from(textIndexMap.keys());
+    const translationPromises = uniqueTexts.map(text => 
+      this.translateText(text, targetLanguage, sourceLanguage)
+    );
 
     try {
-      const translations = await this.engine.translateBatch(texts, {
-        sourceLocale: sourceLanguage,
-        targetLocale: targetLanguage,
-        preserveFormatting: true,
-        context: "emotional wellness application",
+      const translations = await Promise.all(translationPromises);
+      
+      // Map translations back to original positions
+      const result = new Array(texts.length);
+      uniqueTexts.forEach((originalText, index) => {
+        const translatedText = translations[index];
+        const indices = textIndexMap.get(originalText)!;
+        indices.forEach(originalIndex => {
+          result[originalIndex] = translatedText;
+        });
       });
 
-      return translations;
+      // Fill in empty texts
+      texts.forEach((text, index) => {
+        if (!text || text.trim().length === 0) {
+          result[index] = text;
+        }
+      });
+
+      return result;
     } catch (error) {
-      console.warn('Batch translation failed, using individual translations:', error instanceof Error ? error.message : 'Unknown error');
-      
-      // Fallback to individual translations
-      try {
-        const promises = texts.map(text => this.translateText(text, targetLanguage, sourceLanguage));
-        return await Promise.all(promises);
-      } catch (fallbackError) {
-        console.warn('Individual translations also failed, returning original texts');
-        return texts;
-      }
+      console.warn('Batch translation failed, returning original texts:', error instanceof Error ? error.message : 'Unknown error');
+      return texts;
     }
   }
 
@@ -245,7 +254,10 @@ class LingoTranslationService {
       'Conflict Resolution',
       'Navigate interpersonal challenges with guided mediation and communication tools.',
       'Emotional Wellness',
-      'Track your emotional journey with sentiment analysis and personalized wellness insights.'
+      'Track your emotional journey with sentiment analysis and personalized wellness insights.',
+      'Ready to Begin?',
+      'Join thousands who have transformed their emotional wellness through AI-guided reflection and conflict resolution.',
+      'Get Started Now'
     ];
 
     try {
@@ -276,22 +288,22 @@ class LingoTranslationService {
   }
 
   // Get supported languages
-  getSupportedLanguages(): LingoLanguage[] {
+  getSupportedLanguages(): Language[] {
     return supportedLanguages;
   }
 
   // Check if translation service is available
   isTranslationAvailable(): boolean {
-    return this.isInitialized && !!this.engine && !!this.apiKey;
+    return true; // Google Translate API is always available
   }
 
-  // Reset and reinitialize the engine
-  async resetEngine(): Promise<void> {
-    this.isInitialized = false;
-    this.initializationPromise = null;
-    this.engine = null;
-    await this.initializeEngine();
+  // Get cache statistics
+  getCacheStats(): { size: number; keys: string[] } {
+    return {
+      size: this.cache.size,
+      keys: Array.from(this.cache.keys())
+    };
   }
 }
 
-export const translationService = LingoTranslationService.getInstance();
+export const translationService = GoogleTranslationService.getInstance();
