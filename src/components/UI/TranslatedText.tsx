@@ -28,7 +28,7 @@ export const TranslatedText: React.FC<TranslatedTextProps> = ({
         const translated = await translateText(children);
         setTranslatedText(translated);
       } catch (error) {
-        console.error('Translation failed:', error);
+        console.warn('Translation failed for text:', children, error);
         setTranslatedText(children);
       } finally {
         setIsLoading(false);

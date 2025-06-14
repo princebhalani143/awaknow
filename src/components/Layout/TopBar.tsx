@@ -24,7 +24,11 @@ export const TopBar: React.FC = () => {
 
   const handleLanguageChange = async (language: any) => {
     setShowLanguageMenu(false);
-    await setLanguage(language);
+    try {
+      await setLanguage(language);
+    } catch (error) {
+      console.error('Failed to change language:', error);
+    }
   };
 
   return (
@@ -51,7 +55,7 @@ export const TopBar: React.FC = () => {
               isTranslating ? 'opacity-50 cursor-not-allowed' : ''
             }`}
           >
-            <span className="text-sm font-medium text-neutral-700">
+            <span className="font-medium text-neutral-700">
               {currentLanguage.nativeName}
             </span>
             <Globe className={`w-4 h-4 text-neutral-500 ${isTranslating ? 'animate-spin' : ''}`} />
@@ -79,7 +83,7 @@ export const TopBar: React.FC = () => {
                       } ${isTranslating ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <div className="flex flex-col">
-                        <span className="text-sm font-medium text-neutral-800">{lang.name}</span>
+                        <span className="font-medium text-neutral-800">{lang.name}</span>
                         <span className="text-xs text-neutral-500">{lang.nativeName}</span>
                       </div>
                       {currentLanguage.code === lang.code && (

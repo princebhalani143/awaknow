@@ -10,7 +10,7 @@ interface Language {
 
 interface LanguageState {
   currentLanguage: Language;
-  setLanguage: (language: Language) => void;
+  setLanguage: (language: Language) => Promise<void>;
   translations: Record<string, string>;
   isTranslating: boolean;
   translateText: (text: string) => Promise<string>;
@@ -26,16 +26,22 @@ export const useLanguageStore = create<LanguageState>()(
       isTranslating: false,
       
       setLanguage: async (language: Language) => {
-        set({ currentLanguage: language, isTranslating: true });
+        set({ isTranslating: true });
         
-        // Translate UI elements when language changes
-        if (language.code !== 'en') {
-          await get().translateUI();
-        } else {
-          set({ translations: {} }); // Clear translations for English
+        try {
+          set({ currentLanguage: language });
+          
+          // Translate UI elements when language changes
+          if (language.code !== 'en') {
+            await get().translateUI();
+          } else {
+            set({ translations: {} }); // Clear translations for English
+          }
+        } catch (error) {
+          console.error('Failed to set language:', error);
+        } finally {
+          set({ isTranslating: false });
         }
-        
-        set({ isTranslating: false });
       },
 
       translateText: async (text: string): Promise<string> => {
@@ -63,7 +69,7 @@ export const useLanguageStore = create<LanguageState>()(
           
           return translatedText;
         } catch (error) {
-          console.error('Translation failed:', error);
+          console.warn('Translation failed:', error);
           return text; // Return original text as fallback
         }
       },
@@ -80,7 +86,7 @@ export const useLanguageStore = create<LanguageState>()(
           const uiTranslations = await translationService.translateUIElements(currentLanguage.code);
           set({ translations: uiTranslations });
         } catch (error) {
-          console.error('UI translation failed:', error);
+          console.warn('UI translation failed:', error);
         }
       },
 
