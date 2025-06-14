@@ -107,7 +107,7 @@ export const CookieConsent: React.FC = () => {
 
   return (
     <>
-      {/* Cookie Banner */}
+      {/* Compact Cookie Banner */}
       <AnimatePresence>
         {showBanner && (
           <motion.div
@@ -115,28 +115,30 @@ export const CookieConsent: React.FC = () => {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed bottom-4 left-4 right-4 z-50 max-w-md mx-auto"
+            className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-neutral-200 shadow-large"
           >
-            <Card className="border-2 border-primary-200 shadow-large">
-              <div className="flex items-start space-x-3 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Cookie className="w-4 h-4 text-white" />
+            <div className="container mx-auto px-4 py-4">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-3 md:space-y-0 md:space-x-6">
+                {/* Content */}
+                <div className="flex items-start space-x-3 flex-1">
+                  <div className="w-6 h-6 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Cookie className="w-3 h-3 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-neutral-800 text-sm mb-1">Cookie Preferences</h3>
+                    <p className="text-xs text-neutral-600 leading-relaxed">
+                      We use cookies to enhance your experience and provide personalized content. 
+                      You can customize your preferences or accept all cookies.
+                    </p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-neutral-800 mb-2">Cookie Preferences</h3>
-                  <p className="text-sm text-neutral-600 leading-relaxed">
-                    We use cookies to enhance your experience, analyze usage, and provide personalized content. 
-                    You can customize your preferences or accept all cookies.
-                  </p>
-                </div>
-              </div>
 
-              <div className="flex flex-col space-y-2">
-                <div className="flex space-x-2">
+                {/* Actions */}
+                <div className="flex items-center space-x-2 flex-shrink-0">
                   <Button
                     onClick={handleAcceptAll}
                     size="sm"
-                    className="flex-1"
+                    className="text-xs px-3 py-1.5"
                   >
                     Accept All
                   </Button>
@@ -144,22 +146,21 @@ export const CookieConsent: React.FC = () => {
                     onClick={() => setShowSettings(true)}
                     variant="outline"
                     size="sm"
-                    icon={Settings}
-                    className="flex-1"
+                    className="text-xs px-3 py-1.5"
                   >
                     Customize
                   </Button>
+                  <Button
+                    onClick={handleRejectAll}
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs px-3 py-1.5 text-neutral-600"
+                  >
+                    Reject All
+                  </Button>
                 </div>
-                <Button
-                  onClick={handleRejectAll}
-                  variant="ghost"
-                  size="sm"
-                  className="text-neutral-600"
-                >
-                  Reject All
-                </Button>
               </div>
-            </Card>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

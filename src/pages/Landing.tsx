@@ -6,6 +6,7 @@ import { Card } from '../components/UI/Card';
 import { TranslatedText } from '../components/UI/TranslatedText';
 import { useNavigate } from 'react-router-dom';
 import { TopBar } from '../components/Layout/TopBar';
+import { Footer } from '../components/Layout/Footer';
 
 export const Landing: React.FC = () => {
   const navigate = useNavigate();
@@ -32,10 +33,10 @@ export const Landing: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex flex-col">
       <TopBar />
       
-      <div className="container mx-auto px-4 py-12 max-w-6xl">
+      <div className="container mx-auto px-4 py-12 max-w-6xl flex-1">
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -160,6 +161,8 @@ export const Landing: React.FC = () => {
           </Card>
         </motion.div>
       </div>
+
+      <Footer />
     </div>
   );
 };

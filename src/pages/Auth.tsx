@@ -5,6 +5,7 @@ import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { Input } from '../components/UI/Input';
 import { TopBar } from '../components/Layout/TopBar';
+import { Footer } from '../components/Layout/Footer';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
@@ -145,10 +146,10 @@ export const Auth: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex flex-col">
       <TopBar />
       
-      <div className="container mx-auto px-4 py-12 max-w-md">
+      <div className="container mx-auto px-4 py-12 max-w-md flex-1">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -434,6 +435,8 @@ export const Auth: React.FC = () => {
           </Card>
         </motion.div>
       </div>
+
+      <Footer />
     </div>
   );
 };

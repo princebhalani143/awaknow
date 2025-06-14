@@ -62,82 +62,81 @@ export const TopBar: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-3">
-          {/* Profile Menu */}
-          {user && (
-            <div className="relative">
-              <button
-                onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center text-white hover:shadow-lg transition-shadow"
-              >
-                <User className="w-5 h-5" />
-              </button>
+          {/* User Icon - Always visible */}
+          <div className="relative">
+            <button
+              onClick={() => user ? setShowProfileMenu(!showProfileMenu) : navigate('/auth')}
+              className="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center text-white hover:shadow-lg transition-shadow"
+            >
+              <User className="w-5 h-5" />
+            </button>
 
-              <AnimatePresence>
-                {showProfileMenu && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-large border z-50"
-                  >
-                    <div className="p-2">
-                      <div className="px-3 py-3 border-b border-neutral-200">
-                        <p className="text-sm font-medium text-neutral-800 truncate">{user.email}</p>
-                        <p className="text-xs text-neutral-500 capitalize">{user.subscription_tier} Plan</p>
-                      </div>
-                      
-                      <button 
-                        onClick={() => {
-                          setShowProfileMenu(false);
-                          // Navigate to settings page (future implementation)
-                        }}
-                        className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-neutral-100 transition-colors"
-                      >
-                        <Settings className="w-4 h-4 text-neutral-500" />
-                        <span className="text-sm text-neutral-700">Account Settings</span>
-                      </button>
-
-                      <button 
-                        onClick={() => {
-                          setShowProfileMenu(false);
-                          setResetEmail(user.email || '');
-                          setShowPasswordReset(true);
-                        }}
-                        className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-neutral-100 transition-colors"
-                      >
-                        <Lock className="w-4 h-4 text-neutral-500" />
-                        <span className="text-sm text-neutral-700">Change Password</span>
-                      </button>
-
-                      <button 
-                        onClick={() => {
-                          setShowProfileMenu(false);
-                          // Navigate to security page (future implementation)
-                        }}
-                        className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-neutral-100 transition-colors"
-                      >
-                        <Shield className="w-4 h-4 text-neutral-500" />
-                        <span className="text-sm text-neutral-700">Security</span>
-                      </button>
-
-                      <div className="border-t border-neutral-200 mt-2 pt-2">
-                        <button
-                          onClick={() => {
-                            setShowProfileMenu(false);
-                            signOut();
-                          }}
-                          className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-error-50 text-error-600 transition-colors"
-                        >
-                          <LogOut className="w-4 h-4" />
-                          <span className="text-sm">Sign Out</span>
-                        </button>
-                      </div>
+            {/* Profile Menu - Only show when logged in */}
+            <AnimatePresence>
+              {user && showProfileMenu && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-large border z-50"
+                >
+                  <div className="p-2">
+                    <div className="px-3 py-3 border-b border-neutral-200">
+                      <p className="text-sm font-medium text-neutral-800 truncate">{user.email}</p>
+                      <p className="text-xs text-neutral-500 capitalize">{user.subscription_tier} Plan</p>
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          )}
+                    
+                    <button 
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        // Navigate to settings page (future implementation)
+                      }}
+                      className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-neutral-100 transition-colors"
+                    >
+                      <Settings className="w-4 h-4 text-neutral-500" />
+                      <span className="text-sm text-neutral-700">Account Settings</span>
+                    </button>
+
+                    <button 
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        setResetEmail(user.email || '');
+                        setShowPasswordReset(true);
+                      }}
+                      className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-neutral-100 transition-colors"
+                    >
+                      <Lock className="w-4 h-4 text-neutral-500" />
+                      <span className="text-sm text-neutral-700">Change Password</span>
+                    </button>
+
+                    <button 
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        // Navigate to security page (future implementation)
+                      }}
+                      className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-neutral-100 transition-colors"
+                    >
+                      <Shield className="w-4 h-4 text-neutral-500" />
+                      <span className="text-sm text-neutral-700">Security</span>
+                    </button>
+
+                    <div className="border-t border-neutral-200 mt-2 pt-2">
+                      <button
+                        onClick={() => {
+                          setShowProfileMenu(false);
+                          signOut();
+                        }}
+                        className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-error-50 text-error-600 transition-colors"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span className="text-sm">Sign Out</span>
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
 

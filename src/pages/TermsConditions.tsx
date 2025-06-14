@@ -4,16 +4,17 @@ import { FileText, ArrowLeft, Scale, AlertTriangle, Users, Shield } from 'lucide
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { TopBar } from '../components/Layout/TopBar';
+import { Footer } from '../components/Layout/Footer';
 import { useNavigate } from 'react-router-dom';
 
 export const TermsConditions: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex flex-col">
       <TopBar />
       
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-8 max-w-4xl flex-1">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -290,6 +291,8 @@ export const TermsConditions: React.FC = () => {
           </Card>
         </motion.div>
       </div>
+
+      <Footer />
     </div>
   );
 };
