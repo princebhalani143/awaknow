@@ -1,4 +1,4 @@
-import { LingoDotDevEngine } from "lingo.dev/sdk";
+import { LingoDotDevEngine } from "lingo.dev";
 
 interface LingoLanguage {
   code: string;
