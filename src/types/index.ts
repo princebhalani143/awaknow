@@ -30,10 +30,16 @@ export interface Entry {
   created_at: string;
 }
 
+// Language interface for future translation support
 export interface Language {
   code: string;
   name: string;
-  flag: string;
+  nativeName: string;
+}
+
+// Translation interface for future i18n support
+export interface TranslationKeys {
+  [key: string]: string | TranslationKeys;
 }
 
 export interface ApiKeys {
@@ -44,5 +50,4 @@ export interface ApiKeys {
   tavus: string;
   elevenlabs: string;
   revenuecat: string;
-  lingo: string;
 }
