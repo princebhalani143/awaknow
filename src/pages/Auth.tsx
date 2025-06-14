@@ -1,93 +1,139 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Mail, Phone, ArrowRight, Check, Brain } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Mail, ArrowRight, Eye, EyeOff, Brain, Lock, User, Zap } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { Input } from '../components/UI/Input';
 import { TopBar } from '../components/Layout/TopBar';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { smsService } from '../services/smsService';
+
+type AuthMode = 'login' | 'register' | 'forgot-password' | 'verify-email';
 
 export const Auth: React.FC = () => {
   const navigate = useNavigate();
-  const [step, setStep] = useState<'input' | 'verify'>('input');
-  const [method, setMethod] = useState<'email' | 'phone'>('email');
-  const [contact, setContact] = useState('');
-  const [otp, setOtp] = useState('');
+  const [mode, setMode] = useState<AuthMode>('login');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [devVerificationCode, setDevVerificationCode] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleSendOTP = async () => {
+  const handleLogin = async () => {
     setLoading(true);
     setError('');
 
     try {
-      if (method === 'email') {
-        const { error } = await supabase.auth.signInWithOtp({
-          email: contact,
-        });
-        if (error) throw error;
-      } else {
-        // Use our free SMS service for phone verification
-        const result = await smsService.sendVerificationCode(contact);
-        if (!result.success) {
-          throw new Error(result.message);
-        }
-        // For development, store the verification code to show in console
-        if (result.verificationCode) {
-          setDevVerificationCode(result.verificationCode);
-          console.log(`Development Mode - Verification Code: ${result.verificationCode}`);
-        }
-      }
-      setStep('verify');
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      navigate('/home');
     } catch (err: any) {
-      setError(err.message || 'Failed to send verification code');
+      setError(err.message || 'Failed to sign in');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleVerifyOTP = async () => {
+  const handleRegister = async () => {
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
     try {
-      if (method === 'email') {
-        const { error } = await supabase.auth.verifyOtp({
-          email: contact,
-          token: otp,
-          type: 'email',
-        });
-        if (error) throw error;
-      } else {
-        // Use our SMS service for phone verification
-        const isValid = await smsService.verifyCode(contact, otp);
-        if (!isValid) {
-          throw new Error('Invalid verification code');
-        }
-        
-        // For phone verification, we need to create a user session manually
-        // In a real app, you'd integrate this with your authentication system
-        const { error } = await supabase.auth.signInWithOtp({
-          phone: contact,
-          token: otp,
-        });
-        
-        // If Supabase phone auth fails, we'll simulate a successful login
-        // since we've already verified the code with our SMS service
-        if (error) {
-          // Create a mock user session for development
-          console.log('Phone verification successful, creating mock session');
-        }
-      }
-      navigate('/home');
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      if (error) throw error;
+      setMode('verify-email');
+      setMessage('Please check your email for verification link');
     } catch (err: any) {
-      setError(err.message || 'Invalid verification code');
+      setError(err.message || 'Failed to create account');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleForgotPassword = async () => {
+    setLoading(true);
+    setError('');
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      if (error) throw error;
+      setMessage('Password reset email sent! Check your inbox.');
+    } catch (err: any) {
+      setError(err.message || 'Failed to send reset email');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDemoLogin = async () => {
+    setLoading(true);
+    setError('');
+
+    try {
+      // Demo credentials
+      const { error } = await supabase.auth.signInWithPassword({
+        email: 'demo@awaknow.com',
+        password: 'demo123456',
+      });
+      
+      if (error) {
+        // If demo user doesn't exist, create it
+        const { error: signUpError } = await supabase.auth.signUp({
+          email: 'demo@awaknow.com',
+          password: 'demo123456',
+        });
+        
+        if (signUpError) throw signUpError;
+        
+        // Try to sign in again
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: 'demo@awaknow.com',
+          password: 'demo123456',
+        });
+        
+        if (signInError) throw signInError;
+      }
+      
+      navigate('/home');
+    } catch (err: any) {
+      setError('Demo login failed. Please try manual login.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetForm = () => {
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+    setError('');
+    setMessage('');
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+  };
+
+  const switchMode = (newMode: AuthMode) => {
+    resetForm();
+    setMode(newMode);
   };
 
   return (
@@ -106,116 +152,268 @@ export const Auth: React.FC = () => {
                 <Brain className="w-8 h-8 text-white" />
               </div>
               <h1 className="text-2xl font-bold text-neutral-800 mb-2">
-                {step === 'input' ? 'Welcome to AwakNow' : 'Verify Your Account'}
+                {mode === 'login' && 'Welcome Back'}
+                {mode === 'register' && 'Create Account'}
+                {mode === 'forgot-password' && 'Reset Password'}
+                {mode === 'verify-email' && 'Check Your Email'}
               </h1>
               <p className="text-neutral-600">
-                {step === 'input' 
-                  ? 'Enter your details to get started with your emotional wellness journey'
-                  : `We sent a verification code to your ${method}`
-                }
+                {mode === 'login' && 'Sign in to continue your emotional wellness journey'}
+                {mode === 'register' && 'Join AwakNow to start your wellness journey'}
+                {mode === 'forgot-password' && 'Enter your email to receive a password reset link'}
+                {mode === 'verify-email' && 'We sent a verification link to your email address'}
               </p>
             </div>
 
-            {step === 'input' ? (
-              <div className="space-y-6">
-                {/* Method Selection */}
-                <div className="flex space-x-2 p-2 bg-neutral-100 rounded-xl">
-                  <button
-                    onClick={() => setMethod('email')}
-                    className={`flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-lg transition-colors ${
-                      method === 'email' 
-                        ? 'bg-white shadow-soft text-primary-600' 
-                        : 'text-neutral-600 hover:text-neutral-800'
-                    }`}
-                  >
-                    <Mail className="w-4 h-4" />
-                    <span className="font-medium">Email</span>
-                  </button>
-                  <button
-                    onClick={() => setMethod('phone')}
-                    className={`flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-lg transition-colors ${
-                      method === 'phone' 
-                        ? 'bg-white shadow-soft text-primary-600' 
-                        : 'text-neutral-600 hover:text-neutral-800'
-                    }`}
-                  >
-                    <Phone className="w-4 h-4" />
-                    <span className="font-medium">Phone</span>
-                  </button>
-                </div>
+            <AnimatePresence mode="wait">
+              {mode === 'login' && (
+                <motion.div
+                  key="login"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-6"
+                >
+                  <Input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={setEmail}
+                    icon={Mail}
+                    error={error}
+                  />
 
-                <Input
-                  type={method}
-                  placeholder={method === 'email' ? 'Enter your email' : 'Enter your phone number'}
-                  value={contact}
-                  onChange={setContact}
-                  icon={method === 'email' ? Mail : Phone}
-                  error={error}
-                />
-
-                {method === 'phone' && (
-                  <div className="p-3 bg-blue-50 rounded-lg text-left">
-                    <p className="text-sm text-blue-800">
-                      <strong>Development Mode:</strong> Phone verification uses a mock SMS service. 
-                      The verification code will be displayed in the browser console.
-                    </p>
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={setPassword}
+                      icon={Lock}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
+                    >
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
                   </div>
-                )}
 
-                <Button
-                  onClick={handleSendOTP}
-                  loading={loading}
-                  disabled={!contact}
-                  className="w-full"
-                  icon={ArrowRight}
-                  iconPosition="right"
-                >
-                  Send Verification Code
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                <div className="w-16 h-16 bg-success-100 rounded-2xl mx-auto flex items-center justify-center mb-4">
-                  <Check className="w-8 h-8 text-success-600" />
-                </div>
-
-                {method === 'phone' && devVerificationCode && (
-                  <div className="p-3 bg-green-50 rounded-lg text-left">
-                    <p className="text-sm text-green-800">
-                      <strong>Development Code:</strong> {devVerificationCode}
-                    </p>
-                    <p className="text-xs text-green-600 mt-1">
-                      Use this code for testing (also available in console)
-                    </p>
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => switchMode('forgot-password')}
+                      className="text-sm text-primary-600 hover:text-primary-700 transition-colors"
+                    >
+                      Forgot password?
+                    </button>
                   </div>
-                )}
 
-                <Input
-                  type="text"
-                  placeholder="Enter 6-digit code"
-                  value={otp}
-                  onChange={setOtp}
-                  error={error}
-                  className="text-center"
-                />
+                  <Button
+                    onClick={handleLogin}
+                    loading={loading}
+                    disabled={!email || !password}
+                    className="w-full"
+                    icon={ArrowRight}
+                    iconPosition="right"
+                  >
+                    Sign In
+                  </Button>
 
-                <Button
-                  onClick={handleVerifyOTP}
-                  loading={loading}
-                  disabled={otp.length !== 6}
-                  className="w-full"
+                  <div className="flex items-center space-x-4 text-neutral-400">
+                    <div className="flex-1 h-px bg-neutral-200"></div>
+                    <span className="text-sm">or</span>
+                    <div className="flex-1 h-px bg-neutral-200"></div>
+                  </div>
+
+                  <Button
+                    onClick={handleDemoLogin}
+                    loading={loading}
+                    variant="secondary"
+                    className="w-full"
+                    icon={Zap}
+                    iconPosition="left"
+                  >
+                    Try Demo Account
+                  </Button>
+
+                  <p className="text-sm text-neutral-600">
+                    Don't have an account?{' '}
+                    <button
+                      onClick={() => switchMode('register')}
+                      className="text-primary-600 hover:text-primary-700 font-medium transition-colors"
+                    >
+                      Sign up
+                    </button>
+                  </p>
+                </motion.div>
+              )}
+
+              {mode === 'register' && (
+                <motion.div
+                  key="register"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-6"
                 >
-                  Verify & Continue
-                </Button>
+                  <Input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={setEmail}
+                    icon={Mail}
+                    error={error}
+                  />
 
-                <button
-                  onClick={() => setStep('input')}
-                  className="text-sm text-neutral-600 hover:text-neutral-800 transition-colors"
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Create a password"
+                      value={password}
+                      onChange={setPassword}
+                      icon={Lock}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
+                    >
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
+
+                  <div className="relative">
+                    <Input
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      placeholder="Confirm your password"
+                      value={confirmPassword}
+                      onChange={setConfirmPassword}
+                      icon={Lock}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
+                    >
+                      {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
+
+                  <div className="text-left">
+                    <p className="text-xs text-neutral-500 mb-2">Password requirements:</p>
+                    <ul className="text-xs text-neutral-500 space-y-1">
+                      <li className={`flex items-center space-x-2 ${password.length >= 6 ? 'text-success-600' : ''}`}>
+                        <div className={`w-1.5 h-1.5 rounded-full ${password.length >= 6 ? 'bg-success-500' : 'bg-neutral-300'}`}></div>
+                        <span>At least 6 characters</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <Button
+                    onClick={handleRegister}
+                    loading={loading}
+                    disabled={!email || !password || !confirmPassword}
+                    className="w-full"
+                    icon={User}
+                    iconPosition="right"
+                  >
+                    Create Account
+                  </Button>
+
+                  <p className="text-sm text-neutral-600">
+                    Already have an account?{' '}
+                    <button
+                      onClick={() => switchMode('login')}
+                      className="text-primary-600 hover:text-primary-700 font-medium transition-colors"
+                    >
+                      Sign in
+                    </button>
+                  </p>
+                </motion.div>
+              )}
+
+              {mode === 'forgot-password' && (
+                <motion.div
+                  key="forgot-password"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-6"
                 >
-                  Back to {method} entry
-                </button>
-              </div>
-            )}
+                  <Input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={setEmail}
+                    icon={Mail}
+                    error={error}
+                  />
+
+                  {message && (
+                    <div className="p-3 bg-success-50 rounded-lg text-success-800 text-sm">
+                      {message}
+                    </div>
+                  )}
+
+                  <Button
+                    onClick={handleForgotPassword}
+                    loading={loading}
+                    disabled={!email}
+                    className="w-full"
+                    icon={Mail}
+                    iconPosition="right"
+                  >
+                    Send Reset Link
+                  </Button>
+
+                  <button
+                    onClick={() => switchMode('login')}
+                    className="text-sm text-neutral-600 hover:text-neutral-800 transition-colors"
+                  >
+                    Back to sign in
+                  </button>
+                </motion.div>
+              )}
+
+              {mode === 'verify-email' && (
+                <motion.div
+                  key="verify-email"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-6"
+                >
+                  <div className="w-16 h-16 bg-primary-100 rounded-2xl mx-auto flex items-center justify-center mb-4">
+                    <Mail className="w-8 h-8 text-primary-600" />
+                  </div>
+
+                  {message && (
+                    <div className="p-3 bg-primary-50 rounded-lg text-primary-800 text-sm">
+                      {message}
+                    </div>
+                  )}
+
+                  <div className="text-sm text-neutral-600 space-y-2">
+                    <p>We sent a verification link to:</p>
+                    <p className="font-medium text-neutral-800">{email}</p>
+                    <p>Click the link in your email to verify your account and start using AwakNow.</p>
+                  </div>
+
+                  <Button
+                    onClick={() => switchMode('login')}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Back to Sign In
+                  </Button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </Card>
         </motion.div>
       </div>
