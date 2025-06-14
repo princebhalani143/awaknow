@@ -13,11 +13,10 @@ type AuthMode = 'login' | 'register' | 'forgot-password' | 'verify-email';
 export const Auth: React.FC = () => {
   const navigate = useNavigate();
   const [mode, setMode] = useState<AuthMode>('login');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -41,13 +40,13 @@ export const Auth: React.FC = () => {
   };
 
   const handleRegister = async () => {
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
       return;
     }
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+    if (!name.trim()) {
+      setError('Name is required');
       return;
     }
 
@@ -58,6 +57,11 @@ export const Auth: React.FC = () => {
       const { error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            full_name: name,
+          }
+        }
       });
       if (error) throw error;
       setMode('verify-email');
@@ -100,6 +104,11 @@ export const Auth: React.FC = () => {
         const { error: signUpError } = await supabase.auth.signUp({
           email: 'demo@awaknow.com',
           password: 'demo123456',
+          options: {
+            data: {
+              full_name: 'Demo User',
+            }
+          }
         });
         
         if (signUpError) throw signUpError;
@@ -122,13 +131,12 @@ export const Auth: React.FC = () => {
   };
 
   const resetForm = () => {
+    setName('');
     setEmail('');
     setPassword('');
-    setConfirmPassword('');
     setError('');
     setMessage('');
     setShowPassword(false);
-    setShowConfirmPassword(false);
   };
 
   const switchMode = (newMode: AuthMode) => {
@@ -260,12 +268,20 @@ export const Auth: React.FC = () => {
                   className="space-y-6"
                 >
                   <Input
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={name}
+                    onChange={setName}
+                    icon={User}
+                    error={error}
+                  />
+
+                  <Input
                     type="email"
                     placeholder="Enter your email"
                     value={email}
                     onChange={setEmail}
                     icon={Mail}
-                    error={error}
                   />
 
                   <div className="relative">
@@ -285,23 +301,6 @@ export const Auth: React.FC = () => {
                     </button>
                   </div>
 
-                  <div className="relative">
-                    <Input
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      placeholder="Confirm your password"
-                      value={confirmPassword}
-                      onChange={setConfirmPassword}
-                      icon={Lock}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
-                    >
-                      {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    </button>
-                  </div>
-
                   <div className="text-left">
                     <p className="text-xs text-neutral-500 mb-2">Password requirements:</p>
                     <ul className="text-xs text-neutral-500 space-y-1">
@@ -315,13 +314,31 @@ export const Auth: React.FC = () => {
                   <Button
                     onClick={handleRegister}
                     loading={loading}
-                    disabled={!email || !password || !confirmPassword}
+                    disabled={!email || !password || !name.trim()}
                     className="w-full"
                     icon={User}
                     iconPosition="right"
                   >
                     Create Account
                   </Button>
+
+                  <div className="text-xs text-neutral-600 leading-relaxed">
+                    By signing up, you agree to our{' '}
+                    <button
+                      onClick={() => navigate('/privacy-policy')}
+                      className="text-primary-600 hover:text-primary-700 underline"
+                    >
+                      Privacy Policy
+                    </button>
+                    {' '}and{' '}
+                    <button
+                      onClick={() => navigate('/terms-conditions')}
+                      className="text-primary-600 hover:text-primary-700 underline"
+                    >
+                      Terms & Conditions
+                    </button>
+                    .
+                  </div>
 
                   <p className="text-sm text-neutral-600">
                     Already have an account?{' '}

@@ -8,6 +8,9 @@ import { Home } from './pages/Home';
 import { Reflect } from './pages/Reflect';
 import { Resolve } from './pages/Resolve';
 import { Session } from './pages/Session';
+import { PrivacyPolicy } from './pages/PrivacyPolicy';
+import { TermsConditions } from './pages/TermsConditions';
+import { CookieConsent } from './components/UI/CookieConsent';
 
 function App() {
   const { user, setUser, setLoading } = useAuthStore();
@@ -55,6 +58,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-conditions" element={<TermsConditions />} />
         <Route 
           path="/home" 
           element={user ? <Home /> : <Navigate to="/auth" />} 
@@ -72,6 +77,7 @@ function App() {
           element={user ? <Session /> : <Navigate to="/auth" />} 
         />
       </Routes>
+      <CookieConsent />
     </Router>
   );
 }
