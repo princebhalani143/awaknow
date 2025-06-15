@@ -543,6 +543,9 @@ export const About: React.FC = () => {
                   >
                     <Card className="text-center p-6 hover:shadow-xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/90 backdrop-blur-sm">
                       <div className="w-18 h-18 bg-white rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 border border-neutral-100 p-3 group-hover:scale-110">
+                        <span className="inline-block px-3 py-1 bg-accent-100 text-accent-700 rounded-full text-xs font-medium">
+                        {partner.category}
+                      </span>
                         <img
                           src={partner.logo}
                           alt={`${partner.name} logo`}
@@ -557,15 +560,9 @@ export const About: React.FC = () => {
                           }}
                         />
                       </div>
-                      <h4 className="text-lg font-semibold text-neutral-800 mb-2 group-hover:text-accent-700 transition-colors duration-300">
-                        {partner.name}
-                      </h4>
                       <p className="text-neutral-600 text-sm mb-3 leading-relaxed">
                         {partner.description}
                       </p>
-                      <span className="inline-block px-3 py-1 bg-accent-100 text-accent-700 rounded-full text-xs font-medium">
-                        {partner.category}
-                      </span>
                     </Card>
                   </motion.div>
                 ))}
