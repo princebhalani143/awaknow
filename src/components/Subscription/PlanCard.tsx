@@ -28,6 +28,20 @@ export const PlanCard: React.FC<PlanCardProps> = ({
     ? Math.round(((plan.price.monthly * 12 - plan.price.annual) / (plan.price.monthly * 12)) * 100)
     : 0;
 
+  const getButtonText = () => {
+    if (isCurrentPlan) {
+      return 'Current Plan';
+    }
+    
+    if (plan.price.monthly === 0) {
+      return 'Downgrade to Free';
+    }
+    
+    return 'Choose Monthly';
+  };
+
+  const shouldShowDowngrade = plan.price.monthly === 0 && !isCurrentPlan;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -121,28 +135,19 @@ export const PlanCard: React.FC<PlanCardProps> = ({
             <Button variant="outline" className="w-full" disabled>
               Current Plan
             </Button>
-          ) : plan.price.monthly === 0 ? (
-            <Button
-              onClick={() => onSelectPlan(plan.id, false)}
-              variant="outline"
-              className="w-full"
-              loading={loading}
-            >
-              Downgrade to Free
-            </Button>
           ) : (
             <>
               <Button
                 onClick={() => onSelectPlan(plan.id, false)}
-                variant={isPopular ? 'primary' : 'secondary'}
+                variant={shouldShowDowngrade ? 'outline' : isPopular ? 'primary' : 'secondary'}
                 className="w-full"
                 loading={loading}
-                icon={isPopular ? Zap : undefined}
+                icon={isPopular && !shouldShowDowngrade ? Zap : undefined}
               >
-                Choose Monthly
+                {getButtonText()}
               </Button>
               
-              {annualSavings > 0 && (
+              {annualSavings > 0 && !shouldShowDowngrade && (
                 <Button
                   onClick={() => onSelectPlan(plan.id, true)}
                   variant="outline"

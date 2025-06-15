@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Brain, Users, ArrowRight, Crown, Zap, Star } from 'lucide-react';
+import { Heart, Brain, Users, ArrowRight, Crown, Zap, Star, Check } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { TranslatedText } from '../components/UI/TranslatedText';
@@ -137,7 +137,7 @@ export const Landing: React.FC = () => {
           ))}
         </motion.div>
 
-        {/* Pricing Section */}
+        {/* Pricing Section - Matching Backend Design */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -190,22 +190,55 @@ export const Landing: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="space-y-3 mb-8 text-left">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-neutral-600">AI Video Minutes</span>
-                      <span className="font-medium">{plan.features.tavusMinutes}/month</span>
+                  <div className="space-y-4 mb-8">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-neutral-600">AI Video Minutes</span>
+                        <span className="font-medium text-neutral-800">{plan.features.tavusMinutes}/month</span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-neutral-600">Solo Sessions</span>
+                        <span className="font-medium text-neutral-800">
+                          {plan.features.soloSessionsPerDay === 'unlimited' ? 'Unlimited' : `${plan.features.soloSessionsPerDay}/day`}
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-neutral-600">AI Insights</span>
+                        <span className="font-medium text-neutral-800">
+                          {plan.features.insightsPerWeek === 'unlimited' ? 'Unlimited' : `${plan.features.insightsPerWeek}/week`}
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-neutral-600">Session History</span>
+                        <span className="font-medium text-neutral-800">{plan.features.historyDays} days</span>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-neutral-600">Solo Sessions</span>
-                      <span className="font-medium">
-                        {plan.features.soloSessionsPerDay === 'unlimited' ? 'Unlimited' : `${plan.features.soloSessionsPerDay}/day`}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-neutral-600">Group Sessions</span>
-                      <span className={`font-medium ${plan.features.groupSessions ? 'text-success-600' : 'text-neutral-400'}`}>
-                        {plan.features.groupSessions ? '✓' : '✗'}
-                      </span>
+
+                    <div className="border-t border-neutral-200 pt-4 space-y-2">
+                      <div className="flex items-center space-x-2">
+                        {plan.features.groupSessions ? (
+                          <Check className="w-4 h-4 text-success-500" />
+                        ) : (
+                          <div className="w-4 h-4 rounded-full border border-neutral-300" />
+                        )}
+                        <span className={`text-sm ${plan.features.groupSessions ? 'text-neutral-800' : 'text-neutral-500'}`}>
+                          Group Sessions
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2">
+                        {plan.features.prioritySupport ? (
+                          <Check className="w-4 h-4 text-success-500" />
+                        ) : (
+                          <div className="w-4 h-4 rounded-full border border-neutral-300" />
+                        )}
+                        <span className={`text-sm ${plan.features.prioritySupport ? 'text-neutral-800' : 'text-neutral-500'}`}>
+                          Priority Support
+                        </span>
+                      </div>
                     </div>
                   </div>
 
