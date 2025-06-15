@@ -351,9 +351,9 @@ export const Home: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="mb-12 -mx-4"
+          className="mb-12"
         >
-          <div className="text-center mb-8 px-4">
+          <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-800 mb-4">
               <TranslatedText>Types of Conflicts</TranslatedText>
             </h2>
@@ -391,7 +391,7 @@ export const Home: React.FC = () => {
                           <div className="space-y-6">
                             <div className="flex items-center space-x-3">
                               <div className={`w-12 h-12 bg-gradient-to-br ${conflictTypes[currentSlide].color} rounded-xl flex items-center justify-center`}>
-                                {React.createElement(conflictTypes[currentSlide].icon, { className: "w-6 h-6 text-white" })}
+                                <conflictTypes[currentSlide].icon className="w-6 h-6 text-white" />
                               </div>
                               <span className="text-accent-400 text-sm font-medium uppercase tracking-wide">
                                 Conflict Resolution
@@ -756,7 +756,7 @@ export const Home: React.FC = () => {
               <TranslatedText>Your data is private, encrypted, and yours alone; even we can't see it. You can cancel anytime, no questions asked.</TranslatedText>
             </p>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       <Footer />
