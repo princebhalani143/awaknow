@@ -759,7 +759,7 @@ export const Home: React.FC = () => {
               <TranslatedText>Your data is private, encrypted, and yours alone; even we can't see it. You can cancel anytime, no questions asked.</TranslatedText>
             </p>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       <Footer />
