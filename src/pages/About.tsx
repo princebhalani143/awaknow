@@ -542,7 +542,7 @@ export const About: React.FC = () => {
                     className="group"
                   >
                     <Card className="text-center p-6 hover:shadow-xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/90 backdrop-blur-sm">
-                      <div className="mx-auto mb-4 flex items-center justify-center group-hover:shadow-xl transition-all duration-300 border border-neutral-100 p-3 group-hover:scale-110">
+                      <div className="mx-auto mb-4 flex items-center justify-center">
                         <img
                           src={partner.logo}
                           alt={`${partner.name} logo`}
