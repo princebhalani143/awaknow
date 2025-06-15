@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Heart, Users, Shield, Target, Zap, ArrowRight, CheckCircle, Star, Award, Globe, Lightbulb, TrendingUp } from 'lucide-react';
+import { Brain, Heart, Users, Shield, Target, Zap, ArrowRight, CheckCircle, Star, Award, Globe, Lightbulb, TrendingUp, Trophy, Rocket } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { TopBar } from '../components/Layout/TopBar';
@@ -35,24 +35,46 @@ export const About: React.FC = () => {
 
   const journey = [
     {
-      year: '2024',
+      year: 'May 2025',
       title: 'The Vision',
       description: 'Prince Bhalani recognized the global mental health crisis and envisioned AI as a solution for accessible emotional wellness.',
+      icon: Lightbulb,
+      color: 'from-primary-500 to-primary-600'
     },
     {
-      year: 'May 2024',
+      year: 'June 2025',
       title: 'Development Begins',
-      description: 'Started building AwakNow with a focus on AI-powered emotional intelligence and conflict resolution.',
+      description: 'Started building AwakNow with a focus on AI-powered emotional intelligence and conflict resolution using cutting-edge technology stack.',
+      icon: Rocket,
+      color: 'from-secondary-500 to-secondary-600'
     },
     {
-      year: 'Dec 2024',
+      year: 'July 2025',
       title: 'Beta Launch',
-      description: 'Launched beta version with core features: AI conversations, emotion analysis, and personalized insights.',
+      description: 'Successfully launched beta version with core features: AI conversations, emotion analysis, and personalized insights.',
+      icon: Star,
+      color: 'from-accent-500 to-accent-600'
     },
     {
-      year: '2025',
+      year: 'July 2025',
+      title: 'Hackathon Victory',
+      description: 'Won the world\'s largest hackathon by bolt.new, validating our innovative approach to AI-powered emotional wellness and securing recognition from the global tech community.',
+      icon: Trophy,
+      color: 'from-success-500 to-success-600'
+    },
+    {
+      year: 'August 2025',
+      title: 'Expansion & Innovation',
+      description: 'Leveraging hackathon victory funding to expand our team, enhance AI capabilities, and develop advanced features for deeper emotional intelligence.',
+      icon: TrendingUp,
+      color: 'from-warning-500 to-warning-600'
+    },
+    {
+      year: 'September 2025',
       title: 'Global Expansion',
-      description: 'Planning to expand internationally with multi-language support and advanced AI capabilities.',
+      description: 'Planning international expansion with multi-language support, cultural adaptation, and partnerships with global wellness organizations.',
+      icon: Globe,
+      color: 'from-primary-600 to-secondary-600'
     },
   ];
 
@@ -66,10 +88,61 @@ export const About: React.FC = () => {
   ];
 
   const achievements = [
+    { icon: Trophy, title: 'Hackathon Champion', description: 'Won world\'s largest hackathon by bolt.new in July 2025' },
     { icon: TrendingUp, title: 'Beta Platform', description: 'Successfully launched beta with core AI features' },
     { icon: Shield, title: 'Privacy Certified', description: 'HIPAA-compliant with end-to-end encryption' },
     { icon: Brain, title: 'AI Innovation', description: 'Advanced emotion recognition and response algorithms' },
-    { icon: Users, title: 'Community Building', description: 'Growing community of wellness-focused users' },
+  ];
+
+  const techPartners = [
+    {
+      name: 'Bolt',
+      description: 'Development platform and hackathon host',
+      logo: '⚡',
+      category: 'Development'
+    },
+    {
+      name: 'Tavus',
+      description: 'AI video generation and conversational AI',
+      logo: '🎥',
+      category: 'AI Technology'
+    },
+    {
+      name: 'ElevenLabs',
+      description: 'Advanced voice synthesis and audio AI',
+      logo: '🎵',
+      category: 'Voice AI'
+    },
+    {
+      name: 'Supabase',
+      description: 'Backend infrastructure and database',
+      logo: '🗄️',
+      category: 'Infrastructure'
+    },
+    {
+      name: 'RevenueCat',
+      description: 'Subscription management and billing',
+      logo: '💳',
+      category: 'Payments'
+    },
+    {
+      name: 'Netlify',
+      description: 'Web hosting and deployment platform',
+      logo: '🌐',
+      category: 'Hosting'
+    },
+    {
+      name: 'Entri',
+      description: 'Domain management and DNS services',
+      logo: '🔗',
+      category: 'Domain'
+    },
+    {
+      name: 'Stripe',
+      description: 'Payment processing and financial infrastructure',
+      logo: '💰',
+      category: 'Payments'
+    },
   ];
 
   return (
@@ -146,40 +219,115 @@ export const About: React.FC = () => {
 
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-primary-500 to-secondary-500 rounded-full"></div>
+            <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-primary-500 to-secondary-500 rounded-full hidden lg:block"></div>
             
-            <div className="space-y-12">
+            <div className="space-y-8">
               {journey.map((milestone, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.8 + index * 0.2 }}
-                  className={`flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}
+                  className={`flex items-center ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} flex-col lg:flex-row`}
                 >
-                  <div className={`w-1/2 ${index % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
-                    <Card className="p-6">
-                      <div className="text-primary-600 font-bold text-lg mb-2">{milestone.year}</div>
+                  <div className={`w-full lg:w-1/2 ${index % 2 === 0 ? 'lg:pr-8 lg:text-right' : 'lg:pl-8 lg:text-left'} text-center lg:text-left mb-4 lg:mb-0`}>
+                    <Card className="p-6 hover:shadow-medium transition-all duration-300">
+                      <div className="flex items-center justify-center lg:justify-start space-x-3 mb-4">
+                        <div className={`w-10 h-10 bg-gradient-to-br ${milestone.color} rounded-xl flex items-center justify-center`}>
+                          <milestone.icon className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="text-primary-600 font-bold text-lg">{milestone.year}</div>
+                      </div>
                       <h4 className="text-xl font-semibold text-neutral-800 mb-3">{milestone.title}</h4>
                       <p className="text-neutral-600 leading-relaxed">{milestone.description}</p>
                     </Card>
                   </div>
                   
-                  {/* Timeline dot */}
-                  <div className="w-4 h-4 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full border-4 border-white shadow-lg z-10"></div>
+                  {/* Timeline dot - hidden on mobile */}
+                  <div className="w-6 h-6 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full border-4 border-white shadow-lg z-10 hidden lg:block"></div>
                   
-                  <div className="w-1/2"></div>
+                  <div className="w-full lg:w-1/2 hidden lg:block"></div>
                 </motion.div>
               ))}
             </div>
           </div>
         </motion.div>
 
-        {/* Founder Section */}
+        {/* Achievements */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.0 }}
+          className="mb-16"
+        >
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-neutral-800 mb-4">Our Achievements</h2>
+            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+              Milestones we've reached in our mission to transform emotional wellness
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {achievements.map((achievement, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.2 + index * 0.1 }}
+              >
+                <Card className="text-center p-6 h-full hover:shadow-medium transition-all duration-300">
+                  <div className="w-12 h-12 bg-gradient-to-br from-success-500 to-primary-500 rounded-xl mx-auto mb-4 flex items-center justify-center">
+                    <achievement.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <h4 className="font-semibold text-neutral-800 mb-2">{achievement.title}</h4>
+                  <p className="text-neutral-600 text-sm">{achievement.description}</p>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Technology Partners */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1.4 }}
+          className="mb-16"
+        >
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-neutral-800 mb-4">Our Technology Partners</h2>
+            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+              Powered by industry-leading technologies and trusted partners who share our vision
+            </p>
+          </div>
+
+          <Card className="p-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {techPartners.map((partner, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 1.6 + index * 0.1 }}
+                  className="text-center group hover:scale-105 transition-transform duration-300"
+                >
+                  <div className="w-16 h-16 bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-2xl mx-auto mb-3 flex items-center justify-center text-2xl group-hover:shadow-lg transition-shadow duration-300">
+                    {partner.logo}
+                  </div>
+                  <h4 className="font-semibold text-neutral-800 text-sm mb-1">{partner.name}</h4>
+                  <p className="text-xs text-neutral-600 mb-1">{partner.description}</p>
+                  <span className="text-xs text-primary-600 font-medium">{partner.category}</span>
+                </motion.div>
+              ))}
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* Founder Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1.8 }}
           className="mb-16"
         >
           <Card className="overflow-hidden">
@@ -224,6 +372,10 @@ export const About: React.FC = () => {
                     <Star className="w-4 h-4 text-accent-500" />
                     <span className="text-sm text-neutral-700">AI & Psychology Researcher</span>
                   </div>
+                  <div className="flex items-center space-x-2">
+                    <Trophy className="w-4 h-4 text-success-500" />
+                    <span className="text-sm text-neutral-700">Hackathon Champion (bolt.new 2025)</span>
+                  </div>
                 </div>
 
                 <blockquote className="border-l-4 border-primary-500 pl-4 italic text-neutral-700 mb-6">
@@ -249,7 +401,7 @@ export const About: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
+          transition={{ duration: 0.8, delay: 2.0 }}
           className="mb-16"
         >
           <div className="text-center mb-12">
@@ -266,7 +418,7 @@ export const About: React.FC = () => {
                   key={index}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 1.4 + index * 0.1 }}
+                  transition={{ duration: 0.6, delay: 2.2 + index * 0.1 }}
                   className="flex items-start space-x-3"
                 >
                   <CheckCircle className="w-5 h-5 text-success-500 mt-0.5 flex-shrink-0" />
@@ -277,45 +429,11 @@ export const About: React.FC = () => {
           </Card>
         </motion.div>
 
-        {/* Achievements */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.4 }}
-          className="mb-16"
-        >
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-neutral-800 mb-4">Our Achievements</h2>
-            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              Milestones we've reached in our mission to transform emotional wellness
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {achievements.map((achievement, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1.6 + index * 0.1 }}
-              >
-                <Card className="text-center p-6 h-full">
-                  <div className="w-12 h-12 bg-gradient-to-br from-success-500 to-primary-500 rounded-xl mx-auto mb-4 flex items-center justify-center">
-                    <achievement.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <h4 className="font-semibold text-neutral-800 mb-2">{achievement.title}</h4>
-                  <p className="text-neutral-600 text-sm">{achievement.description}</p>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
         {/* CTA Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.8 }}
+          transition={{ duration: 0.8, delay: 2.4 }}
         >
           <Card className="bg-gradient-to-br from-primary-500 to-secondary-500 text-white border-0 text-center">
             <h2 className="text-3xl font-bold mb-4">Join Our Mission</h2>
