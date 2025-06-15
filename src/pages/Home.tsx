@@ -408,7 +408,7 @@ export const Home: React.FC = () => {
               </Card>
             </motion.div>
           ))}
-        </grid>
+        </motion.div>
 
         {/* Upgrade CTA */}
         {subscription?.plan_id === 'awaknow_free' && (
