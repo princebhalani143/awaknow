@@ -234,9 +234,7 @@ export const Landing: React.FC = () => {
       <TopBar />
       
       <div className="flex-1">
-        {/* Hero Section - Premium Design with Consistent Fonts */}
-        <section className="relative min-h-screen flex items-center justify-center bg-white">
-          {/* Bolt.new Hackathon Winner Badge - Fixed Position and Responsive */}
+        {/* Bolt.new Hackathon Winner Badge - Fixed Position and Responsive */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -273,7 +271,8 @@ export const Landing: React.FC = () => {
               </div>
             </a>
           </motion.div>
-
+        {/* Hero Section - Premium Design with Consistent Fonts */}
+        <section className="relative min-h-screen flex items-center justify-center bg-white">
           {/* Animated Background Elements */}
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute top-1/4 left-1/4 w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64 bg-gradient-to-br from-primary-200/30 to-secondary-200/30 rounded-full blur-3xl animate-pulse"></div>
