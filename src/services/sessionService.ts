@@ -178,21 +178,51 @@ export class SessionService {
 
   static async getUserSessions(userId: string): Promise<SessionData[]> {
     try {
-      const { data, error } = await supabase
+      // Query 1: Get sessions created by the user
+      const { data: createdSessions, error: createdError } = await supabase
         .from('sessions')
         .select(`
           *,
           participants:session_participants(*)
         `)
-        .or(`created_by.eq.${userId},session_participants.user_id.eq.${userId}`)
+        .eq('created_by', userId)
         .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching user sessions:', error);
+      if (createdError) {
+        console.error('Error fetching created sessions:', createdError);
         return [];
       }
 
-      return data || [];
+      // Query 2: Get sessions where user is a participant
+      const { data: participantSessions, error: participantError } = await supabase
+        .from('sessions')
+        .select(`
+          *,
+          participants:session_participants(*)
+        `)
+        .in('id', 
+          supabase
+            .from('session_participants')
+            .select('session_id')
+            .eq('user_id', userId)
+        )
+        .order('created_at', { ascending: false });
+
+      if (participantError) {
+        console.error('Error fetching participant sessions:', participantError);
+        return [];
+      }
+
+      // Combine and deduplicate sessions
+      const allSessions = [...(createdSessions || []), ...(participantSessions || [])];
+      const uniqueSessions = allSessions.filter((session, index, self) => 
+        index === self.findIndex(s => s.id === session.id)
+      );
+
+      // Sort by created_at descending
+      uniqueSessions.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+      return uniqueSessions;
     } catch (error) {
       console.error('Error in getUserSessions:', error);
       return [];

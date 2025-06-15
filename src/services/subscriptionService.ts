@@ -11,14 +11,61 @@ export class SubscriptionService {
         .eq('user_id', userId)
         .single();
 
+      // If no subscription found, create a default free subscription
+      if (error && error.code === 'PGRST116') {
+        return await this.createDefaultSubscription(userId);
+      }
+
       if (error) {
         console.error('Error fetching subscription:', error);
         return null;
       }
 
+      // If data is null, create default subscription
+      if (!data) {
+        return await this.createDefaultSubscription(userId);
+      }
+
       return data;
     } catch (error) {
       console.error('Error in getUserSubscription:', error);
+      return null;
+    }
+  }
+
+  private static async createDefaultSubscription(userId: string): Promise<UserSubscription | null> {
+    try {
+      const freePlan = getPlanById('awaknow_free');
+      if (!freePlan) {
+        console.error('Free plan not found');
+        return null;
+      }
+
+      const defaultSubscription = {
+        user_id: userId,
+        plan_id: 'awaknow_free',
+        plan_name: freePlan.displayName,
+        status: 'active',
+        tavus_minutes_limit: freePlan.features.tavusMinutes,
+        tavus_minutes_used: 0,
+        solo_sessions_today: 0,
+        insights_this_week: 0,
+      };
+
+      const { data, error } = await supabase
+        .from('user_subscriptions')
+        .insert(defaultSubscription)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating default subscription:', error);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error in createDefaultSubscription:', error);
       return null;
     }
   }
