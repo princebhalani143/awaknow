@@ -721,7 +721,7 @@ export const Landing: React.FC = () => {
                         <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 to-secondary-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                         
                         <div className="relative z-10">
-                          <div className="w-24 h-24 bg-white rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-300 border border-neutral-100 p-4 group-hover:scale-110">
+                          <div className="mx-auto mb-4 flex items-center justify-center">
                             <img
                               src={partner.logo}
                               alt={`${partner.name} logo`}
@@ -736,9 +736,6 @@ export const Landing: React.FC = () => {
                               }}
                             />
                           </div>
-                          <h4 className="text-xl font-bold text-neutral-800 mb-3 group-hover:text-primary-700 transition-colors duration-300">
-                            {partner.name}
-                          </h4>
                           <p className="text-neutral-600 mb-4 leading-relaxed">
                             {partner.description}
                           </p>
@@ -774,7 +771,7 @@ export const Landing: React.FC = () => {
                       className="group"
                     >
                       <Card className="text-center p-6 hover:shadow-xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/90 backdrop-blur-sm">
-                        <div className="w-20 h-20 bg-white rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 border border-neutral-100 p-3 group-hover:scale-110">
+                        <div className="mx-auto mb-4 flex items-center justify-center">
                           <img
                             src={partner.logo}
                             alt={`${partner.name} logo`}
@@ -789,9 +786,6 @@ export const Landing: React.FC = () => {
                             }}
                           />
                         </div>
-                        <h4 className="text-lg font-semibold text-neutral-800 mb-2 group-hover:text-secondary-700 transition-colors duration-300">
-                          {partner.name}
-                        </h4>
                         <p className="text-neutral-600 text-sm mb-3 leading-relaxed">
                           {partner.description}
                         </p>
