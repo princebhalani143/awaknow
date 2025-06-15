@@ -6,6 +6,7 @@ import { Card } from '../components/UI/Card';
 import { TopBar } from '../components/Layout/TopBar';
 import { Footer } from '../components/Layout/Footer';
 import { useNavigate } from 'react-router-dom';
+import { ProtectedEmail } from '../utils/emailProtection';
 
 export const PrivacyPolicy: React.FC = () => {
   const navigate = useNavigate();
@@ -175,8 +176,13 @@ export const PrivacyPolicy: React.FC = () => {
             </div>
             <div className="mt-4 p-4 bg-success-50 rounded-lg">
               <p className="text-success-800 text-sm">
-                <strong>Exercise Your Rights:</strong> Contact us at <a href="mailto:info@awaknow.org" className="underline">info@awaknow.org</a> to exercise any of these rights. 
-                We will respond within 30 days and verify your identity before processing requests.
+                <strong>Exercise Your Rights:</strong> Contact us at{' '}
+                <ProtectedEmail
+                  email="info@awaknow.org"
+                  subject="Privacy Rights Request"
+                  className="text-success-800 underline hover:text-success-900"
+                />{' '}
+                to exercise any of these rights. We will respond within 30 days and verify your identity before processing requests.
               </p>
             </div>
           </Card>
@@ -240,12 +246,22 @@ export const PrivacyPolicy: React.FC = () => {
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <strong>Privacy Officer:</strong><br />
-                  Email: <a href="mailto:info@awaknow.org" className="text-primary-600 hover:text-primary-700 underline">info@awaknow.org</a><br />
+                  Email:{' '}
+                  <ProtectedEmail
+                    email="info@awaknow.org"
+                    subject="Privacy Inquiry"
+                    className="text-primary-600 hover:text-primary-700 underline"
+                  /><br />
                   Response time: Within 30 days
                 </div>
                 <div>
                   <strong>Data Protection Officer (EU):</strong><br />
-                  Email: <a href="mailto:info@awaknow.org" className="text-primary-600 hover:text-primary-700 underline">info@awaknow.org</a><br />
+                  Email:{' '}
+                  <ProtectedEmail
+                    email="info@awaknow.org"
+                    subject="GDPR Inquiry"
+                    className="text-primary-600 hover:text-primary-700 underline"
+                  /><br />
                   For GDPR-related inquiries
                 </div>
               </div>

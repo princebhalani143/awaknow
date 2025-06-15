@@ -1,6 +1,7 @@
 import React from 'react';
 import { Heart, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { ProtectedEmail } from '../../utils/emailProtection';
 
 export const Footer: React.FC = () => {
   const navigate = useNavigate();
@@ -39,12 +40,13 @@ export const Footer: React.FC = () => {
             >
               Terms & Conditions
             </button>
-            <a
-              href="mailto:info@awaknow.org"
-              className="text-neutral-600 hover:text-primary-600 transition-colors"
+            <ProtectedEmail
+              email="info@awaknow.org"
+              subject="Contact AwakNow"
+              className="text-neutral-600 hover:text-primary-600"
             >
               Contact Us
-            </a>
+            </ProtectedEmail>
           </div>
         </div>
       </div>

@@ -6,6 +6,7 @@ import { Card } from '../components/UI/Card';
 import { TopBar } from '../components/Layout/TopBar';
 import { Footer } from '../components/Layout/Footer';
 import { useNavigate } from 'react-router-dom';
+import { ProtectedEmail } from '../utils/emailProtection';
 
 export const TermsConditions: React.FC = () => {
   const navigate = useNavigate();
@@ -235,7 +236,15 @@ export const TermsConditions: React.FC = () => {
             <div className="space-y-3 text-neutral-700 text-sm">
               <div>
                 <h4 className="font-medium text-neutral-800 mb-2">By You</h4>
-                <p>You may terminate your account at any time through your account settings or by contacting <a href="mailto:info@awaknow.org" className="text-primary-600 hover:text-primary-700 underline">info@awaknow.org</a>.</p>
+                <p>
+                  You may terminate your account at any time through your account settings or by contacting{' '}
+                  <ProtectedEmail
+                    email="info@awaknow.org"
+                    subject="Account Termination Request"
+                    className="text-primary-600 hover:text-primary-700 underline"
+                  />
+                  .
+                </p>
               </div>
               <div>
                 <h4 className="font-medium text-neutral-800 mb-2">By Us</h4>
@@ -279,12 +288,22 @@ export const TermsConditions: React.FC = () => {
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <strong>Legal Team:</strong><br />
-                  Email: <a href="mailto:info@awaknow.org" className="text-primary-600 hover:text-primary-700 underline">info@awaknow.org</a><br />
+                  Email:{' '}
+                  <ProtectedEmail
+                    email="info@awaknow.org"
+                    subject="Legal Inquiry"
+                    className="text-primary-600 hover:text-primary-700 underline"
+                  /><br />
                   Response time: Within 5 business days
                 </div>
                 <div>
                   <strong>Customer Support:</strong><br />
-                  Email: <a href="mailto:info@awaknow.org" className="text-primary-600 hover:text-primary-700 underline">info@awaknow.org</a><br />
+                  Email:{' '}
+                  <ProtectedEmail
+                    email="info@awaknow.org"
+                    subject="Customer Support"
+                    className="text-primary-600 hover:text-primary-700 underline"
+                  /><br />
                   Response time: Within 24 hours
                 </div>
               </div>

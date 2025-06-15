@@ -50,7 +50,7 @@ VITE_REVENUECAT_API_KEY=your_revenuecat_api_key
 
 ## Contact
 
-For questions or support, contact us at: [info@awaknow.org](mailto:info@awaknow.org)
+For questions or support, contact us at: info [at] awaknow [dot] org
 
 ## License
 
