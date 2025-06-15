@@ -9,6 +9,7 @@ import { Reflect } from './pages/Reflect';
 import { Resolve } from './pages/Resolve';
 import { Session } from './pages/Session';
 import { Subscription } from './pages/Subscription';
+import { BillingHistory } from './pages/BillingHistory';
 import { Analytics } from './pages/Analytics';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsConditions } from './pages/TermsConditions';
@@ -81,6 +82,10 @@ function App() {
         <Route 
           path="/subscription" 
           element={user ? <Subscription /> : <Navigate to="/auth" />} 
+        />
+        <Route 
+          path="/billing-history" 
+          element={user ? <BillingHistory /> : <Navigate to="/auth" />} 
         />
         <Route 
           path="/analytics" 

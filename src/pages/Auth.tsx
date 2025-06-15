@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, ArrowRight, Eye, EyeOff, Brain, Lock, User, Zap } from 'lucide-react';
+import { Mail, ArrowRight, Eye, EyeOff, Brain, Lock, User, Zap, Shield, Key } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { Input } from '../components/UI/Input';
@@ -9,7 +9,7 @@ import { Footer } from '../components/Layout/Footer';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
-type AuthMode = 'login' | 'register' | 'forgot-password' | 'verify-email';
+type AuthMode = 'login' | 'register' | 'forgot-password' | 'verify-email' | 'demo-gate';
 
 export const Auth: React.FC = () => {
   const navigate = useNavigate();
@@ -17,10 +17,15 @@ export const Auth: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [demoAnswer, setDemoAnswer] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+
+  // Secret demo access question and answer
+  const DEMO_QUESTION = "What is the primary emotion that drives personal growth?";
+  const DEMO_ANSWER = "curiosity"; // Keep this secret - only for internal use
 
   const handleLogin = async () => {
     setLoading(true);
@@ -89,6 +94,14 @@ export const Auth: React.FC = () => {
     }
   };
 
+  const handleDemoAccess = () => {
+    if (demoAnswer.toLowerCase().trim() === DEMO_ANSWER.toLowerCase()) {
+      handleDemoLogin();
+    } else {
+      setError('Incorrect answer. Please try again.');
+    }
+  };
+
   const handleDemoLogin = async () => {
     setLoading(true);
     setError('');
@@ -135,6 +148,7 @@ export const Auth: React.FC = () => {
     setName('');
     setEmail('');
     setPassword('');
+    setDemoAnswer('');
     setError('');
     setMessage('');
     setShowPassword(false);
@@ -165,12 +179,14 @@ export const Auth: React.FC = () => {
                 {mode === 'register' && 'Start Your Wellness Journey'}
                 {mode === 'forgot-password' && 'Reset Password'}
                 {mode === 'verify-email' && 'Check Your Email'}
+                {mode === 'demo-gate' && 'Demo Access'}
               </h1>
               <p className="text-neutral-600">
                 {mode === 'login' && 'Access your personalized emotional wellness platform'}
                 {mode === 'register' && 'Create your account and begin exploring emotional wellness with AI'}
                 {mode === 'forgot-password' && 'Enter your email to receive a password reset link'}
                 {mode === 'verify-email' && 'We sent a verification link to your email address'}
+                {mode === 'demo-gate' && 'Answer the question below to access the demo account'}
               </p>
             </div>
 
@@ -237,7 +253,7 @@ export const Auth: React.FC = () => {
                   </div>
 
                   <Button
-                    onClick={handleDemoLogin}
+                    onClick={() => switchMode('demo-gate')}
                     loading={loading}
                     variant="secondary"
                     className="w-full"
@@ -256,6 +272,55 @@ export const Auth: React.FC = () => {
                       Sign up
                     </button>
                   </p>
+                </motion.div>
+              )}
+
+              {mode === 'demo-gate' && (
+                <motion.div
+                  key="demo-gate"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-6"
+                >
+                  <div className="w-16 h-16 bg-gradient-to-br from-accent-500 to-warning-500 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                    <Key className="w-8 h-8 text-white" />
+                  </div>
+
+                  <div className="p-4 bg-accent-50 rounded-lg border border-accent-200">
+                    <h4 className="font-medium text-accent-800 mb-2">Demo Access Question</h4>
+                    <p className="text-sm text-accent-700">
+                      {DEMO_QUESTION}
+                    </p>
+                  </div>
+
+                  <Input
+                    type="text"
+                    placeholder="Enter your answer"
+                    value={demoAnswer}
+                    onChange={setDemoAnswer}
+                    icon={Shield}
+                    error={error}
+                  />
+
+                  <Button
+                    onClick={handleDemoAccess}
+                    loading={loading}
+                    disabled={!demoAnswer.trim()}
+                    className="w-full"
+                    icon={ArrowRight}
+                    iconPosition="right"
+                  >
+                    Access Demo
+                  </Button>
+
+                  <button
+                    onClick={() => switchMode('login')}
+                    className="text-sm text-neutral-600 hover:text-neutral-800 transition-colors"
+                  >
+                    Back to sign in
+                  </button>
                 </motion.div>
               )}
 

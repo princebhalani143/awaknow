@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Settings, Brain, Lock, LogOut, Shield, Crown, Trash2 } from 'lucide-react';
+import { User, Settings, Brain, Lock, LogOut, Shield, Crown, Trash2, Receipt } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -180,6 +180,17 @@ export const TopBar: React.FC = () => {
                     >
                       <Crown className="w-4 h-4 text-neutral-500" />
                       <span className="text-sm text-neutral-700">Subscription</span>
+                    </button>
+
+                    <button 
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        navigate('/billing-history');
+                      }}
+                      className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-neutral-100 transition-colors"
+                    >
+                      <Receipt className="w-4 h-4 text-neutral-500" />
+                      <span className="text-sm text-neutral-700">Billing History</span>
                     </button>
 
                     <button 
