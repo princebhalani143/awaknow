@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Brain, Users, ArrowRight, Crown, Zap, Star, Check, Shield, Play, Sparkles } from 'lucide-react';
+import { Heart, Brain, Users, ArrowRight, Crown, Zap, Star, Check, Shield, Play, Sparkles, X } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { TranslatedText } from '../components/UI/TranslatedText';
@@ -10,24 +10,25 @@ import { Footer } from '../components/Layout/Footer';
 
 export const Landing: React.FC = () => {
   const navigate = useNavigate();
+  const [showVideo, setShowVideo] = useState(false);
 
   const problems = [
     {
       icon: Brain,
       title: 'Mental Health Crisis',
-      description: 'Over 1 billion people worldwide struggle with mental health challenges, with limited access to professional support.',
+      description: 'Over 1 billion people worldwide suffer from mental health disorders, with limited access to professional help.',
       stat: '1 in 4 people',
     },
     {
       icon: Users,
-      title: 'Communication Breakdown',
-      description: 'Poor communication and unresolved conflicts damage relationships, families, and workplace productivity.',
+      title: 'Relationship Conflicts',
+      description: 'Poor communication and unresolved conflicts destroy relationships, families, and workplace productivity.',
       stat: '67% of couples',
     },
     {
       icon: Heart,
       title: 'Emotional Isolation',
-      description: 'People lack safe spaces to process emotions and develop emotional intelligence skills.',
+      description: 'People struggle with emotional awareness and lack safe spaces to process their feelings.',
       stat: '3 in 5 adults',
     },
   ];
@@ -145,11 +146,12 @@ export const Landing: React.FC = () => {
                 {/* Overlay Content */}
                 <div className="relative h-full flex items-center justify-center bg-gradient-to-br from-primary-500/20 to-secondary-500/20">
                   <div className="text-center space-y-6">
-                    {/* Play Button - Fixed centering */}
+                    {/* Play Button - Properly centered */}
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-large hover:bg-white/30 transition-colors group mx-auto"
+                      onClick={() => setShowVideo(true)}
+                      className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-large hover:bg-white/30 transition-colors group"
                     >
                       <Play className="w-8 h-8 text-white ml-1 group-hover:text-accent-200" />
                     </motion.button>
@@ -183,10 +185,10 @@ export const Landing: React.FC = () => {
         >
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-neutral-800 mb-4">
-              <TranslatedText>The Problems We're Solving</TranslatedText>
+              <TranslatedText>The Global Challenge</TranslatedText>
             </h2>
             <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              <TranslatedText>Mental health and emotional wellness challenges affect billions of people worldwide</TranslatedText>
+              <TranslatedText>Millions struggle with emotional wellness challenges that affect every aspect of life</TranslatedText>
             </p>
           </div>
 
@@ -224,10 +226,10 @@ export const Landing: React.FC = () => {
         >
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-neutral-800 mb-4">
-              <TranslatedText>Our Revolutionary Solution</TranslatedText>
+              <TranslatedText>Our AI-Powered Solution</TranslatedText>
             </h2>
             <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              <TranslatedText>AI-powered emotional wellness that's accessible, private, and effective</TranslatedText>
+              <TranslatedText>Revolutionary technology that makes emotional wellness accessible, private, and effective</TranslatedText>
             </p>
           </div>
 
@@ -264,10 +266,10 @@ export const Landing: React.FC = () => {
         >
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-neutral-800 mb-4">
-              <TranslatedText>How It Works</TranslatedText>
+              <TranslatedText>Simple Steps to Wellness</TranslatedText>
             </h2>
             <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              <TranslatedText>Simple steps to start your emotional wellness transformation</TranslatedText>
+              <TranslatedText>Get started in minutes and begin your transformation journey today</TranslatedText>
             </p>
           </div>
 
@@ -362,6 +364,42 @@ export const Landing: React.FC = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Video Modal */}
+      {showVideo && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowVideo(false)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="relative w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowVideo(false)}
+              className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            {/* Embedded Video */}
+            <iframe
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1"
+              title="AwakNow Demo Video"
+              className="w-full h-full"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </motion.div>
+        </motion.div>
+      )}
 
       <Footer />
     </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Users, Sparkles, TrendingUp, Clock, Star, Play, Crown, ArrowRight, Shield, Zap, Heart, Award, Target, BarChart3 } from 'lucide-react';
+import { Brain, Users, Sparkles, TrendingUp, Clock, Star, Play, Crown, ArrowRight, Shield, Zap, Heart, Award, Target, BarChart3, X } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { TranslatedText } from '../components/UI/TranslatedText';
@@ -28,6 +28,7 @@ export const Home: React.FC = () => {
   const { subscription, limits, loading, loadSubscription } = useSubscriptionStore();
   const [stats, setStats] = useState<UserStats | null>(null);
   const [loadingStats, setLoadingStats] = useState(true);
+  const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -250,12 +251,12 @@ export const Home: React.FC = () => {
                     <span className="text-accent-400 text-sm font-medium uppercase tracking-wide">AI-Powered Sessions</span>
                   </div>
                   <h2 className="text-3xl md:text-4xl font-bold leading-tight">
-                    <TranslatedText>Experience the Future of Emotional Wellness</TranslatedText>
+                    <TranslatedText>Your Personal AI Wellness Companion</TranslatedText>
                   </h2>
                   <p className="text-neutral-300 text-lg leading-relaxed">
                     <TranslatedText>
-                      Our advanced AI companion understands your emotions, provides personalized insights, 
-                      and guides you through meaningful conversations that promote growth and healing.
+                      Experience personalized conversations that understand your unique emotional patterns, 
+                      provide real-time insights, and guide you toward meaningful growth and healing.
                     </TranslatedText>
                   </p>
                 </div>
@@ -308,7 +309,8 @@ export const Home: React.FC = () => {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-large hover:bg-white/30 transition-colors group mx-auto"
+                      onClick={() => setShowVideo(true)}
+                      className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-large hover:bg-white/30 transition-colors group"
                     >
                       <Play className="w-8 h-8 text-white ml-1 group-hover:text-accent-200" />
                     </motion.button>
@@ -590,6 +592,42 @@ export const Home: React.FC = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Video Modal */}
+      {showVideo && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowVideo(false)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="relative w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowVideo(false)}
+              className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            {/* Embedded Video */}
+            <iframe
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1"
+              title="AwakNow Personal Dashboard Demo"
+              className="w-full h-full"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </motion.div>
+        </motion.div>
+      )}
 
       <Footer />
     </div>
