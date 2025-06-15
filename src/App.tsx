@@ -5,6 +5,8 @@ import { useAuthStore } from './stores/authStore';
 import { Landing } from './pages/Landing';
 import { About } from './pages/About';
 import { Plans } from './pages/Plans';
+import { Blog } from './pages/Blog';
+import { BlogPost } from './pages/BlogPost';
 import { Auth } from './pages/Auth';
 import { Home } from './pages/Home';
 import { Reflect } from './pages/Reflect';
@@ -64,6 +66,8 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/about" element={<About />} />
         <Route path="/plans" element={<Plans />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:id" element={<BlogPost />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-conditions" element={<TermsConditions />} />

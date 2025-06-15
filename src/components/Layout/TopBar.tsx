@@ -120,6 +120,7 @@ export const TopBar: React.FC = () => {
   const navigationItems = [
     { label: 'About', path: '/about' },
     { label: 'Plans', path: '/plans' },
+    { label: 'Blog', path: '/blog' },
   ];
 
   return (
