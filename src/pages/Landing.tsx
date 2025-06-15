@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Brain, Users, ArrowRight, Crown, Zap, Star, Check, Shield, Play, Sparkles, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Heart, Brain, Users, ArrowRight, Crown, Zap, Star, Check, Shield, Play, Sparkles, X, ChevronLeft, ChevronRight, AlertTriangle, MessageCircle, Target, TrendingUp } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { TranslatedText } from '../components/UI/TranslatedText';
@@ -96,6 +96,63 @@ export const Landing: React.FC = () => {
     { value: '100%', label: 'Private & Secure' },
   ];
 
+  // Problems We're Solving Section
+  const problems = [
+    {
+      icon: AlertTriangle,
+      stat: '1 in 4 people',
+      title: 'Mental Health Crisis',
+      description: 'Over 1 billion people worldwide struggle with mental health challenges, with limited access to professional support.',
+      color: 'from-error-500 to-error-600'
+    },
+    {
+      icon: MessageCircle,
+      stat: '67% of couples',
+      title: 'Communication Breakdown',
+      description: 'Poor communication and unresolved conflicts damage relationships, families, and workplace productivity.',
+      color: 'from-warning-500 to-warning-600'
+    },
+    {
+      icon: Heart,
+      stat: '3 in 5 adults',
+      title: 'Emotional Isolation',
+      description: 'People lack safe spaces to process emotions and develop emotional intelligence skills.',
+      color: 'from-secondary-500 to-secondary-600'
+    }
+  ];
+
+  // How It Works Section
+  const steps = [
+    {
+      number: '1',
+      title: 'Choose Your Path',
+      description: 'Select private reflection or guided conflict resolution',
+      icon: Target,
+      color: 'from-primary-500 to-primary-600'
+    },
+    {
+      number: '2',
+      title: 'Engage with AI',
+      description: 'Have natural conversations with our empathetic AI companion',
+      icon: Brain,
+      color: 'from-secondary-500 to-secondary-600'
+    },
+    {
+      number: '3',
+      title: 'Receive Insights',
+      description: 'Get personalized feedback and actionable recommendations',
+      icon: Sparkles,
+      color: 'from-accent-500 to-accent-600'
+    },
+    {
+      number: '4',
+      title: 'Track Progress',
+      description: 'Monitor your emotional wellness journey over time',
+      icon: TrendingUp,
+      color: 'from-success-500 to-success-600'
+    }
+  ];
+
   const benefits = [
     {
       icon: Brain,
@@ -176,11 +233,54 @@ export const Landing: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Full-Width Conflict Types Slider */}
+        {/* Problems We're Solving Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
+          className="bg-neutral-50 py-16 mb-16"
+        >
+          <div className="container mx-auto px-4 max-w-6xl">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-neutral-800 mb-4">
+                <TranslatedText>The Problems We're Solving</TranslatedText>
+              </h2>
+              <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
+                <TranslatedText>Mental health and emotional wellness challenges affect billions of people worldwide</TranslatedText>
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {problems.map((problem, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.6 + index * 0.2 }}
+                >
+                  <Card className="h-full text-center p-8 hover:shadow-medium transition-all duration-300">
+                    <div className={`w-16 h-16 bg-gradient-to-br ${problem.color} rounded-2xl mx-auto mb-6 flex items-center justify-center`}>
+                      <problem.icon className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="text-3xl font-bold text-neutral-800 mb-2">{problem.stat}</div>
+                    <h3 className="text-xl font-semibold text-neutral-800 mb-4">
+                      <TranslatedText>{problem.title}</TranslatedText>
+                    </h3>
+                    <p className="text-neutral-600 leading-relaxed">
+                      <TranslatedText>{problem.description}</TranslatedText>
+                    </p>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Full-Width Conflict Types Slider */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
           className="w-full bg-neutral-900 text-white py-16 mb-16"
         >
           <div className="container mx-auto px-4 max-w-6xl">
@@ -288,12 +388,61 @@ export const Landing: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Benefits Section */}
+        {/* How It Works Section */}
         <div className="container mx-auto px-4 py-16 max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            transition={{ duration: 0.8, delay: 1.0 }}
+            className="mb-16"
+          >
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-neutral-800 mb-4">
+                <TranslatedText>How It Works</TranslatedText>
+              </h2>
+              <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+                <TranslatedText>Simple steps to start your emotional wellness transformation</TranslatedText>
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {steps.map((step, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 1.2 + index * 0.1 }}
+                  className="relative"
+                >
+                  {/* Connection Line */}
+                  {index < steps.length - 1 && (
+                    <div className="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-primary-200 to-secondary-200 z-0" />
+                  )}
+                  
+                  <Card className="text-center p-6 relative z-10 h-full hover:shadow-medium transition-all duration-300">
+                    <div className={`w-16 h-16 bg-gradient-to-br ${step.color} rounded-2xl mx-auto mb-4 flex items-center justify-center relative`}>
+                      <step.icon className="w-8 h-8 text-white" />
+                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg">
+                        <span className="text-sm font-bold text-neutral-800">{step.number}</span>
+                      </div>
+                    </div>
+                    <h3 className="text-lg font-semibold text-neutral-800 mb-3">
+                      <TranslatedText>{step.title}</TranslatedText>
+                    </h3>
+                    <p className="text-neutral-600 text-sm leading-relaxed">
+                      <TranslatedText>{step.description}</TranslatedText>
+                    </p>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Benefits Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.4 }}
             className="mb-16"
           >
             <div className="text-center mb-12">
@@ -311,7 +460,7 @@ export const Landing: React.FC = () => {
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.8 + index * 0.2 }}
+                  transition={{ duration: 0.6, delay: 1.6 + index * 0.2 }}
                 >
                   <Card className="h-full text-center p-8 hover:shadow-medium transition-all duration-300">
                     <div className="w-16 h-16 bg-gradient-to-br from-success-500 to-primary-500 rounded-2xl mx-auto mb-6 flex items-center justify-center">
@@ -329,11 +478,11 @@ export const Landing: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* CTA Section */}
+          {/* Ready to Begin CTA Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.2 }}
+            transition={{ duration: 0.8, delay: 1.8 }}
             className="text-center"
           >
             <Card className="bg-gradient-to-br from-primary-500 to-secondary-500 text-white border-0 overflow-hidden relative">
@@ -352,7 +501,7 @@ export const Landing: React.FC = () => {
                   <Sparkles className="w-6 h-6 text-accent-200" />
                   <span className="text-accent-200 text-sm font-medium uppercase tracking-wide">Ready to Begin?</span>
                 </div>
-                <h2 className="text-3xl font-bold mb-4">
+                <h2 className="text-4xl font-bold mb-4">
                   <TranslatedText>Transform Your Life Today</TranslatedText>
                 </h2>
                 <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
@@ -386,7 +535,7 @@ export const Landing: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.4 }}
+            transition={{ duration: 0.6, delay: 2.0 }}
             className="text-center mt-8"
           >
             <div className="flex items-center justify-center space-x-2 text-neutral-600">
