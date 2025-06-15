@@ -39,6 +39,12 @@ export const Footer: React.FC = () => {
             >
               Terms & Conditions
             </button>
+            <a
+              href="mailto:info@awaknow.org"
+              className="text-neutral-600 hover:text-primary-600 transition-colors"
+            >
+              Contact Us
+            </a>
           </div>
         </div>
       </div>

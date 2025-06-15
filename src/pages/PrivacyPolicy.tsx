@@ -52,7 +52,8 @@ export const PrivacyPolicy: React.FC = () => {
             <p className="text-neutral-700 leading-relaxed">
               At AwakNow, we are committed to protecting your privacy and ensuring the security of your personal information. 
               This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our 
-              emotional wellness platform. We comply with GDPR, CCPA, HIPAA, and other applicable privacy regulations.
+              emotional wellness platform at <a href="https://awaknow.org" className="text-primary-600 hover:text-primary-700 underline">https://awaknow.org</a>. 
+              We comply with GDPR, CCPA, HIPAA, and other applicable privacy regulations.
             </p>
           </Card>
 
@@ -174,7 +175,7 @@ export const PrivacyPolicy: React.FC = () => {
             </div>
             <div className="mt-4 p-4 bg-success-50 rounded-lg">
               <p className="text-success-800 text-sm">
-                <strong>Exercise Your Rights:</strong> Contact us at privacy@awaknow.com to exercise any of these rights. 
+                <strong>Exercise Your Rights:</strong> Contact us at <a href="mailto:info@awaknow.org" className="underline">info@awaknow.org</a> to exercise any of these rights. 
                 We will respond within 30 days and verify your identity before processing requests.
               </p>
             </div>
@@ -239,12 +240,12 @@ export const PrivacyPolicy: React.FC = () => {
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <strong>Privacy Officer:</strong><br />
-                  Email: privacy@awaknow.com<br />
+                  Email: <a href="mailto:info@awaknow.org" className="text-primary-600 hover:text-primary-700 underline">info@awaknow.org</a><br />
                   Response time: Within 30 days
                 </div>
                 <div>
                   <strong>Data Protection Officer (EU):</strong><br />
-                  Email: dpo@awaknow.com<br />
+                  Email: <a href="mailto:info@awaknow.org" className="text-primary-600 hover:text-primary-700 underline">info@awaknow.org</a><br />
                   For GDPR-related inquiries
                 </div>
               </div>
@@ -256,7 +257,8 @@ export const PrivacyPolicy: React.FC = () => {
             <h3 className="text-lg font-semibold text-neutral-800 mb-4">Policy Updates</h3>
             <p className="text-neutral-700 text-sm">
               We may update this Privacy Policy periodically. We will notify you of significant changes via email 
-              or through our platform. Your continued use of AwakNow after changes constitutes acceptance of the updated policy.
+              or through our platform at <a href="https://awaknow.org" className="text-primary-600 hover:text-primary-700 underline">https://awaknow.org</a>. 
+              Your continued use of AwakNow after changes constitutes acceptance of the updated policy.
             </p>
           </Card>
         </motion.div>

@@ -51,7 +51,8 @@ export const TermsConditions: React.FC = () => {
             </div>
             <p className="text-neutral-700 leading-relaxed">
               Welcome to AwakNow. These Terms and Conditions ("Terms") govern your use of our emotional wellness platform 
-              and AI-powered services. By accessing or using AwakNow, you agree to be bound by these Terms. 
+              and AI-powered services available at <a href="https://awaknow.org" className="text-primary-600 hover:text-primary-700 underline">https://awaknow.org</a>. 
+              By accessing or using AwakNow, you agree to be bound by these Terms. 
               Please read them carefully before using our services.
             </p>
           </Card>
@@ -234,7 +235,7 @@ export const TermsConditions: React.FC = () => {
             <div className="space-y-3 text-neutral-700 text-sm">
               <div>
                 <h4 className="font-medium text-neutral-800 mb-2">By You</h4>
-                <p>You may terminate your account at any time through your account settings or by contacting support.</p>
+                <p>You may terminate your account at any time through your account settings or by contacting <a href="mailto:info@awaknow.org" className="text-primary-600 hover:text-primary-700 underline">info@awaknow.org</a>.</p>
               </div>
               <div>
                 <h4 className="font-medium text-neutral-800 mb-2">By Us</h4>
@@ -251,7 +252,7 @@ export const TermsConditions: React.FC = () => {
           <Card>
             <h3 className="text-lg font-semibold text-neutral-800 mb-4">Governing Law & Disputes</h3>
             <div className="space-y-3 text-neutral-700 text-sm">
-              <p>These Terms are governed by the laws of [Your Jurisdiction]. Any disputes will be resolved through:</p>
+              <p>These Terms are governed by applicable laws. Any disputes will be resolved through:</p>
               <ol className="list-decimal list-inside space-y-1 ml-4">
                 <li>Good faith negotiation</li>
                 <li>Mediation if negotiation fails</li>
@@ -278,12 +279,12 @@ export const TermsConditions: React.FC = () => {
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <strong>Legal Team:</strong><br />
-                  Email: legal@awaknow.com<br />
+                  Email: <a href="mailto:info@awaknow.org" className="text-primary-600 hover:text-primary-700 underline">info@awaknow.org</a><br />
                   Response time: Within 5 business days
                 </div>
                 <div>
                   <strong>Customer Support:</strong><br />
-                  Email: support@awaknow.com<br />
+                  Email: <a href="mailto:info@awaknow.org" className="text-primary-600 hover:text-primary-700 underline">info@awaknow.org</a><br />
                   Response time: Within 24 hours
                 </div>
               </div>

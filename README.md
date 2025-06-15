@@ -2,6 +2,10 @@
 
 A modern React application for emotional wellness and conflict resolution powered by AI.
 
+## Website
+
+Visit us at: [https://awaknow.org](https://awaknow.org)
+
 ## Features
 
 - **Reflect Alone**: Private AI-powered sessions for personal emotional exploration
@@ -43,3 +47,11 @@ VITE_TAVUS_API_KEY=your_tavus_api_key
 VITE_ELEVENLABS_API_KEY=your_elevenlabs_api_key
 VITE_REVENUECAT_API_KEY=your_revenuecat_api_key
 ```
+
+## Contact
+
+For questions or support, contact us at: [info@awaknow.org](mailto:info@awaknow.org)
+
+## License
+
+© 2025 AwakNow. All rights reserved.
