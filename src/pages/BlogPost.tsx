@@ -145,9 +145,12 @@ export const BlogPost: React.FC = () => {
                 ))}
               </div>
 
-              {/* Content */}
+              {/* Content with improved formatting */}
               <div 
-                className="prose prose-lg max-w-none text-neutral-700 leading-relaxed"
+                className="prose prose-lg max-w-none text-neutral-700"
+                style={{
+                  lineHeight: '1.8',
+                }}
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
 
@@ -159,7 +162,7 @@ export const BlogPost: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-neutral-800 mb-2">{post.author}</h4>
-                    <p className="text-neutral-600 text-sm">
+                    <p className="text-neutral-600 text-sm leading-relaxed">
                       Dr. Sarah Chen is a leading researcher in emotional intelligence and AI applications 
                       in mental health. She has published over 50 papers on the intersection of technology 
                       and human psychology.
