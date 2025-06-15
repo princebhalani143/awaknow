@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Brain, Users, ArrowRight, Crown, Zap, Star, Check, Shield, Play, Sparkles, X, ChevronLeft, ChevronRight, AlertTriangle, MessageCircle, Target, TrendingUp } from 'lucide-react';
+import { Heart, Brain, Users, ArrowRight, Crown, Zap, Star, Check, Shield, Play, Sparkles, X, ChevronLeft, ChevronRight, AlertTriangle, MessageCircle, Target, TrendingUp, Lightbulb, Globe, Award } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { TranslatedText } from '../components/UI/TranslatedText';
@@ -103,53 +103,56 @@ export const Landing: React.FC = () => {
       stat: '1 in 4 people',
       title: 'Mental Health Crisis',
       description: 'Over 1 billion people worldwide struggle with mental health challenges, with limited access to professional support.',
-      color: 'from-error-500 to-error-600'
+      color: 'from-error-500 to-error-600',
+      bgColor: 'bg-error-50'
     },
     {
       icon: MessageCircle,
       stat: '67% of couples',
       title: 'Communication Breakdown',
       description: 'Poor communication and unresolved conflicts damage relationships, families, and workplace productivity.',
-      color: 'from-warning-500 to-warning-600'
+      color: 'from-warning-500 to-warning-600',
+      bgColor: 'bg-warning-50'
     },
     {
       icon: Heart,
       stat: '3 in 5 adults',
       title: 'Emotional Isolation',
       description: 'People lack safe spaces to process emotions and develop emotional intelligence skills.',
-      color: 'from-secondary-500 to-secondary-600'
+      color: 'from-secondary-500 to-secondary-600',
+      bgColor: 'bg-secondary-50'
     }
   ];
 
-  // How It Works Section
+  // How It Works Section - Redesigned without numbers
   const steps = [
     {
-      number: '1',
       title: 'Choose Your Path',
-      description: 'Select private reflection or guided conflict resolution',
+      description: 'Select private reflection or guided conflict resolution based on your current needs',
       icon: Target,
-      color: 'from-primary-500 to-primary-600'
+      color: 'from-primary-500 to-primary-600',
+      bgColor: 'bg-primary-50'
     },
     {
-      number: '2',
       title: 'Engage with AI',
-      description: 'Have natural conversations with our empathetic AI companion',
+      description: 'Have natural, empathetic conversations with our advanced AI companion that understands context',
       icon: Brain,
-      color: 'from-secondary-500 to-secondary-600'
+      color: 'from-secondary-500 to-secondary-600',
+      bgColor: 'bg-secondary-50'
     },
     {
-      number: '3',
       title: 'Receive Insights',
-      description: 'Get personalized feedback and actionable recommendations',
+      description: 'Get personalized feedback, actionable recommendations, and deep emotional analysis',
       icon: Sparkles,
-      color: 'from-accent-500 to-accent-600'
+      color: 'from-accent-500 to-accent-600',
+      bgColor: 'bg-accent-50'
     },
     {
-      number: '4',
       title: 'Track Progress',
-      description: 'Monitor your emotional wellness journey over time',
+      description: 'Monitor your emotional wellness journey with detailed analytics and growth metrics',
       icon: TrendingUp,
-      color: 'from-success-500 to-success-600'
+      color: 'from-success-500 to-success-600',
+      bgColor: 'bg-success-50'
     }
   ];
 
@@ -158,140 +161,211 @@ export const Landing: React.FC = () => {
       icon: Brain,
       title: 'AI-Powered Insights',
       description: 'Get personalized emotional insights and recommendations tailored to your unique patterns and needs.',
+      color: 'from-primary-500 to-primary-600'
     },
     {
       icon: Shield,
       title: 'Complete Privacy',
       description: 'Your conversations are end-to-end encrypted. We never see your data, and you maintain full control.',
+      color: 'from-success-500 to-success-600'
     },
     {
       icon: Heart,
       title: 'Emotional Growth',
       description: 'Track your emotional wellness journey with data-driven insights and measurable progress over time.',
+      color: 'from-accent-500 to-accent-600'
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex flex-col overflow-hidden">
       <TopBar />
       
       <div className="flex-1">
-        {/* Hero Section */}
-        <div className="container mx-auto px-4 py-12 max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h1 className="text-5xl md:text-6xl font-bold text-neutral-800 mb-6 leading-tight">
-              <TranslatedText>The Future of</TranslatedText>
-              <span className="bg-gradient-to-r from-primary-600 via-secondary-600 to-accent-600 bg-clip-text text-transparent">
-                {' '}<TranslatedText>Emotional Wellness</TranslatedText>
-              </span>
-            </h1>
-            <p className="text-xl text-neutral-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              <TranslatedText>Experience revolutionary AI-powered conversations that understand your emotions, provide personalized insights, and guide you toward meaningful growth and healing.</TranslatedText>
-            </p>
+        {/* Hero Section - Premium Design */}
+        <section className="relative min-h-screen flex items-center justify-center">
+          {/* Animated Background Elements */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-br from-primary-200/30 to-secondary-200/30 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-accent-200/20 to-primary-200/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-br from-secondary-100/10 to-accent-100/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
+          </div>
 
+          <div className="container mx-auto px-4 py-12 max-w-6xl relative z-10">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="mb-12"
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="text-center mb-16"
             >
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+              {/* Premium Badge */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-primary-100 to-secondary-100 rounded-full mb-8"
+              >
+                <Award className="w-5 h-5 text-primary-600" />
+                <span className="text-primary-700 font-medium">The Future of Emotional Wellness</span>
+              </motion.div>
+
+              <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-neutral-800 mb-8 leading-tight">
+                <motion.span
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.4 }}
+                >
+                  Transform Your
+                </motion.span>
+                <br />
+                <motion.span
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.6 }}
+                  className="bg-gradient-to-r from-primary-600 via-secondary-600 to-accent-600 bg-clip-text text-transparent"
+                >
+                  Inner World
+                </motion.span>
+              </h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+                className="text-2xl text-neutral-600 mb-12 max-w-4xl mx-auto leading-relaxed font-light"
+              >
+                Experience revolutionary AI-powered conversations that understand your emotions, 
+                provide personalized insights, and guide you toward meaningful growth and healing.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 1.0 }}
+                className="flex flex-col sm:flex-row gap-6 justify-center mb-16"
+              >
                 <Button
                   onClick={() => navigate('/auth')}
                   size="lg"
                   icon={ArrowRight}
                   iconPosition="right"
-                  className="text-lg px-12 py-4"
+                  className="text-xl px-12 py-6 shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300"
                 >
-                  <TranslatedText>Start Your Journey</TranslatedText>
+                  Begin Your Journey
                 </Button>
                 <Button
-                  onClick={() => navigate('/about')}
+                  onClick={() => setShowVideo(true)}
                   variant="outline"
                   size="lg"
-                  className="text-lg px-12 py-4"
+                  icon={Play}
+                  className="text-xl px-12 py-6 border-2 hover:bg-white/80 backdrop-blur-sm"
                 >
-                  <TranslatedText>Learn More</TranslatedText>
+                  Watch Demo
                 </Button>
-              </div>
+              </motion.div>
 
-              {/* Trust Indicators */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+              {/* Trust Indicators - Redesigned */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 1.2 }}
+                className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto"
+              >
                 {stats.map((stat, index) => (
-                  <div key={index} className="text-center">
-                    <div className="text-2xl font-bold text-primary-600">{stat.value}</div>
-                    <div className="text-sm text-neutral-600">{stat.label}</div>
-                  </div>
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, delay: 1.4 + index * 0.1 }}
+                    className="text-center group"
+                  >
+                    <div className="text-4xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
+                      {stat.value}
+                    </div>
+                    <div className="text-sm text-neutral-600 font-medium">{stat.label}</div>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        </div>
+          </div>
+        </section>
 
-        {/* Problems We're Solving Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="bg-neutral-50 py-16 mb-16"
-        >
+        {/* Problems We're Solving Section - Enhanced */}
+        <section className="py-24 bg-gradient-to-br from-neutral-50 to-primary-50/30">
           <div className="container mx-auto px-4 max-w-6xl">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-neutral-800 mb-4">
-                <TranslatedText>The Problems We're Solving</TranslatedText>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-5xl font-bold text-neutral-800 mb-6">
+                The Crisis We're
+                <span className="bg-gradient-to-r from-error-600 to-warning-600 bg-clip-text text-transparent"> Solving</span>
               </h2>
-              <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-                <TranslatedText>Mental health and emotional wellness challenges affect billions of people worldwide</TranslatedText>
+              <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-relaxed">
+                Mental health and emotional wellness challenges affect billions of people worldwide, 
+                creating an urgent need for accessible, effective solutions.
               </p>
-            </div>
+            </motion.div>
 
             <div className="grid md:grid-cols-3 gap-8">
               {problems.map((problem, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.6 + index * 0.2 }}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: index * 0.2 }}
+                  className="group"
                 >
-                  <Card className="h-full text-center p-8 hover:shadow-medium transition-all duration-300">
-                    <div className={`w-16 h-16 bg-gradient-to-br ${problem.color} rounded-2xl mx-auto mb-6 flex items-center justify-center`}>
-                      <problem.icon className="w-8 h-8 text-white" />
+                  <Card className="h-full text-center p-8 hover:shadow-2xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/80 backdrop-blur-sm">
+                    <div className={`w-20 h-20 bg-gradient-to-br ${problem.color} rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300`}>
+                      <problem.icon className="w-10 h-10 text-white" />
                     </div>
-                    <div className="text-3xl font-bold text-neutral-800 mb-2">{problem.stat}</div>
-                    <h3 className="text-xl font-semibold text-neutral-800 mb-4">
-                      <TranslatedText>{problem.title}</TranslatedText>
+                    <div className="text-4xl font-bold text-neutral-800 mb-3">{problem.stat}</div>
+                    <h3 className="text-2xl font-semibold text-neutral-800 mb-4">
+                      {problem.title}
                     </h3>
                     <p className="text-neutral-600 leading-relaxed">
-                      <TranslatedText>{problem.description}</TranslatedText>
+                      {problem.description}
                     </p>
                   </Card>
                 </motion.div>
               ))}
             </div>
           </div>
-        </motion.div>
+        </section>
 
-        {/* Full-Width Conflict Types Slider */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="w-full bg-neutral-900 text-white py-16 mb-16"
-        >
-          <div className="container mx-auto px-4 max-w-6xl">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold mb-4">
-                <TranslatedText>Types of Conflicts We Help Resolve</TranslatedText>
+        {/* Full-Width Conflict Types Slider - Enhanced */}
+        <section className="w-full bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white py-24 relative overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-5">
+            <div 
+              className="w-full h-full bg-repeat"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+              }}
+            />
+          </div>
+
+          <div className="container mx-auto px-4 max-w-6xl relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-5xl font-bold mb-6">
+                Conflicts We Help
+                <span className="bg-gradient-to-r from-accent-400 to-primary-400 bg-clip-text text-transparent"> Resolve</span>
               </h2>
-              <p className="text-xl text-neutral-300 max-w-2xl mx-auto">
-                <TranslatedText>Explore different conflict types and their resolution stages with AI-powered guidance</TranslatedText>
+              <p className="text-xl text-neutral-300 max-w-3xl mx-auto leading-relaxed">
+                Explore different conflict types and their resolution stages with AI-powered guidance
               </p>
-            </div>
+            </motion.div>
 
             <div className="relative">
               <AnimatePresence mode="wait">
@@ -300,31 +374,35 @@ export const Landing: React.FC = () => {
                   initial={{ opacity: 0, x: 100 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -100 }}
-                  transition={{ duration: 0.5 }}
-                  className="grid lg:grid-cols-2 gap-12 items-center"
+                  transition={{ duration: 0.6, ease: "easeInOut" }}
+                  className="grid lg:grid-cols-2 gap-16 items-center"
                 >
                   {/* Content */}
-                  <div className="space-y-6">
+                  <div className="space-y-8">
                     <div>
-                      <h3 className="text-3xl font-bold mb-4">{conflictSlides[currentSlide].title}</h3>
-                      <p className="text-lg text-neutral-300 leading-relaxed">
+                      <h3 className="text-4xl font-bold mb-6 bg-gradient-to-r from-white to-neutral-300 bg-clip-text text-transparent">
+                        {conflictSlides[currentSlide].title}
+                      </h3>
+                      <p className="text-xl text-neutral-300 leading-relaxed">
                         {conflictSlides[currentSlide].subtitle}
                       </p>
                     </div>
 
                     <div>
-                      <h4 className="text-xl font-semibold mb-4 text-accent-400">Resolution Techniques:</h4>
-                      <ul className="space-y-3">
+                      <h4 className="text-2xl font-semibold mb-6 text-accent-400">Resolution Techniques:</h4>
+                      <ul className="space-y-4">
                         {conflictSlides[currentSlide].techniques.map((technique, index) => (
                           <motion.li
                             key={index}
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.3, delay: index * 0.1 }}
-                            className="flex items-start space-x-3"
+                            transition={{ duration: 0.4, delay: index * 0.1 }}
+                            className="flex items-start space-x-4"
                           >
-                            <Check className="w-5 h-5 text-success-400 mt-0.5 flex-shrink-0" />
-                            <span className="text-neutral-300">{technique}</span>
+                            <div className="w-6 h-6 bg-gradient-to-r from-accent-500 to-primary-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                              <Check className="w-3 h-3 text-white" />
+                            </div>
+                            <span className="text-neutral-300 text-lg">{technique}</span>
                           </motion.li>
                         ))}
                       </ul>
@@ -336,42 +414,44 @@ export const Landing: React.FC = () => {
                       size="lg"
                       icon={ArrowRight}
                       iconPosition="right"
-                      className="mt-6"
+                      className="mt-8 shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300"
                     >
-                      <TranslatedText>Start Resolving Conflicts</TranslatedText>
+                      Start Resolving Conflicts
                     </Button>
                   </div>
 
                   {/* Image */}
                   <div className="relative">
-                    <div className="aspect-video rounded-2xl overflow-hidden">
+                    <div className="aspect-video rounded-3xl overflow-hidden shadow-2xl">
                       <img
                         src={conflictSlides[currentSlide].image}
                         alt={conflictSlides[currentSlide].title}
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
                     </div>
                   </div>
                 </motion.div>
               </AnimatePresence>
 
-              {/* Navigation */}
-              <div className="flex items-center justify-between mt-8">
+              {/* Enhanced Navigation */}
+              <div className="flex items-center justify-between mt-12">
                 <button
                   onClick={prevSlide}
-                  className="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+                  className="w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 backdrop-blur-sm"
                 >
                   <ChevronLeft className="w-6 h-6" />
                 </button>
 
-                <div className="flex space-x-2">
+                <div className="flex space-x-3">
                   {conflictSlides.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentSlide(index)}
-                      className={`w-3 h-3 rounded-full transition-colors ${
-                        index === currentSlide ? 'bg-accent-400' : 'bg-white/30'
+                      className={`w-4 h-4 rounded-full transition-all duration-300 ${
+                        index === currentSlide 
+                          ? 'bg-accent-400 scale-125' 
+                          : 'bg-white/30 hover:bg-white/50'
                       }`}
                     />
                   ))}
@@ -379,174 +459,244 @@ export const Landing: React.FC = () => {
 
                 <button
                   onClick={nextSlide}
-                  className="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+                  className="w-14 h-14 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 backdrop-blur-sm"
                 >
                   <ChevronRight className="w-6 h-6" />
                 </button>
               </div>
             </div>
           </div>
-        </motion.div>
+        </section>
 
-        {/* How It Works Section */}
-        <div className="container mx-auto px-4 py-16 max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.0 }}
-            className="mb-16"
-          >
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-neutral-800 mb-4">
-                <TranslatedText>How It Works</TranslatedText>
+        {/* How It Works Section - Redesigned Flow */}
+        <section className="py-24 bg-gradient-to-br from-white to-secondary-50/30">
+          <div className="container mx-auto px-4 max-w-6xl">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-5xl font-bold text-neutral-800 mb-6">
+                Your Journey to
+                <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent"> Wellness</span>
               </h2>
-              <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-                <TranslatedText>Simple steps to start your emotional wellness transformation</TranslatedText>
+              <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-relaxed">
+                A seamless, intuitive process designed to guide you through emotional transformation
               </p>
-            </div>
+            </motion.div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {steps.map((step, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 1.2 + index * 0.1 }}
-                  className="relative"
-                >
-                  {/* Connection Line */}
-                  {index < steps.length - 1 && (
-                    <div className="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-primary-200 to-secondary-200 z-0" />
-                  )}
-                  
-                  <Card className="text-center p-6 relative z-10 h-full hover:shadow-medium transition-all duration-300">
-                    <div className={`w-16 h-16 bg-gradient-to-br ${step.color} rounded-2xl mx-auto mb-4 flex items-center justify-center relative`}>
-                      <step.icon className="w-8 h-8 text-white" />
-                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg">
-                        <span className="text-sm font-bold text-neutral-800">{step.number}</span>
+            {/* Flow Design */}
+            <div className="relative">
+              {/* Connection Lines */}
+              <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-primary-200 via-secondary-200 to-accent-200 rounded-full transform -translate-y-1/2 z-0"></div>
+              
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+                {steps.map((step, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: index * 0.2 }}
+                    className="group"
+                  >
+                    <Card className="text-center p-8 h-full hover:shadow-2xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/90 backdrop-blur-sm relative overflow-hidden">
+                      {/* Background Gradient */}
+                      <div className={`absolute inset-0 ${step.bgColor} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+                      
+                      <div className="relative z-10">
+                        <div className={`w-20 h-20 bg-gradient-to-br ${step.color} rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
+                          <step.icon className="w-10 h-10 text-white" />
+                        </div>
+                        <h3 className="text-2xl font-semibold text-neutral-800 mb-4 group-hover:text-primary-700 transition-colors duration-300">
+                          {step.title}
+                        </h3>
+                        <p className="text-neutral-600 leading-relaxed group-hover:text-neutral-700 transition-colors duration-300">
+                          {step.description}
+                        </p>
                       </div>
-                    </div>
-                    <h3 className="text-lg font-semibold text-neutral-800 mb-3">
-                      <TranslatedText>{step.title}</TranslatedText>
-                    </h3>
-                    <p className="text-neutral-600 text-sm leading-relaxed">
-                      <TranslatedText>{step.description}</TranslatedText>
-                    </p>
-                  </Card>
-                </motion.div>
-              ))}
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
             </div>
-          </motion.div>
+          </div>
+        </section>
 
-          {/* Benefits Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.4 }}
-            className="mb-16"
-          >
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-neutral-800 mb-4">
-                <TranslatedText>Why Choose AwakNow?</TranslatedText>
+        {/* Benefits Section - Enhanced */}
+        <section className="py-24 bg-gradient-to-br from-primary-50/50 to-white">
+          <div className="container mx-auto px-4 max-w-6xl">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-5xl font-bold text-neutral-800 mb-6">
+                Why Choose
+                <span className="bg-gradient-to-r from-success-600 to-primary-600 bg-clip-text text-transparent"> AwakNow?</span>
               </h2>
-              <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-                <TranslatedText>Revolutionary technology that makes emotional wellness accessible, private, and effective</TranslatedText>
+              <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-relaxed">
+                Revolutionary technology that makes emotional wellness accessible, private, and effective
               </p>
-            </div>
+            </motion.div>
 
             <div className="grid md:grid-cols-3 gap-8">
               {benefits.map((benefit, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 1.6 + index * 0.2 }}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: index * 0.2 }}
+                  className="group"
                 >
-                  <Card className="h-full text-center p-8 hover:shadow-medium transition-all duration-300">
-                    <div className="w-16 h-16 bg-gradient-to-br from-success-500 to-primary-500 rounded-2xl mx-auto mb-6 flex items-center justify-center">
-                      <benefit.icon className="w-8 h-8 text-white" />
+                  <Card className="h-full text-center p-8 hover:shadow-2xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/90 backdrop-blur-sm relative overflow-hidden">
+                    {/* Animated Background */}
+                    <div className={`absolute inset-0 bg-gradient-to-br ${benefit.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
+                    
+                    <div className="relative z-10">
+                      <div className={`w-20 h-20 bg-gradient-to-br ${benefit.color} rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
+                        <benefit.icon className="w-10 h-10 text-white" />
+                      </div>
+                      <h3 className="text-2xl font-semibold text-neutral-800 mb-4">
+                        {benefit.title}
+                      </h3>
+                      <p className="text-neutral-600 leading-relaxed">
+                        {benefit.description}
+                      </p>
                     </div>
-                    <h3 className="text-xl font-semibold text-neutral-800 mb-4">
-                      <TranslatedText>{benefit.title}</TranslatedText>
-                    </h3>
-                    <p className="text-neutral-600 leading-relaxed">
-                      <TranslatedText>{benefit.description}</TranslatedText>
-                    </p>
                   </Card>
                 </motion.div>
               ))}
             </div>
-          </motion.div>
+          </div>
+        </section>
 
-          {/* Ready to Begin CTA Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.8 }}
-            className="text-center"
-          >
-            <Card className="bg-gradient-to-br from-primary-500 to-secondary-500 text-white border-0 overflow-hidden relative">
-              {/* Background Pattern */}
-              <div className="absolute inset-0 opacity-10">
-                <div 
-                  className="w-full h-full bg-repeat"
-                  style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-                  }}
-                />
-              </div>
-              
-              <div className="relative">
-                <div className="flex items-center justify-center space-x-2 mb-4">
-                  <Sparkles className="w-6 h-6 text-accent-200" />
-                  <span className="text-accent-200 text-sm font-medium uppercase tracking-wide">Ready to Begin?</span>
+        {/* Ready to Begin CTA Section - Premium Design */}
+        <section className="py-24">
+          <div className="container mx-auto px-4 max-w-6xl">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <Card className="bg-gradient-to-br from-primary-600 via-secondary-600 to-accent-600 text-white border-0 overflow-hidden relative">
+                {/* Animated Background Elements */}
+                <div className="absolute inset-0 overflow-hidden">
+                  <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
+                  <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
                 </div>
-                <h2 className="text-4xl font-bold mb-4">
-                  <TranslatedText>Transform Your Life Today</TranslatedText>
-                </h2>
-                <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-                  <TranslatedText>Join the future of emotional wellness with AI-powered insights, personalized guidance, and breakthrough conflict resolution tools.</TranslatedText>
+                
+                <div className="relative z-10 text-center py-16">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                    className="flex items-center justify-center space-x-3 mb-6"
+                  >
+                    <Sparkles className="w-8 h-8 text-accent-200" />
+                    <span className="text-accent-200 text-lg font-medium uppercase tracking-wide">Ready to Begin?</span>
+                    <Sparkles className="w-8 h-8 text-accent-200" />
+                  </motion.div>
+                  
+                  <h2 className="text-5xl md:text-6xl font-bold mb-6">
+                    Transform Your Life
+                    <span className="block bg-gradient-to-r from-accent-200 to-white bg-clip-text text-transparent">
+                      Starting Today
+                    </span>
+                  </h2>
+                  
+                  <p className="text-2xl text-primary-100 mb-12 max-w-3xl mx-auto leading-relaxed">
+                    Join the future of emotional wellness with AI-powered insights, personalized guidance, 
+                    and breakthrough conflict resolution tools.
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                    <Button
+                      onClick={() => navigate('/auth')}
+                      variant="accent"
+                      size="lg"
+                      icon={ArrowRight}
+                      iconPosition="right"
+                      className="bg-white text-primary-600 hover:bg-primary-50 text-xl px-12 py-6 shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300"
+                    >
+                      Start Free Today
+                    </Button>
+                    <Button
+                      onClick={() => navigate('/plans')}
+                      variant="outline"
+                      size="lg"
+                      className="border-2 border-white text-white hover:bg-white/10 text-xl px-12 py-6 backdrop-blur-sm"
+                    >
+                      View All Plans
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+
+            {/* Trust Message */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="text-center mt-12"
+            >
+              <div className="flex items-center justify-center space-x-3 text-neutral-600">
+                <Shield className="w-6 h-6 text-success-500" />
+                <p className="text-lg">
+                  Your data is private, encrypted, and yours alone; even we can't see it. You can cancel anytime, no questions asked.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button
-                    onClick={() => navigate('/auth')}
-                    variant="accent"
-                    size="lg"
-                    icon={ArrowRight}
-                    iconPosition="right"
-                    className="bg-white text-primary-600 hover:bg-primary-50"
-                  >
-                    <TranslatedText>Start Free Today</TranslatedText>
-                  </Button>
-                  <Button
-                    onClick={() => navigate('/plans')}
-                    variant="outline"
-                    size="lg"
-                    className="border-white text-white hover:bg-white/10"
-                  >
-                    <TranslatedText>View All Plans</TranslatedText>
-                  </Button>
-                </div>
               </div>
-            </Card>
-          </motion.div>
-
-          {/* Trust Message */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 2.0 }}
-            className="text-center mt-8"
-          >
-            <div className="flex items-center justify-center space-x-2 text-neutral-600">
-              <Shield className="w-5 h-5 text-success-500" />
-              <p className="text-sm">
-                <TranslatedText>Your data is private, encrypted, and yours alone; even we can't see it. You can cancel anytime, no questions asked.</TranslatedText>
-              </p>
-            </div>
-          </motion.div>
-        </div>
+            </motion.div>
+          </div>
+        </section>
       </div>
+
+      {/* Video Modal - Enhanced */}
+      <AnimatePresence>
+        {showVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
+            onClick={() => setShowVideo(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              className="relative w-full max-w-6xl aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setShowVideo(false)}
+                className="absolute top-6 right-6 z-10 w-12 h-12 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-all duration-300 hover:scale-110 backdrop-blur-sm"
+              >
+                <X className="w-6 h-6" />
+              </button>
+              
+              {/* Embedded Video */}
+              <iframe
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1"
+                title="AwakNow Demo - Transform Your Emotional Wellness"
+                className="w-full h-full"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Footer />
     </div>
