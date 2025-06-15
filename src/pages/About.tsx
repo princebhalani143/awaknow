@@ -97,14 +97,14 @@ export const About: React.FC = () => {
   const techPartners = [
     {
       name: 'Bolt',
-      description: 'Dev platform and hackathon host',
+      description: 'Development platform and hackathon host',
       logo: '/bolt.jpg',
       category: 'Development',
       tier: 'primary'
     },
     {
       name: 'Tavus',
-      description: 'AI video generation and conversational AI',
+      description: 'AI video and conversational AI',
       logo: '/Tavus.png',
       category: 'AI Technology',
       tier: 'primary'
