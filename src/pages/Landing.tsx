@@ -856,36 +856,6 @@ export const Landing: React.FC = () => {
                 </div>
               </motion.div>
             </div>
-
-            {/* Partnership Stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              className="mt-16"
-            >
-              <Card className="bg-gradient-to-br from-primary-500 to-secondary-500 text-white border-0">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-                  <div>
-                    <div className="text-3xl font-bold mb-2">{techPartners.length}</div>
-                    <div className="text-primary-100 text-sm">Technology Partners</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold mb-2">100%</div>
-                    <div className="text-primary-100 text-sm">Uptime Guarantee</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold mb-2">24/7</div>
-                    <div className="text-primary-100 text-sm">AI Availability</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold mb-2">Enterprise</div>
-                    <div className="text-primary-100 text-sm">Grade Security</div>
-                  </div>
-                </div>
-              </Card>
-            </motion.div>
           </div>
         </section>
 
