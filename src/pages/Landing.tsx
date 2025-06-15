@@ -7,37 +7,55 @@ import { TranslatedText } from '../components/UI/TranslatedText';
 import { useNavigate } from 'react-router-dom';
 import { TopBar } from '../components/Layout/TopBar';
 import { Footer } from '../components/Layout/Footer';
-import { SUBSCRIPTION_PLANS } from '../config/subscriptionPlans';
 
 export const Landing: React.FC = () => {
   const navigate = useNavigate();
 
-  const features = [
+  const problems = [
     {
       icon: Brain,
-      title: 'AI-Powered Conversations',
-      description: 'Experience natural, empathetic conversations with advanced AI that understands your emotions and provides personalized guidance.',
-      color: 'from-primary-500 to-primary-600'
+      title: 'Mental Health Crisis',
+      description: 'Over 1 billion people worldwide struggle with mental health challenges, with limited access to professional support.',
+      stat: '1 in 4 people',
     },
     {
       icon: Users,
-      title: 'Conflict Resolution',
-      description: 'Navigate relationship challenges with AI-mediated sessions that promote understanding and healthy communication.',
-      color: 'from-secondary-500 to-secondary-600'
+      title: 'Communication Breakdown',
+      description: 'Poor communication and unresolved conflicts damage relationships, families, and workplace productivity.',
+      stat: '67% of couples',
     },
     {
       icon: Heart,
-      title: 'Emotional Wellness',
-      description: 'Track your emotional journey with real-time analysis, personalized insights, and evidence-based wellness strategies.',
-      color: 'from-accent-500 to-accent-600'
-    }
+      title: 'Emotional Isolation',
+      description: 'People lack safe spaces to process emotions and develop emotional intelligence skills.',
+      stat: '3 in 5 adults',
+    },
   ];
 
-  const plans = Object.values(SUBSCRIPTION_PLANS);
+  const solutions = [
+    {
+      icon: Zap,
+      title: 'AI-Powered Conversations',
+      description: 'Advanced AI that understands emotions, provides empathetic responses, and guides meaningful conversations.',
+    },
+    {
+      icon: Shield,
+      title: 'Safe & Private Environment',
+      description: 'End-to-end encrypted sessions where you can explore emotions without judgment or privacy concerns.',
+    },
+    {
+      icon: Brain,
+      title: 'Personalized Insights',
+      description: 'Data-driven insights about your emotional patterns, growth opportunities, and wellness journey.',
+    },
+  ];
 
-  const formatFeature = (value: number | 'unlimited') => {
-    return value === 'unlimited' ? 'Unlimited' : value.toString();
-  };
+  const howItWorks = [
+    { step: '1', title: 'Choose Your Path', description: 'Select private reflection or guided conflict resolution' },
+    { step: '2', title: 'Engage with AI', description: 'Have natural conversations with our empathetic AI companion' },
+    { step: '3', title: 'Receive Insights', description: 'Get personalized feedback and actionable recommendations' },
+    { step: '4', title: 'Track Progress', description: 'Monitor your emotional wellness journey over time' },
+  ];
 
   const stats = [
     { value: '10,000+', label: 'Users Helped' },
@@ -127,11 +145,11 @@ export const Landing: React.FC = () => {
                 {/* Overlay Content */}
                 <div className="relative h-full flex items-center justify-center bg-gradient-to-br from-primary-500/20 to-secondary-500/20">
                   <div className="text-center space-y-6">
-                    {/* Play Button */}
+                    {/* Play Button - Fixed centering */}
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-large hover:bg-white/30 transition-colors group"
+                      className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-large hover:bg-white/30 transition-colors group mx-auto"
                     >
                       <Play className="w-8 h-8 text-white ml-1 group-hover:text-accent-200" />
                     </motion.button>
@@ -156,39 +174,80 @@ export const Landing: React.FC = () => {
           </motion.div>
         </motion.div>
 
-        {/* Features Section */}
+        {/* Problem Section */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
           className="mb-16"
         >
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-neutral-800 mb-4">
-              <TranslatedText>Why Choose AwakNow?</TranslatedText>
+              <TranslatedText>The Problems We're Solving</TranslatedText>
             </h2>
             <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              <TranslatedText>Advanced AI technology meets proven psychological principles for unprecedented emotional wellness support</TranslatedText>
+              <TranslatedText>Mental health and emotional wellness challenges affect billions of people worldwide</TranslatedText>
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
+            {problems.map((problem, index) => (
               <motion.div
-                key={feature.title}
+                key={index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.8 + index * 0.2 }}
               >
-                <Card hover className="text-center h-full group">
-                  <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl mx-auto mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                    <feature.icon className="w-8 h-8 text-white" />
+                <Card className="h-full text-center p-8 hover:shadow-medium transition-all duration-300">
+                  <div className="w-16 h-16 bg-gradient-to-br from-error-500 to-warning-500 rounded-2xl mx-auto mb-6 flex items-center justify-center">
+                    <problem.icon className="w-8 h-8 text-white" />
                   </div>
+                  <div className="text-2xl font-bold text-error-600 mb-2">{problem.stat}</div>
                   <h3 className="text-xl font-semibold text-neutral-800 mb-4">
-                    <TranslatedText>{feature.title}</TranslatedText>
+                    <TranslatedText>{problem.title}</TranslatedText>
                   </h3>
                   <p className="text-neutral-600 leading-relaxed">
-                    <TranslatedText>{feature.description}</TranslatedText>
+                    <TranslatedText>{problem.description}</TranslatedText>
+                  </p>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Solution Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1.0 }}
+          className="mb-16"
+        >
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-neutral-800 mb-4">
+              <TranslatedText>Our Revolutionary Solution</TranslatedText>
+            </h2>
+            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+              <TranslatedText>AI-powered emotional wellness that's accessible, private, and effective</TranslatedText>
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {solutions.map((solution, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.2 + index * 0.2 }}
+              >
+                <Card className="h-full text-center p-8 hover:shadow-medium transition-all duration-300">
+                  <div className="w-16 h-16 bg-gradient-to-br from-success-500 to-primary-500 rounded-2xl mx-auto mb-6 flex items-center justify-center">
+                    <solution.icon className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-neutral-800 mb-4">
+                    <TranslatedText>{solution.title}</TranslatedText>
+                  </h3>
+                  <p className="text-neutral-600 leading-relaxed">
+                    <TranslatedText>{solution.description}</TranslatedText>
                   </p>
                 </Card>
               </motion.div>
@@ -200,7 +259,7 @@ export const Landing: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.0 }}
+          transition={{ duration: 0.8, delay: 1.4 }}
           className="mb-16"
         >
           <div className="text-center mb-12">
@@ -213,166 +272,33 @@ export const Landing: React.FC = () => {
           </div>
 
           <div className="grid md:grid-cols-4 gap-6">
-            {[
-              { step: '1', title: 'Sign Up', description: 'Create your free account in seconds' },
-              { step: '2', title: 'Choose Session', description: 'Select private reflection or group resolution' },
-              { step: '3', title: 'Engage with AI', description: 'Have natural conversations with our AI companion' },
-              { step: '4', title: 'Grow & Thrive', description: 'Receive insights and track your progress' },
-            ].map((item, index) => (
+            {howItWorks.map((item, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1.2 + index * 0.1 }}
+                transition={{ duration: 0.6, delay: 1.6 + index * 0.1 }}
                 className="text-center"
               >
                 <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 text-white rounded-full mx-auto mb-4 flex items-center justify-center text-lg font-bold">
                   {item.step}
                 </div>
-                <h4 className="font-semibold text-neutral-800 mb-2">{item.title}</h4>
-                <p className="text-neutral-600 text-sm">{item.description}</p>
+                <h4 className="font-semibold text-neutral-800 mb-2">
+                  <TranslatedText>{item.title}</TranslatedText>
+                </h4>
+                <p className="text-neutral-600 text-sm">
+                  <TranslatedText>{item.description}</TranslatedText>
+                </p>
               </motion.div>
             ))}
           </div>
-        </motion.div>
-
-        {/* Pricing Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.4 }}
-          className="mb-16"
-        >
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-neutral-800 mb-4">
-              <TranslatedText>Choose Your Plan</TranslatedText>
-            </h2>
-            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              <TranslatedText>Start free and upgrade as your wellness journey grows</TranslatedText>
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {plans.map((plan, index) => (
-              <motion.div
-                key={plan.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1.6 + index * 0.1 }}
-                className="relative"
-              >
-                {plan.name === 'reflect_plus' && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
-                    <div className="bg-gradient-to-r from-accent-500 to-accent-600 text-white px-4 py-1 rounded-full text-sm font-medium flex items-center space-x-1">
-                      <Star className="w-3 h-3" />
-                      <span>Most Popular</span>
-                    </div>
-                  </div>
-                )}
-
-                <Card className={`text-center h-full ${plan.name === 'reflect_plus' ? 'ring-2 ring-accent-500 ring-opacity-50' : ''}`}>
-                  <div className="mb-6">
-                    <h3 className="text-xl font-bold text-neutral-800 mb-2">{plan.displayName}</h3>
-                    
-                    <div className="space-y-1">
-                      <div className="text-3xl font-bold text-neutral-800">
-                        ${plan.price.monthly.toFixed(2)}
-                        <span className="text-lg font-normal text-neutral-600">/month</span>
-                      </div>
-                      {plan.price.monthly > 0 && (
-                        <div className="text-sm text-success-600">
-                          or ${plan.price.annual}/year (save ${(plan.price.monthly * 12 - plan.price.annual).toFixed(0)})
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="space-y-4 mb-8">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-neutral-600">AI Video Minutes</span>
-                        <span className="font-medium text-neutral-800">{plan.features.tavusMinutes}/month</span>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-neutral-600">Solo Sessions</span>
-                        <span className="font-medium text-neutral-800">
-                          {formatFeature(plan.features.soloSessionsPerDay)}/day
-                        </span>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-neutral-600">AI Insights</span>
-                        <span className="font-medium text-neutral-800">
-                          {formatFeature(plan.features.insightsPerWeek)}/week
-                        </span>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-neutral-600">Session History</span>
-                        <span className="font-medium text-neutral-800">{plan.features.historyDays} days</span>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-neutral-200 pt-4 space-y-2">
-                      <div className="flex items-center space-x-2">
-                        {plan.features.groupSessions ? (
-                          <Check className="w-4 h-4 text-success-500" />
-                        ) : (
-                          <div className="w-4 h-4 rounded-full border border-neutral-300" />
-                        )}
-                        <span className={`text-sm ${plan.features.groupSessions ? 'text-neutral-800' : 'text-neutral-500'}`}>
-                          Group Sessions
-                        </span>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        {plan.features.prioritySupport ? (
-                          <Check className="w-4 h-4 text-success-500" />
-                        ) : (
-                          <div className="w-4 h-4 rounded-full border border-neutral-300" />
-                        )}
-                        <span className={`text-sm ${plan.features.prioritySupport ? 'text-neutral-800' : 'text-neutral-500'}`}>
-                          Priority Support
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Button
-                    onClick={() => navigate('/auth')}
-                    variant={plan.name === 'reflect_plus' ? 'primary' : plan.price.monthly === 0 ? 'outline' : 'secondary'}
-                    className="w-full"
-                    icon={plan.name === 'reflect_plus' ? Zap : undefined}
-                  >
-                    {plan.price.monthly === 0 ? 'Get Started Free' : 'Get Started'}
-                  </Button>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Trust Message */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.8 }}
-            className="text-center mt-8"
-          >
-            <div className="flex items-center justify-center space-x-2 text-neutral-600">
-              <Shield className="w-5 h-5 text-success-500" />
-              <p className="text-sm">
-                <TranslatedText>Your data is private, encrypted, and yours alone; even we can't see it. You can cancel anytime, no questions asked.</TranslatedText>
-              </p>
-            </div>
-          </motion.div>
         </motion.div>
 
         {/* CTA Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 2.0 }}
+          transition={{ duration: 0.8, delay: 1.8 }}
           className="text-center"
         >
           <Card className="bg-gradient-to-br from-primary-500 to-secondary-500 text-white border-0 overflow-hidden relative">
@@ -419,6 +345,21 @@ export const Landing: React.FC = () => {
               </div>
             </div>
           </Card>
+        </motion.div>
+
+        {/* Trust Message */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 2.0 }}
+          className="text-center mt-8"
+        >
+          <div className="flex items-center justify-center space-x-2 text-neutral-600">
+            <Shield className="w-5 h-5 text-success-500" />
+            <p className="text-sm">
+              <TranslatedText>Your data is private, encrypted, and yours alone; even we can't see it. You can cancel anytime, no questions asked.</TranslatedText>
+            </p>
+          </div>
         </motion.div>
       </div>
 

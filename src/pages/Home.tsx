@@ -308,7 +308,7 @@ export const Home: React.FC = () => {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-large hover:bg-white/30 transition-colors group"
+                      className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-large hover:bg-white/30 transition-colors group mx-auto"
                     >
                       <Play className="w-8 h-8 text-white ml-1 group-hover:text-accent-200" />
                     </motion.button>
