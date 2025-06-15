@@ -98,49 +98,49 @@ export const About: React.FC = () => {
     {
       name: 'Bolt',
       description: 'Development platform and hackathon host',
-      logo: '⚡',
+      logo: '/bolt.jpg',
       category: 'Development'
     },
     {
       name: 'Tavus',
       description: 'AI video generation and conversational AI',
-      logo: '🎥',
+      logo: '/Tavus.png',
       category: 'AI Technology'
     },
     {
       name: 'ElevenLabs',
       description: 'Advanced voice synthesis and audio AI',
-      logo: '🎵',
+      logo: '/ElevenLabs.png',
       category: 'Voice AI'
     },
     {
       name: 'Supabase',
       description: 'Backend infrastructure and database',
-      logo: '🗄️',
+      logo: '/Supabase.png',
       category: 'Infrastructure'
     },
     {
       name: 'RevenueCat',
       description: 'Subscription management and billing',
-      logo: '💳',
+      logo: '/revenuecat.png',
       category: 'Payments'
     },
     {
       name: 'Netlify',
       description: 'Web hosting and deployment platform',
-      logo: '🌐',
+      logo: 'https://www.netlify.com/v3/img/components/logomark.png',
       category: 'Hosting'
     },
     {
       name: 'Entri',
       description: 'Domain management and DNS services',
-      logo: '🔗',
+      logo: 'https://entri.com/favicon.ico',
       category: 'Domain'
     },
     {
       name: 'Stripe',
       description: 'Payment processing and financial infrastructure',
-      logo: '💰',
+      logo: 'https://images.ctfassets.net/fzn2n1nzq965/3AGidihOJl4nH9D1vDjM84/9540155d584be52fc54c443b6efa4ae6/stripe.png',
       category: 'Payments'
     },
   ];
@@ -408,7 +408,7 @@ export const About: React.FC = () => {
           </div>
 
           <Card className="p-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {techPartners.map((partner, index) => (
                 <motion.div
                   key={index}
@@ -417,11 +417,24 @@ export const About: React.FC = () => {
                   transition={{ duration: 0.6, delay: 2.2 + index * 0.1 }}
                   className="text-center group hover:scale-105 transition-transform duration-300"
                 >
-                  <div className="w-16 h-16 bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-2xl mx-auto mb-3 flex items-center justify-center text-2xl group-hover:shadow-lg transition-shadow duration-300">
-                    {partner.logo}
+                  <div className="w-20 h-20 bg-white rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-sm group-hover:shadow-lg transition-shadow duration-300 border border-neutral-100">
+                    <img
+                      src={partner.logo}
+                      alt={`${partner.name} logo`}
+                      className="w-16 h-16 object-contain"
+                      onError={(e) => {
+                        // Fallback to text if image fails to load
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const parent = target.parentElement;
+                        if (parent) {
+                          parent.innerHTML = `<span class="text-2xl font-bold text-neutral-600">${partner.name.charAt(0)}</span>`;
+                        }
+                      }}
+                    />
                   </div>
                   <h4 className="font-semibold text-neutral-800 text-sm mb-1">{partner.name}</h4>
-                  <p className="text-xs text-neutral-600 mb-1">{partner.description}</p>
+                  <p className="text-xs text-neutral-600 mb-1 leading-tight">{partner.description}</p>
                   <span className="text-xs text-primary-600 font-medium">{partner.category}</span>
                 </motion.div>
               ))}
