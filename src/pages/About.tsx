@@ -232,7 +232,7 @@ export const About: React.FC = () => {
                 >
                   <div className={`w-full lg:w-1/2 ${index % 2 === 0 ? 'lg:pr-8 lg:text-right' : 'lg:pl-8 lg:text-left'} text-center lg:text-left mb-4 lg:mb-0`}>
                     <Card className="p-6 hover:shadow-medium transition-all duration-300">
-                      <div className="flex items-center justify-center lg:justify-start space-x-3 mb-4">
+                      <div className={`flex items-center ${index % 2 === 0 ? 'lg:justify-end' : 'lg:justify-start'} justify-center space-x-3 mb-4`}>
                         <div className={`w-10 h-10 bg-gradient-to-br ${milestone.color} rounded-xl flex items-center justify-center`}>
                           <milestone.icon className="w-5 h-5 text-white" />
                         </div>
@@ -287,47 +287,11 @@ export const About: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Technology Partners */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.4 }}
-          className="mb-16"
-        >
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-neutral-800 mb-4">Our Technology Partners</h2>
-            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              Powered by industry-leading technologies and trusted partners who share our vision
-            </p>
-          </div>
-
-          <Card className="p-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {techPartners.map((partner, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6, delay: 1.6 + index * 0.1 }}
-                  className="text-center group hover:scale-105 transition-transform duration-300"
-                >
-                  <div className="w-16 h-16 bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-2xl mx-auto mb-3 flex items-center justify-center text-2xl group-hover:shadow-lg transition-shadow duration-300">
-                    {partner.logo}
-                  </div>
-                  <h4 className="font-semibold text-neutral-800 text-sm mb-1">{partner.name}</h4>
-                  <p className="text-xs text-neutral-600 mb-1">{partner.description}</p>
-                  <span className="text-xs text-primary-600 font-medium">{partner.category}</span>
-                </motion.div>
-              ))}
-            </div>
-          </Card>
-        </motion.div>
-
         {/* Founder Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.8 }}
+          transition={{ duration: 0.8, delay: 1.4 }}
           className="mb-16"
         >
           <Card className="overflow-hidden">
@@ -401,7 +365,7 @@ export const About: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 2.0 }}
+          transition={{ duration: 0.8, delay: 1.6 }}
           className="mb-16"
         >
           <div className="text-center mb-12">
@@ -418,11 +382,47 @@ export const About: React.FC = () => {
                   key={index}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 2.2 + index * 0.1 }}
+                  transition={{ duration: 0.6, delay: 1.8 + index * 0.1 }}
                   className="flex items-start space-x-3"
                 >
                   <CheckCircle className="w-5 h-5 text-success-500 mt-0.5 flex-shrink-0" />
                   <span className="text-neutral-700">{belief}</span>
+                </motion.div>
+              ))}
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* Technology Partners */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 2.0 }}
+          className="mb-16"
+        >
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-neutral-800 mb-4">Our Technology Partners</h2>
+            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+              Powered by industry-leading technologies and trusted partners who share our vision
+            </p>
+          </div>
+
+          <Card className="p-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {techPartners.map((partner, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 2.2 + index * 0.1 }}
+                  className="text-center group hover:scale-105 transition-transform duration-300"
+                >
+                  <div className="w-16 h-16 bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-2xl mx-auto mb-3 flex items-center justify-center text-2xl group-hover:shadow-lg transition-shadow duration-300">
+                    {partner.logo}
+                  </div>
+                  <h4 className="font-semibold text-neutral-800 text-sm mb-1">{partner.name}</h4>
+                  <p className="text-xs text-neutral-600 mb-1">{partner.description}</p>
+                  <span className="text-xs text-primary-600 font-medium">{partner.category}</span>
                 </motion.div>
               ))}
             </div>
