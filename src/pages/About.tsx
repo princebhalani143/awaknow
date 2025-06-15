@@ -132,7 +132,7 @@ export const About: React.FC = () => {
     },
     {
       name: 'Stripe',
-      description: 'Payment processing and financial infrastructure',
+      description: 'Payment processing and infrastructure',
       logo: '/stripe.jpg',
       category: 'Payments',
       tier: 'core'
