@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Users, Sparkles, TrendingUp, Clock, Star, Play, Crown, ArrowRight } from 'lucide-react';
+import { Brain, Users, Sparkles, TrendingUp, Clock, Star, Play, Crown, ArrowRight, Shield, Zap, Heart, Award, Target, BarChart3 } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { TranslatedText } from '../components/UI/TranslatedText';
@@ -138,20 +138,38 @@ export const Home: React.FC = () => {
       label: 'Sessions Completed', 
       value: loadingStats ? '...' : stats?.completedSessions.toString() || '0', 
       icon: Clock,
-      color: 'text-primary-500'
+      color: 'text-primary-500',
+      bgColor: 'bg-primary-50'
     },
     { 
       label: 'Current Streak', 
-      value: loadingStats ? '...' : `${stats?.currentStreak || 0} days`, 
+      value: loadingStats ? '...' : `${stats?.currentStreak || 0}`, 
+      unit: 'days',
       icon: TrendingUp,
-      color: 'text-success-500'
+      color: 'text-success-500',
+      bgColor: 'bg-success-50'
     },
     { 
       label: 'Wellness Score', 
       value: loadingStats ? '...' : stats?.averageEmotionScore.toFixed(1) || '0.0', 
       icon: Star,
-      color: 'text-accent-500'
+      color: 'text-accent-500',
+      bgColor: 'bg-accent-50'
     },
+    { 
+      label: 'AI Minutes Used', 
+      value: loadingStats ? '...' : stats?.totalMinutesUsed.toString() || '0', 
+      icon: Brain,
+      color: 'text-secondary-500',
+      bgColor: 'bg-secondary-50'
+    },
+  ];
+
+  const achievements = [
+    { icon: Award, title: 'First Session', description: 'Completed your first reflection', unlocked: (stats?.totalSessions || 0) > 0 },
+    { icon: Target, title: 'Consistent Practice', description: '7-day streak achieved', unlocked: (stats?.currentStreak || 0) >= 7 },
+    { icon: Heart, title: 'Emotional Growth', description: 'Wellness score above 7.0', unlocked: (stats?.averageEmotionScore || 0) >= 7.0 },
+    { icon: BarChart3, title: 'Data Driven', description: '10+ insights generated', unlocked: (stats?.insightsGenerated || 0) >= 10 },
   ];
 
   if (loading) {
@@ -172,25 +190,25 @@ export const Home: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex flex-col">
       <TopBar />
       
-      <div className="container mx-auto px-4 py-8 max-w-4xl flex-1">
-        {/* Welcome Section */}
+      <div className="container mx-auto px-4 py-8 max-w-7xl flex-1">
+        {/* Hero Welcome Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-8"
+          className="mb-12"
         >
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-neutral-800 mb-2">
+            <h1 className="text-4xl md:text-5xl font-bold text-neutral-800 mb-4">
               <TranslatedText>Welcome back, {user?.email?.split('@')[0] || 'Friend'}! 👋</TranslatedText>
             </h1>
-            <p className="text-neutral-600">
-              <TranslatedText>How would you like to explore your emotional wellness today?</TranslatedText>
+            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+              <TranslatedText>Continue your journey of emotional wellness and personal growth with AI-powered insights</TranslatedText>
             </p>
           </div>
 
-          {/* Real Stats from Database */}
-          <div className="grid grid-cols-3 gap-4 mb-8">
+          {/* Premium Stats Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             {displayStats.map((stat, index) => (
               <motion.div
                 key={stat.label}
@@ -198,10 +216,15 @@ export const Home: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
               >
-                <Card className="text-center p-4">
-                  <stat.icon className={`w-6 h-6 mx-auto mb-2 ${stat.color}`} />
-                  <div className="text-2xl font-bold text-neutral-800">{stat.value}</div>
-                  <div className="text-xs text-neutral-500">
+                <Card className="text-center p-6 hover:shadow-medium transition-all duration-300">
+                  <div className={`w-12 h-12 ${stat.bgColor} rounded-xl mx-auto mb-3 flex items-center justify-center`}>
+                    <stat.icon className={`w-6 h-6 ${stat.color}`} />
+                  </div>
+                  <div className="text-3xl font-bold text-neutral-800 mb-1">
+                    {stat.value}
+                    {stat.unit && <span className="text-lg font-normal text-neutral-600 ml-1">{stat.unit}</span>}
+                  </div>
+                  <div className="text-sm text-neutral-500">
                     <TranslatedText>{stat.label}</TranslatedText>
                   </div>
                 </Card>
@@ -210,132 +233,90 @@ export const Home: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Usage Overview */}
-        {subscription && limits && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-8"
-          >
-            <Card>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-neutral-800">Your Plan Usage</h3>
-                <div className="flex items-center space-x-2">
-                  <span className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm font-medium">
-                    {subscription.plan_name}
-                  </span>
-                  <Button
-                    onClick={() => navigate('/subscription')}
-                    variant="outline"
-                    size="sm"
-                    icon={Crown}
-                  >
-                    Upgrade
-                  </Button>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary-600">{limits.tavusMinutes}</div>
-                  <div className="text-xs text-neutral-500">AI Minutes Left</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-secondary-600">
-                    {limits.soloSessionsToday === 'unlimited' ? '∞' : limits.soloSessionsToday}
-                  </div>
-                  <div className="text-xs text-neutral-500">Sessions Today</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-accent-600">
-                    {limits.insightsThisWeek === 'unlimited' ? '∞' : limits.insightsThisWeek}
-                  </div>
-                  <div className="text-xs text-neutral-500">Insights Left</div>
-                </div>
-                <div className="text-center">
-                  <div className={`text-2xl font-bold ${limits.canCreateGroupSessions ? 'text-success-600' : 'text-neutral-400'}`}>
-                    {limits.canCreateGroupSessions ? '✓' : '✗'}
-                  </div>
-                  <div className="text-xs text-neutral-500">Group Sessions</div>
-                </div>
-              </div>
-            </Card>
-          </motion.div>
-        )}
-
-        {/* AI Video Sessions Section */}
+        {/* Premium AI Video Showcase */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="mb-8"
+          className="mb-12"
         >
-          <Card className="overflow-hidden">
-            <div className="relative">
-              {/* Video Container */}
-              <div className="aspect-video bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-xl overflow-hidden relative">
-                {/* Background Image */}
-                <div 
-                  className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
-                  style={{
-                    backgroundImage: `url('https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')`
-                  }}
-                />
-                
-                {/* Overlay Content */}
-                <div className="relative h-full flex items-center justify-center bg-gradient-to-br from-primary-500/20 to-secondary-500/20">
-                  <div className="text-center space-y-4">
-                    {/* Play Button */}
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="w-20 h-20 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-large hover:bg-white transition-colors group"
-                    >
-                      <Play className="w-8 h-8 text-primary-600 ml-1 group-hover:text-primary-700" />
-                    </motion.button>
-                    
-                    <div className="space-y-2">
-                      <h3 className="text-2xl font-semibold text-neutral-800">
-                        <TranslatedText>AI Video Sessions</TranslatedText>
-                      </h3>
-                      <p className="text-neutral-600 max-w-md mx-auto">
-                        <TranslatedText>Experience personalized conversations that understand and respond to your emotions</TranslatedText>
-                      </p>
-                    </div>
+          <Card className="overflow-hidden bg-gradient-to-br from-neutral-900 to-neutral-800 text-white border-0">
+            <div className="grid lg:grid-cols-2 gap-8 p-8">
+              {/* Content Side */}
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-accent-400 rounded-full animate-pulse"></div>
+                    <span className="text-accent-400 text-sm font-medium uppercase tracking-wide">AI-Powered Sessions</span>
                   </div>
+                  <h2 className="text-3xl md:text-4xl font-bold leading-tight">
+                    <TranslatedText>Experience the Future of Emotional Wellness</TranslatedText>
+                  </h2>
+                  <p className="text-neutral-300 text-lg leading-relaxed">
+                    <TranslatedText>
+                      Our advanced AI companion understands your emotions, provides personalized insights, 
+                      and guides you through meaningful conversations that promote growth and healing.
+                    </TranslatedText>
+                  </p>
                 </div>
 
-                {/* Video Duration Badge */}
-                <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-medium">
-                  2:34
+                <div className="grid grid-cols-2 gap-4">
+                  {['Real-time Emotion Analysis', 'Personalized Responses', 'Voice & Video Support', 'Privacy Protected'].map((feature, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <Sparkles className="w-4 h-4 text-accent-400" />
+                      <span className="text-sm text-neutral-300">
+                        <TranslatedText>{feature}</TranslatedText>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex space-x-4">
+                  <Button
+                    onClick={() => navigate('/reflect')}
+                    variant="accent"
+                    size="lg"
+                    icon={Play}
+                    className="bg-accent-500 hover:bg-accent-600"
+                  >
+                    <TranslatedText>Start Session</TranslatedText>
+                  </Button>
+                  <Button
+                    onClick={() => navigate('/analytics')}
+                    variant="ghost"
+                    size="lg"
+                    className="text-white border-white/20 hover:bg-white/10"
+                  >
+                    <TranslatedText>View Analytics</TranslatedText>
+                  </Button>
                 </div>
               </div>
 
-              {/* Video Description */}
-              <div className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h4 className="text-lg font-semibold text-neutral-800 mb-2">
-                      <TranslatedText>See How AI Conversations Work</TranslatedText>
-                    </h4>
-                    <p className="text-neutral-600 text-sm leading-relaxed mb-4">
-                      <TranslatedText>
-                        Watch this demo to understand how our AI companion provides personalized emotional support 
-                        through natural video conversations. See real examples of emotion recognition, empathetic responses, 
-                        and personalized insights.
-                      </TranslatedText>
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {['Emotion Recognition', 'Natural Conversations', 'Personalized Insights', 'Safe Environment'].map((feature) => (
-                        <span
-                          key={feature}
-                          className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-xs font-medium"
-                        >
-                          <TranslatedText>{feature}</TranslatedText>
-                        </span>
-                      ))}
-                    </div>
+              {/* Video/Image Side */}
+              <div className="relative">
+                <div className="aspect-video bg-gradient-to-br from-neutral-700 to-neutral-600 rounded-2xl overflow-hidden relative">
+                  {/* Background Image from Unsplash */}
+                  <div 
+                    className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-60"
+                    style={{
+                      backgroundImage: `url('https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')`
+                    }}
+                  />
+                  
+                  {/* Overlay Content */}
+                  <div className="relative h-full flex items-center justify-center">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-large hover:bg-white/30 transition-colors group"
+                    >
+                      <Play className="w-8 h-8 text-white ml-1 group-hover:text-accent-200" />
+                    </motion.button>
+                  </div>
+
+                  {/* Duration Badge */}
+                  <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    3:42
                   </div>
                 </div>
               </div>
@@ -343,40 +324,157 @@ export const Home: React.FC = () => {
           </Card>
         </motion.div>
 
-        {/* Main Options */}
+        {/* Usage Overview & Achievements */}
+        <div className="grid lg:grid-cols-3 gap-8 mb-12">
+          {/* Usage Overview */}
+          {subscription && limits && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="lg:col-span-2"
+            >
+              <Card className="h-full">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-neutral-800">Your Plan Usage</h3>
+                  <div className="flex items-center space-x-3">
+                    <span className="px-3 py-1 bg-gradient-to-r from-primary-100 to-secondary-100 text-primary-700 rounded-full text-sm font-medium flex items-center space-x-1">
+                      <Crown className="w-3 h-3" />
+                      <span>{subscription.plan_name}</span>
+                    </span>
+                    <Button
+                      onClick={() => navigate('/subscription')}
+                      variant="outline"
+                      size="sm"
+                      icon={Crown}
+                    >
+                      Upgrade
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-neutral-700">AI Minutes</span>
+                        <span className="text-sm text-neutral-600">{limits.tavusMinutes} left</span>
+                      </div>
+                      <div className="w-full bg-neutral-200 rounded-full h-2">
+                        <div 
+                          className="bg-gradient-to-r from-primary-500 to-primary-600 h-2 rounded-full transition-all duration-500"
+                          style={{ width: `${Math.max(10, (limits.tavusMinutes / subscription.tavus_minutes_limit) * 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="p-4 bg-secondary-50 rounded-xl">
+                      <div className="text-2xl font-bold text-secondary-600">
+                        {limits.soloSessionsToday === 'unlimited' ? '∞' : limits.soloSessionsToday}
+                      </div>
+                      <div className="text-sm text-secondary-700">Sessions Today</div>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="p-4 bg-accent-50 rounded-xl">
+                      <div className="text-2xl font-bold text-accent-600">
+                        {limits.insightsThisWeek === 'unlimited' ? '∞' : limits.insightsThisWeek}
+                      </div>
+                      <div className="text-sm text-accent-700">Insights Left</div>
+                    </div>
+                    
+                    <div className="p-4 bg-neutral-50 rounded-xl">
+                      <div className={`text-2xl font-bold ${limits.canCreateGroupSessions ? 'text-success-600' : 'text-neutral-400'}`}>
+                        {limits.canCreateGroupSessions ? '✓' : '✗'}
+                      </div>
+                      <div className="text-sm text-neutral-600">Group Sessions</div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* Achievements */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+          >
+            <Card className="h-full">
+              <h3 className="text-xl font-semibold text-neutral-800 mb-6">Achievements</h3>
+              <div className="space-y-4">
+                {achievements.map((achievement, index) => (
+                  <div 
+                    key={index}
+                    className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 ${
+                      achievement.unlocked 
+                        ? 'bg-success-50 border border-success-200' 
+                        : 'bg-neutral-50 border border-neutral-200 opacity-60'
+                    }`}
+                  >
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                      achievement.unlocked 
+                        ? 'bg-success-500 text-white' 
+                        : 'bg-neutral-300 text-neutral-500'
+                    }`}>
+                      <achievement.icon className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1">
+                      <div className={`font-medium text-sm ${
+                        achievement.unlocked ? 'text-success-800' : 'text-neutral-600'
+                      }`}>
+                        {achievement.title}
+                      </div>
+                      <div className={`text-xs ${
+                        achievement.unlocked ? 'text-success-600' : 'text-neutral-500'
+                      }`}>
+                        {achievement.description}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </motion.div>
+        </div>
+
+        {/* Main Session Options */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="grid md:grid-cols-2 gap-6 mb-8"
+          transition={{ duration: 0.8, delay: 1.0 }}
+          className="grid md:grid-cols-2 gap-8 mb-12"
         >
           {options.map((option, index) => (
             <motion.div
               key={option.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.7 + index * 0.2 }}
+              transition={{ duration: 0.6, delay: 1.1 + index * 0.2 }}
             >
               <Card 
                 hover={option.available} 
                 onClick={option.available ? () => navigate(option.route) : undefined} 
-                className={`h-full ${option.available ? 'cursor-pointer' : 'opacity-60'}`}
+                className={`h-full ${option.available ? 'cursor-pointer' : 'opacity-60'} group`}
               >
-                <div className="space-y-6">
-                  <div className={`w-16 h-16 bg-gradient-to-br ${option.color} rounded-2xl flex items-center justify-center`}>
-                    <option.icon className="w-8 h-8 text-white" />
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-xl font-semibold text-neutral-800 mb-2">
-                      <TranslatedText>{option.title}</TranslatedText>
-                    </h3>
-                    <p className="text-neutral-600 mb-4 leading-relaxed">
-                      <TranslatedText>{option.description}</TranslatedText>
-                    </p>
+                <div className="space-y-6 p-2">
+                  <div className="flex items-center space-x-4">
+                    <div className={`w-16 h-16 bg-gradient-to-br ${option.color} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                      <option.icon className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold text-neutral-800 mb-2">
+                        <TranslatedText>{option.title}</TranslatedText>
+                      </h3>
+                      <p className="text-neutral-600 leading-relaxed">
+                        <TranslatedText>{option.description}</TranslatedText>
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="grid grid-cols-2 gap-3">
                     {option.features.map((feature, idx) => (
                       <div key={idx} className="flex items-center space-x-2">
                         <Sparkles className="w-4 h-4 text-accent-500" />
@@ -388,7 +486,7 @@ export const Home: React.FC = () => {
                   </div>
 
                   {option.available ? (
-                    <Button className="w-full" variant={index === 0 ? 'primary' : 'secondary'}>
+                    <Button className="w-full" variant={index === 0 ? 'primary' : 'secondary'} size="lg">
                       <TranslatedText>Start Session</TranslatedText>
                     </Button>
                   ) : (
@@ -399,6 +497,7 @@ export const Home: React.FC = () => {
                       }}
                       className="w-full" 
                       variant="outline"
+                      size="lg"
                       icon={Crown}
                     >
                       <TranslatedText>Upgrade Required</TranslatedText>
@@ -410,35 +509,86 @@ export const Home: React.FC = () => {
           ))}
         </motion.div>
 
-        {/* Upgrade CTA */}
+        {/* Premium Upgrade CTA */}
         {subscription?.plan_id === 'awaknow_free' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.9 }}
+            transition={{ duration: 0.6, delay: 1.3 }}
           >
-            <Card className="bg-gradient-to-r from-accent-500 to-accent-600 text-white border-0">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold mb-1">
-                    <TranslatedText>Upgrade to Premium</TranslatedText>
-                  </h3>
-                  <p className="text-accent-100 text-sm">
-                    <TranslatedText>Unlock unlimited sessions, advanced insights, and priority support</TranslatedText>
-                  </p>
+            <Card className="bg-gradient-to-r from-accent-500 via-accent-600 to-primary-600 text-white border-0 overflow-hidden relative">
+              {/* Background Pattern */}
+              <div className="absolute inset-0 opacity-10">
+                <div 
+                  className="w-full h-full bg-repeat"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+                  }}
+                />
+              </div>
+              
+              <div className="relative p-8">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 mb-3">
+                      <Crown className="w-6 h-6 text-accent-200" />
+                      <span className="text-accent-200 text-sm font-medium uppercase tracking-wide">Premium Experience</span>
+                    </div>
+                    <h3 className="text-2xl font-bold mb-2">
+                      <TranslatedText>Unlock Your Full Potential</TranslatedText>
+                    </h3>
+                    <p className="text-accent-100 mb-4 max-w-2xl">
+                      <TranslatedText>
+                        Get unlimited sessions, advanced AI insights, group conflict resolution, 
+                        and priority support. Transform your emotional wellness journey today.
+                      </TranslatedText>
+                    </p>
+                    <div className="flex items-center space-x-6 text-sm text-accent-100">
+                      <div className="flex items-center space-x-1">
+                        <Zap className="w-4 h-4" />
+                        <span>Unlimited Sessions</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Shield className="w-4 h-4" />
+                        <span>Advanced Analytics</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Users className="w-4 h-4" />
+                        <span>Group Sessions</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="ml-8">
+                    <Button 
+                      onClick={() => navigate('/subscription')}
+                      variant="accent" 
+                      size="lg"
+                      className="bg-white text-accent-600 hover:bg-accent-50 shadow-large"
+                      icon={ArrowRight}
+                    >
+                      <TranslatedText>Upgrade Now</TranslatedText>
+                    </Button>
+                  </div>
                 </div>
-                <Button 
-                  onClick={() => navigate('/subscription')}
-                  variant="accent" 
-                  className="bg-white text-accent-600 hover:bg-accent-50"
-                  icon={ArrowRight}
-                >
-                  <TranslatedText>Upgrade Now</TranslatedText>
-                </Button>
               </div>
             </Card>
           </motion.div>
         )}
+
+        {/* Trust & Security Message */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.5 }}
+          className="text-center mt-12"
+        >
+          <div className="flex items-center justify-center space-x-2 text-neutral-600">
+            <Shield className="w-5 h-5 text-success-500" />
+            <p className="text-sm">
+              <TranslatedText>Your data is private, encrypted, and yours alone; even we can't see it. You can cancel anytime, no questions asked.</TranslatedText>
+            </p>
+          </div>
+        </motion.div>
       </div>
 
       <Footer />

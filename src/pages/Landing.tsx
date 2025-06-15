@@ -267,8 +267,7 @@ export const Landing: React.FC = () => {
             <div className="flex items-center justify-center space-x-2 text-neutral-600">
               <Shield className="w-5 h-5 text-success-500" />
               <p className="text-sm">
-                <strong>🔒 Your data is private and encrypted</strong>, even as a company we can't read your data. 
-                <strong> Cancel anytime - no questions asked.</strong>
+                <TranslatedText>Your data is private, encrypted, and yours alone; even we can't see it. You can cancel anytime, no questions asked.</TranslatedText>
               </p>
             </div>
           </motion.div>
