@@ -392,7 +392,7 @@ export const Home: React.FC = () => {
                           <div className="space-y-6">
                             <div className="flex items-center space-x-3">
                               <div className={`w-12 h-12 bg-gradient-to-br ${conflictTypes[currentSlide].color} rounded-xl flex items-center justify-center`}>
-                                <conflictTypes[currentSlide].icon className="w-6 h-6 text-white" />
+                                {React.createElement(conflictTypes[currentSlide].icon, { className: "w-6 h-6 text-white" })}
                               </div>
                               <span className="text-accent-400 text-sm font-medium uppercase tracking-wide">
                                 Conflict Resolution
