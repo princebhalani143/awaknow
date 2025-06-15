@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { supabase } from './lib/supabase';
 import { useAuthStore } from './stores/authStore';
 import { Landing } from './pages/Landing';
+import { About } from './pages/About';
+import { Plans } from './pages/Plans';
 import { Auth } from './pages/Auth';
 import { Home } from './pages/Home';
 import { Reflect } from './pages/Reflect';
@@ -60,6 +62,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/plans" element={<Plans />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-conditions" element={<TermsConditions />} />

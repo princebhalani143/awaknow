@@ -88,7 +88,7 @@ export const PrivacyPolicy: React.FC = () => {
                   <li>Device information and browser type</li>
                   <li>IP address and location data (anonymized)</li>
                   <li>Usage patterns and session analytics</li>
-                  <li>Cookies and similar tracking technologies</li>
+                  <li>Cookies and similar tracking technologies (Google Analytics 4, GTM, Facebook, LinkedIn)</li>
                 </ul>
               </div>
             </div>
@@ -113,6 +113,34 @@ export const PrivacyPolicy: React.FC = () => {
               <div className="p-3 bg-neutral-50 rounded-lg">
                 <strong className="text-neutral-800">Communication:</strong> To send important updates, security alerts, and service notifications (with your consent)
               </div>
+              <div className="p-3 bg-warning-50 rounded-lg">
+                <strong className="text-warning-800">Marketing & Analytics:</strong> We use Google Analytics 4, Google Tag Manager, Facebook Pixel, LinkedIn Insight Tag, and other tracking technologies to understand user behavior, improve our website, and deliver relevant marketing content. You can opt out of these tracking technologies through our cookie preferences.
+              </div>
+            </div>
+          </Card>
+
+          {/* Tracking Technologies */}
+          <Card>
+            <h3 className="text-lg font-semibold text-neutral-800 mb-4">Tracking Technologies & Marketing</h3>
+            <div className="space-y-3 text-neutral-700 text-sm">
+              <p>We use various tracking technologies to improve our services and marketing efforts:</p>
+              <div className="grid md:grid-cols-2 gap-3">
+                <div className="p-3 bg-neutral-50 rounded-lg">
+                  <strong>Google Analytics 4 & GTM:</strong> Website analytics, user behavior tracking, and conversion measurement
+                </div>
+                <div className="p-3 bg-neutral-50 rounded-lg">
+                  <strong>Facebook Pixel:</strong> Social media advertising optimization and audience insights
+                </div>
+                <div className="p-3 bg-neutral-50 rounded-lg">
+                  <strong>LinkedIn Insight Tag:</strong> Professional network advertising and B2B marketing analytics
+                </div>
+                <div className="p-3 bg-neutral-50 rounded-lg">
+                  <strong>Essential Cookies:</strong> Required for basic functionality and security
+                </div>
+              </div>
+              <p className="text-xs text-neutral-600">
+                You can manage these tracking preferences through our cookie consent banner or your browser settings. Note that disabling certain tracking may limit website functionality.
+              </p>
             </div>
           </Card>
 
@@ -137,7 +165,7 @@ export const PrivacyPolicy: React.FC = () => {
                 <h4 className="font-medium text-neutral-800 mb-2">Data Retention</h4>
                 <p className="text-sm">
                   We retain your personal data only as long as necessary to provide our services and comply with legal obligations. 
-                  Health information is retained according to HIPAA requirements. You can request data deletion at any time.
+                  Health information is retained according to HIPAA requirements. Marketing and analytics data is retained according to platform policies (Google: 26 months, Facebook: 180 days, LinkedIn: 90 days). You can request data deletion at any time.
                 </p>
               </div>
             </div>
@@ -159,6 +187,7 @@ export const PrivacyPolicy: React.FC = () => {
                     <li>Right to erasure ("right to be forgotten")</li>
                     <li>Right to data portability</li>
                     <li>Right to object to processing</li>
+                    <li>Right to opt-out of marketing tracking</li>
                   </ul>
                 </div>
               </div>
@@ -170,6 +199,7 @@ export const PrivacyPolicy: React.FC = () => {
                     <li>Right to delete personal information</li>
                     <li>Right to opt-out of data sales</li>
                     <li>Right to non-discrimination</li>
+                    <li>Right to opt-out of targeted advertising</li>
                   </ul>
                 </div>
               </div>
@@ -191,20 +221,20 @@ export const PrivacyPolicy: React.FC = () => {
           <Card>
             <h3 className="text-lg font-semibold text-neutral-800 mb-4">Cookies & Tracking Technologies</h3>
             <div className="space-y-3 text-neutral-700 text-sm">
-              <p>We use cookies and similar technologies to enhance your experience:</p>
+              <p>We use cookies and similar technologies to enhance your experience and for marketing purposes:</p>
               <div className="grid md:grid-cols-3 gap-3">
                 <div className="p-3 bg-neutral-50 rounded-lg">
                   <strong>Essential Cookies:</strong> Required for basic functionality and security
                 </div>
                 <div className="p-3 bg-neutral-50 rounded-lg">
-                  <strong>Analytics Cookies:</strong> Help us understand usage patterns (with consent)
+                  <strong>Analytics Cookies:</strong> Google Analytics 4, GTM for usage insights (with consent)
                 </div>
                 <div className="p-3 bg-neutral-50 rounded-lg">
-                  <strong>Preference Cookies:</strong> Remember your settings and preferences
+                  <strong>Marketing Cookies:</strong> Facebook, LinkedIn, and other social media tracking for advertising optimization
                 </div>
               </div>
               <p className="text-xs text-neutral-600">
-                You can manage cookie preferences through our cookie consent banner or your browser settings.
+                You can manage cookie preferences through our cookie consent banner or your browser settings. Opting out of marketing cookies will not affect core functionality but may limit personalized content.
               </p>
             </div>
           </Card>
@@ -213,14 +243,17 @@ export const PrivacyPolicy: React.FC = () => {
           <Card>
             <h3 className="text-lg font-semibold text-neutral-800 mb-4">Third-Party Services</h3>
             <div className="space-y-3 text-neutral-700 text-sm">
-              <p>We work with trusted partners who help us provide our services:</p>
+              <p>We work with trusted partners who help us provide our services and marketing:</p>
               <ul className="list-disc list-inside space-y-1">
                 <li><strong>Supabase:</strong> Secure database and authentication services</li>
                 <li><strong>AI Providers:</strong> For emotional analysis and conversation capabilities</li>
-                <li><strong>Analytics Services:</strong> For usage insights and platform improvement</li>
+                <li><strong>Google (Analytics 4, GTM):</strong> Website analytics and tag management</li>
+                <li><strong>Facebook:</strong> Social media advertising and audience insights</li>
+                <li><strong>LinkedIn:</strong> Professional network advertising and analytics</li>
+                <li><strong>Other Marketing Platforms:</strong> For website improvement and targeted advertising</li>
               </ul>
               <p className="text-xs text-neutral-600">
-                All third-party services are bound by strict data processing agreements and privacy standards.
+                All third-party services are bound by strict data processing agreements and privacy standards. Marketing data is anonymized and aggregated where possible.
               </p>
             </div>
           </Card>
@@ -235,6 +268,7 @@ export const PrivacyPolicy: React.FC = () => {
               <li>Standard Contractual Clauses (SCCs) for EU data transfers</li>
               <li>Adequacy decisions where applicable</li>
               <li>Additional safeguards for sensitive health information</li>
+              <li>Marketing data transfers comply with platform-specific privacy frameworks</li>
             </ul>
           </Card>
 
@@ -272,8 +306,9 @@ export const PrivacyPolicy: React.FC = () => {
           <Card>
             <h3 className="text-lg font-semibold text-neutral-800 mb-4">Policy Updates</h3>
             <p className="text-neutral-700 text-sm">
-              We may update this Privacy Policy periodically. We will notify you of significant changes via email 
-              or through our platform at <a href="https://awaknow.org" className="text-primary-600 hover:text-primary-700 underline">https://awaknow.org</a>. 
+              We may update this Privacy Policy periodically to reflect changes in our practices or legal requirements. 
+              We will notify you of significant changes via email or through our platform at{' '}
+              <a href="https://awaknow.org" className="text-primary-600 hover:text-primary-700 underline">https://awaknow.org</a>. 
               Your continued use of AwakNow after changes constitutes acceptance of the updated policy.
             </p>
           </Card>

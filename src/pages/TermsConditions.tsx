@@ -71,6 +71,7 @@ export const TermsConditions: React.FC = () => {
                 <li>Have the legal capacity to enter into these Terms</li>
                 <li>Agree to comply with all applicable laws and regulations</li>
                 <li>Understand that AwakNow is a wellness platform, not a substitute for professional medical care</li>
+                <li>Consent to our use of tracking technologies (Google Analytics 4, GTM, Facebook, LinkedIn) for website improvement and marketing purposes</li>
               </ul>
             </div>
           </Card>
@@ -87,6 +88,7 @@ export const TermsConditions: React.FC = () => {
                   <li>Conflict resolution tools and mediated discussions</li>
                   <li>Emotional tracking and wellness insights</li>
                   <li>Personalized recommendations and growth plans</li>
+                  <li>Website analytics and marketing optimization through third-party tracking</li>
                 </ul>
               </div>
               <div className="p-4 bg-warning-50 rounded-lg border border-warning-200">
@@ -130,6 +132,7 @@ export const TermsConditions: React.FC = () => {
                   <li>Use the platform to harm others or yourself</li>
                   <li>Violate any applicable laws or regulations</li>
                   <li>Share your account with others</li>
+                  <li>Interfere with our tracking and analytics systems</li>
                 </ul>
               </div>
             </div>
@@ -157,6 +160,9 @@ export const TermsConditions: React.FC = () => {
                   <strong className="text-success-800">Data Security:</strong> End-to-end encryption and secure storage
                 </div>
               </div>
+              <div className="p-3 bg-warning-50 rounded-lg">
+                <strong className="text-warning-800">Marketing & Analytics:</strong> We use Google Analytics 4, Google Tag Manager, Facebook Pixel, LinkedIn Insight Tag, and other tracking technologies to improve our website and deliver relevant marketing content. You can opt out through our cookie preferences.
+              </div>
               <p>
                 For detailed information about our data practices, please review our{' '}
                 <button
@@ -178,7 +184,7 @@ export const TermsConditions: React.FC = () => {
                 <h4 className="font-medium text-neutral-800 mb-2">Service Tiers</h4>
                 <ul className="list-disc list-inside space-y-1 ml-4">
                   <li><strong>Free Tier:</strong> Limited sessions and basic features</li>
-                  <li><strong>Premium Tier:</strong> Unlimited sessions, advanced insights, priority support</li>
+                  <li><strong>Premium Tiers:</strong> Unlimited sessions, advanced insights, priority support</li>
                 </ul>
               </div>
               <div>
@@ -203,7 +209,7 @@ export const TermsConditions: React.FC = () => {
               </div>
               <div>
                 <h4 className="font-medium text-neutral-800 mb-2">Your Content</h4>
-                <p>You retain ownership of content you create. By using our services, you grant us a limited license to process your content to provide our services and improve our AI models (in anonymized form only).</p>
+                <p>You retain ownership of content you create. By using our services, you grant us a limited license to process your content to provide our services and improve our AI models (in anonymized form only). We may also use aggregated, anonymized data for marketing and website improvement purposes.</p>
               </div>
             </div>
           </Card>
@@ -222,6 +228,10 @@ export const TermsConditions: React.FC = () => {
               <div>
                 <h4 className="font-medium text-neutral-800 mb-2">Service Availability</h4>
                 <p>We strive for 99.9% uptime but cannot guarantee uninterrupted service. We may temporarily suspend service for maintenance or updates.</p>
+              </div>
+              <div>
+                <h4 className="font-medium text-neutral-800 mb-2">Third-Party Services</h4>
+                <p>Our website uses third-party tracking and analytics services (Google, Facebook, LinkedIn, etc.). We are not responsible for the privacy practices or content of these third-party services.</p>
               </div>
               <div>
                 <h4 className="font-medium text-neutral-800 mb-2">Limitation of Liability</h4>
@@ -252,7 +262,7 @@ export const TermsConditions: React.FC = () => {
               </div>
               <div>
                 <h4 className="font-medium text-neutral-800 mb-2">Effect of Termination</h4>
-                <p>Upon termination, your access will cease, but we may retain certain data as required by law or our Privacy Policy.</p>
+                <p>Upon termination, your access will cease, but we may retain certain data as required by law or our Privacy Policy. Marketing and analytics data may be retained according to third-party platform policies.</p>
               </div>
             </div>
           </Card>
@@ -275,8 +285,9 @@ export const TermsConditions: React.FC = () => {
           <Card>
             <h3 className="text-lg font-semibold text-neutral-800 mb-4">Changes to Terms</h3>
             <p className="text-neutral-700 text-sm">
-              We may update these Terms periodically. Significant changes will be communicated via email or platform notification 
-              at least 30 days before taking effect. Continued use after changes constitutes acceptance of the updated Terms.
+              We may update these Terms periodically to reflect changes in our services, legal requirements, or business practices. 
+              Significant changes will be communicated via email or platform notification at least 30 days before taking effect. 
+              Continued use after changes constitutes acceptance of the updated Terms.
             </p>
           </Card>
 

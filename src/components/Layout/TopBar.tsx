@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Settings, Brain, Lock, LogOut, Shield, Crown, Trash2, Receipt } from 'lucide-react';
+import { User, Settings, Brain, Lock, LogOut, Shield, Crown, Trash2, Receipt, Menu, X } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +11,7 @@ export const TopBar: React.FC = () => {
   const { user, signOut } = useAuthStore();
   const { subscription } = useSubscriptionStore();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [showAccountDeletion, setShowAccountDeletion] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
@@ -116,6 +117,11 @@ export const TopBar: React.FC = () => {
     setActionMessage('');
   };
 
+  const navigationItems = [
+    { label: 'About', path: '/about' },
+    { label: 'Plans', path: '/plans' },
+  ];
+
   return (
     <>
       <div className="flex items-center justify-between p-4 bg-white/80 backdrop-blur-sm border-b border-neutral-200">
@@ -131,6 +137,21 @@ export const TopBar: React.FC = () => {
           </button>
         </div>
 
+        {/* Desktop Navigation */}
+        {!user && (
+          <div className="hidden md:flex items-center space-x-6">
+            {navigationItems.map((item) => (
+              <button
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                className="text-neutral-600 hover:text-primary-600 transition-colors font-medium"
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className="flex items-center space-x-3">
           {/* Subscription Badge */}
           {user && subscription && subscription.plan_id !== 'awaknow_free' && (
@@ -138,6 +159,16 @@ export const TopBar: React.FC = () => {
               <Crown className="w-4 h-4 text-accent-600" />
               <span className="text-sm font-medium text-accent-700">{subscription.plan_name}</span>
             </div>
+          )}
+
+          {/* Mobile Menu Button */}
+          {!user && (
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="md:hidden w-10 h-10 bg-neutral-100 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-neutral-200 transition-colors"
+            >
+              {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           )}
 
           {/* User Icon - Always visible */}
@@ -245,6 +276,33 @@ export const TopBar: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Mobile Navigation Menu */}
+      <AnimatePresence>
+        {!user && showMobileMenu && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-white border-b border-neutral-200"
+          >
+            <div className="p-4 space-y-2">
+              {navigationItems.map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => {
+                    navigate(item.path);
+                    setShowMobileMenu(false);
+                  }}
+                  className="block w-full text-left px-3 py-2 text-neutral-600 hover:text-primary-600 hover:bg-neutral-50 rounded-lg transition-colors"
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Password Change Modal */}
       <AnimatePresence>
