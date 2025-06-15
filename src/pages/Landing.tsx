@@ -1,12 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Brain, Users, ArrowRight } from 'lucide-react';
+import { Heart, Brain, Users, ArrowRight, Crown, Zap, Star } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { TranslatedText } from '../components/UI/TranslatedText';
 import { useNavigate } from 'react-router-dom';
 import { TopBar } from '../components/Layout/TopBar';
 import { Footer } from '../components/Layout/Footer';
+import { SUBSCRIPTION_PLANS } from '../config/subscriptionPlans';
 
 export const Landing: React.FC = () => {
   const navigate = useNavigate();
@@ -31,6 +32,8 @@ export const Landing: React.FC = () => {
       color: 'from-accent-500 to-accent-600'
     }
   ];
+
+  const plans = Object.values(SUBSCRIPTION_PLANS);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex flex-col">
@@ -134,11 +137,97 @@ export const Landing: React.FC = () => {
           ))}
         </motion.div>
 
-        {/* CTA Section */}
+        {/* Pricing Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.2 }}
+          className="mb-16"
+        >
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-neutral-800 mb-4">
+              <TranslatedText>Choose Your Plan</TranslatedText>
+            </h2>
+            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+              <TranslatedText>Start free and upgrade as your wellness journey grows</TranslatedText>
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {plans.map((plan, index) => (
+              <motion.div
+                key={plan.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.4 + index * 0.1 }}
+                className="relative"
+              >
+                {plan.name === 'reflect_plus' && (
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                    <div className="bg-gradient-to-r from-accent-500 to-accent-600 text-white px-4 py-1 rounded-full text-sm font-medium flex items-center space-x-1">
+                      <Star className="w-3 h-3" />
+                      <span>Most Popular</span>
+                    </div>
+                  </div>
+                )}
+
+                <Card className={`text-center h-full ${plan.name === 'reflect_plus' ? 'ring-2 ring-accent-500 ring-opacity-50' : ''}`}>
+                  <div className="mb-6">
+                    <h3 className="text-xl font-bold text-neutral-800 mb-2">{plan.displayName}</h3>
+                    
+                    {plan.price.monthly === 0 ? (
+                      <div className="text-3xl font-bold text-neutral-800">Free</div>
+                    ) : (
+                      <div className="space-y-1">
+                        <div className="text-3xl font-bold text-neutral-800">
+                          ${plan.price.monthly}
+                          <span className="text-lg font-normal text-neutral-600">/month</span>
+                        </div>
+                        <div className="text-sm text-success-600">
+                          or ${plan.price.annual}/year (save ${(plan.price.monthly * 12 - plan.price.annual).toFixed(0)})
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-3 mb-8 text-left">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-neutral-600">AI Video Minutes</span>
+                      <span className="font-medium">{plan.features.tavusMinutes}/month</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-neutral-600">Solo Sessions</span>
+                      <span className="font-medium">
+                        {plan.features.soloSessionsPerDay === 'unlimited' ? 'Unlimited' : `${plan.features.soloSessionsPerDay}/day`}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-neutral-600">Group Sessions</span>
+                      <span className={`font-medium ${plan.features.groupSessions ? 'text-success-600' : 'text-neutral-400'}`}>
+                        {plan.features.groupSessions ? '✓' : '✗'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <Button
+                    onClick={() => navigate('/auth')}
+                    variant={plan.name === 'reflect_plus' ? 'primary' : plan.price.monthly === 0 ? 'outline' : 'secondary'}
+                    className="w-full"
+                    icon={plan.name === 'reflect_plus' ? Zap : undefined}
+                  >
+                    {plan.price.monthly === 0 ? 'Start Free' : 'Get Started'}
+                  </Button>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* CTA Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1.8 }}
           className="text-center"
         >
           <Card className="bg-gradient-to-br from-primary-500 to-secondary-500 text-white border-0">

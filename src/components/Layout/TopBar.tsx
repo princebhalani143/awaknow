@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { User, Settings, Brain, Lock, LogOut, Shield } from 'lucide-react';
+import { User, Settings, Brain, Lock, LogOut, Shield, Crown } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { useSubscriptionStore } from '../../stores/subscriptionStore';
 
 export const TopBar: React.FC = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuthStore();
+  const { subscription } = useSubscriptionStore();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showPasswordReset, setShowPasswordReset] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
@@ -62,6 +64,14 @@ export const TopBar: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-3">
+          {/* Subscription Badge */}
+          {user && subscription && subscription.plan_id !== 'awaknow_free' && (
+            <div className="hidden sm:flex items-center space-x-2 px-3 py-1 bg-gradient-to-r from-accent-100 to-primary-100 rounded-full">
+              <Crown className="w-4 h-4 text-accent-600" />
+              <span className="text-sm font-medium text-accent-700">{subscription.plan_name}</span>
+            </div>
+          )}
+
           {/* User Icon - Always visible */}
           <div className="relative">
             <button
@@ -83,9 +93,27 @@ export const TopBar: React.FC = () => {
                   <div className="p-2">
                     <div className="px-3 py-3 border-b border-neutral-200">
                       <p className="text-sm font-medium text-neutral-800 truncate">{user.email}</p>
-                      <p className="text-xs text-neutral-500 capitalize">{user.subscription_tier} Plan</p>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <p className="text-xs text-neutral-500 capitalize">
+                          {subscription?.plan_name || 'Free'} Plan
+                        </p>
+                        {subscription?.plan_id !== 'awaknow_free' && (
+                          <Crown className="w-3 h-3 text-accent-500" />
+                        )}
+                      </div>
                     </div>
                     
+                    <button 
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        navigate('/subscription');
+                      }}
+                      className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-neutral-100 transition-colors"
+                    >
+                      <Crown className="w-4 h-4 text-neutral-500" />
+                      <span className="text-sm text-neutral-700">Subscription</span>
+                    </button>
+
                     <button 
                       onClick={() => {
                         setShowProfileMenu(false);

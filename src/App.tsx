@@ -9,6 +9,7 @@ import { Reflect } from './pages/Reflect';
 import { Resolve } from './pages/Resolve';
 import { Session } from './pages/Session';
 import { Subscription } from './pages/Subscription';
+import { Analytics } from './pages/Analytics';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsConditions } from './pages/TermsConditions';
 import { CookieConsent } from './components/UI/CookieConsent';
@@ -80,6 +81,10 @@ function App() {
         <Route 
           path="/subscription" 
           element={user ? <Subscription /> : <Navigate to="/auth" />} 
+        />
+        <Route 
+          path="/analytics" 
+          element={user ? <Analytics /> : <Navigate to="/auth" />} 
         />
       </Routes>
       <CookieConsent />
