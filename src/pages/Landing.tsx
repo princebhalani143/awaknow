@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Brain, Users, ArrowRight, Crown, Zap, Star, Check } from 'lucide-react';
+import { Heart, Brain, Users, ArrowRight, Crown, Zap, Star, Check, Shield } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { TranslatedText } from '../components/UI/TranslatedText';
@@ -34,6 +34,10 @@ export const Landing: React.FC = () => {
   ];
 
   const plans = Object.values(SUBSCRIPTION_PLANS);
+
+  const formatFeature = (value: number | 'unlimited') => {
+    return value === 'unlimited' ? 'Unlimited' : value.toString();
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex flex-col">
@@ -137,7 +141,7 @@ export const Landing: React.FC = () => {
           ))}
         </motion.div>
 
-        {/* Pricing Section - Matching Backend Design */}
+        {/* Pricing Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -175,19 +179,17 @@ export const Landing: React.FC = () => {
                   <div className="mb-6">
                     <h3 className="text-xl font-bold text-neutral-800 mb-2">{plan.displayName}</h3>
                     
-                    {plan.price.monthly === 0 ? (
-                      <div className="text-3xl font-bold text-neutral-800">Free</div>
-                    ) : (
-                      <div className="space-y-1">
-                        <div className="text-3xl font-bold text-neutral-800">
-                          ${plan.price.monthly}
-                          <span className="text-lg font-normal text-neutral-600">/month</span>
-                        </div>
+                    <div className="space-y-1">
+                      <div className="text-3xl font-bold text-neutral-800">
+                        ${plan.price.monthly.toFixed(2)}
+                        <span className="text-lg font-normal text-neutral-600">/month</span>
+                      </div>
+                      {plan.price.monthly > 0 && (
                         <div className="text-sm text-success-600">
                           or ${plan.price.annual}/year (save ${(plan.price.monthly * 12 - plan.price.annual).toFixed(0)})
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
 
                   <div className="space-y-4 mb-8">
@@ -200,14 +202,14 @@ export const Landing: React.FC = () => {
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-neutral-600">Solo Sessions</span>
                         <span className="font-medium text-neutral-800">
-                          {plan.features.soloSessionsPerDay === 'unlimited' ? 'Unlimited' : `${plan.features.soloSessionsPerDay}/day`}
+                          {formatFeature(plan.features.soloSessionsPerDay)}/day
                         </span>
                       </div>
                       
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-neutral-600">AI Insights</span>
                         <span className="font-medium text-neutral-800">
-                          {plan.features.insightsPerWeek === 'unlimited' ? 'Unlimited' : `${plan.features.insightsPerWeek}/week`}
+                          {formatFeature(plan.features.insightsPerWeek)}/week
                         </span>
                       </div>
                       
@@ -248,19 +250,35 @@ export const Landing: React.FC = () => {
                     className="w-full"
                     icon={plan.name === 'reflect_plus' ? Zap : undefined}
                   >
-                    {plan.price.monthly === 0 ? 'Start Free' : 'Get Started'}
+                    {plan.price.monthly === 0 ? 'Get Started Free' : 'Get Started'}
                   </Button>
                 </Card>
               </motion.div>
             ))}
           </div>
+
+          {/* Trust Message */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.8 }}
+            className="text-center mt-8"
+          >
+            <div className="flex items-center justify-center space-x-2 text-neutral-600">
+              <Shield className="w-5 h-5 text-success-500" />
+              <p className="text-sm">
+                <strong>🔒 Your data is private and encrypted</strong>, even as a company we can't read your data. 
+                <strong> Cancel anytime - no questions asked.</strong>
+              </p>
+            </div>
+          </motion.div>
         </motion.div>
 
         {/* CTA Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.8 }}
+          transition={{ duration: 0.8, delay: 2.0 }}
           className="text-center"
         >
           <Card className="bg-gradient-to-br from-primary-500 to-secondary-500 text-white border-0">

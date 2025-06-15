@@ -34,7 +34,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
     }
     
     if (plan.price.monthly === 0) {
-      return 'Downgrade to Free';
+      return 'Get Started Free';
     }
     
     return 'Choose Monthly';
@@ -61,21 +61,17 @@ export const PlanCard: React.FC<PlanCardProps> = ({
         <div className="text-center mb-6">
           <h3 className="text-xl font-bold text-neutral-800 mb-2">{plan.displayName}</h3>
           
-          {plan.price.monthly === 0 ? (
-            <div className="text-3xl font-bold text-neutral-800">Free</div>
-          ) : (
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-neutral-800">
-                ${plan.price.monthly}
-                <span className="text-lg font-normal text-neutral-600">/month</span>
-              </div>
-              {annualSavings > 0 && (
-                <div className="text-sm text-success-600">
-                  Save {annualSavings}% with annual billing (${plan.price.annual}/year)
-                </div>
-              )}
+          <div className="space-y-2">
+            <div className="text-3xl font-bold text-neutral-800">
+              ${plan.price.monthly.toFixed(2)}
+              <span className="text-lg font-normal text-neutral-600">/month</span>
             </div>
-          )}
+            {annualSavings > 0 && (
+              <div className="text-sm text-success-600">
+                Save {annualSavings}% with annual billing (${plan.price.annual}/year)
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="space-y-4 mb-8">
