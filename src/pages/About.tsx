@@ -441,7 +441,7 @@ export const About: React.FC = () => {
                       <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 to-secondary-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                       
                       <div className="relative z-10">
-                        <div className="w-34 h-34 mx-auto mb-4 flex items-center justify-center">
+                        <div className="mx-auto mb-4 flex items-center justify-center">
                           <img
                             src={partner.logo}
                             alt={`${partner.name} logo`}
