@@ -50,8 +50,8 @@ export const About: React.FC = () => {
     },
     {
       year: 'July 2025',
-      title: 'Beta Launch',
-      description: 'Successfully launched beta version with core features: AI conversations, emotion analysis, and personalized insights.',
+      title: 'Submitted for Bolt Hackathon',
+      description: 'Successfully submitted our innovative AI-powered emotional wellness platform to the world\'s largest hackathon by bolt.new, showcasing our breakthrough approach to mental health technology.',
       icon: Star,
       color: 'from-accent-500 to-accent-600'
     },
@@ -65,14 +65,14 @@ export const About: React.FC = () => {
     {
       year: 'August 2025',
       title: 'Expansion & Innovation',
-      description: 'Leveraging hackathon victory funding to expand our team, enhance AI capabilities, and develop advanced features for deeper emotional intelligence.',
+      description: 'Leveraging hackathon victory funding to expand our team, enhance AI capabilities, integrate professional-grade APIs, and develop advanced features for deeper emotional intelligence.',
       icon: TrendingUp,
       color: 'from-warning-500 to-warning-600'
     },
     {
       year: 'September 2025',
-      title: 'Global Expansion',
-      description: 'Planning international expansion with multi-language support, cultural adaptation, and partnerships with global wellness organizations.',
+      title: 'Global Launch',
+      description: 'Official worldwide launch with multi-language support, cultural adaptation, partnerships with global wellness organizations, and full-scale deployment of our emotional wellness platform.',
       icon: Globe,
       color: 'from-primary-600 to-secondary-600'
     },
