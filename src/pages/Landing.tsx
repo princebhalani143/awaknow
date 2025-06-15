@@ -686,7 +686,7 @@ export const Landing: React.FC = () => {
               
               {/* Embedded Video */}
               <iframe
-                src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1"
+                src="https://www.youtube.com/embed/ZcdwGRnV1Fs?autoplay=1&rel=0&modestbranding=1"
                 title="AwakNow Demo - Transform Your Emotional Wellness"
                 className="w-full h-full"
                 frameBorder="0"
