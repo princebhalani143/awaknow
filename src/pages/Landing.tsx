@@ -329,55 +329,6 @@ export const Landing: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Demo Video Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.0 }}
-            className="mb-16"
-          >
-            <Card className="overflow-hidden bg-gradient-to-br from-neutral-900 to-neutral-800 border-0">
-              <div className="aspect-video relative">
-                {/* Background Image */}
-                <div 
-                  className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-60"
-                  style={{
-                    backgroundImage: `url('https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80')`
-                  }}
-                />
-                
-                {/* Overlay Content */}
-                <div className="relative h-full flex items-center justify-center bg-gradient-to-br from-primary-500/20 to-secondary-500/20">
-                  <div className="text-center space-y-6">
-                    {/* Play Button - Properly centered */}
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setShowVideo(true)}
-                      className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-large hover:bg-white/30 transition-colors group mx-auto"
-                    >
-                      <Play className="w-8 h-8 text-white ml-1 group-hover:text-accent-200" />
-                    </motion.button>
-                    
-                    <div className="space-y-2">
-                      <h3 className="text-2xl font-semibold text-white">
-                        <TranslatedText>See AwakNow in Action</TranslatedText>
-                      </h3>
-                      <p className="text-white/80 max-w-md mx-auto">
-                        <TranslatedText>Watch how AI-powered conversations can transform your emotional wellness journey</TranslatedText>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Duration Badge */}
-                <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-medium">
-                  2:34
-                </div>
-              </div>
-            </Card>
-          </motion.div>
-
           {/* CTA Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -447,42 +398,6 @@ export const Landing: React.FC = () => {
           </motion.div>
         </div>
       </div>
-
-      {/* Video Modal */}
-      {showVideo && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
-          onClick={() => setShowVideo(false)}
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="relative w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setShowVideo(false)}
-              className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            
-            {/* Embedded Video */}
-            <iframe
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1"
-              title="AwakNow Demo Video"
-              className="w-full h-full"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </motion.div>
-        </motion.div>
-      )}
 
       <Footer />
     </div>
