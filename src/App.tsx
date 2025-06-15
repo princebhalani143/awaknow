@@ -8,6 +8,7 @@ import { Home } from './pages/Home';
 import { Reflect } from './pages/Reflect';
 import { Resolve } from './pages/Resolve';
 import { Session } from './pages/Session';
+import { Subscription } from './pages/Subscription';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsConditions } from './pages/TermsConditions';
 import { CookieConsent } from './components/UI/CookieConsent';
@@ -75,6 +76,10 @@ function App() {
         <Route 
           path="/session/:id" 
           element={user ? <Session /> : <Navigate to="/auth" />} 
+        />
+        <Route 
+          path="/subscription" 
+          element={user ? <Subscription /> : <Navigate to="/auth" />} 
         />
       </Routes>
       <CookieConsent />
