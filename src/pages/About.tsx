@@ -97,7 +97,7 @@ export const About: React.FC = () => {
   const techPartners = [
     {
       name: 'Bolt',
-      description: 'Development platform and hackathon host',
+      description: 'Dev platform and hackathon host',
       logo: '/bolt.jpg',
       category: 'Development',
       tier: 'primary'
