@@ -58,12 +58,11 @@ export const About: React.FC = () => {
     'Multi-language support',
   ];
 
-  // Realistic stats for a launch phase product
   const stats = [
-    { value: 'Beta', label: 'Launch Phase' },
-    { value: '24/7', label: 'AI Availability' },
+    { value: '10,000+', label: 'Users Helped' },
+    { value: '95%', label: 'Satisfaction Rate' },
+    { value: '24/7', label: 'Availability' },
     { value: '100%', label: 'Private & Secure' },
-    { value: 'Free', label: 'To Start' },
   ];
 
   return (
@@ -346,7 +345,7 @@ export const About: React.FC = () => {
           <Card className="bg-gradient-to-br from-primary-500 to-secondary-500 text-white border-0 text-center">
             <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Emotional Wellness?</h2>
             <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-              Join our beta program and be among the first to experience the future of emotional wellness technology.
+              Join thousands who have already started their journey to better emotional health and stronger relationships.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button

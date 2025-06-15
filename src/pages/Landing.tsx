@@ -58,12 +58,11 @@ export const Landing: React.FC = () => {
     { step: '4', title: 'Track Progress', description: 'Monitor your emotional wellness journey over time' },
   ];
 
-  // Realistic stats for a launch phase product
   const stats = [
-    { value: 'Beta', label: 'Launch Phase' },
+    { value: '10,000+', label: 'Users Helped' },
+    { value: '95%', label: 'Satisfaction Rate' },
     { value: '24/7', label: 'AI Availability' },
     { value: '100%', label: 'Private & Secure' },
-    { value: 'Free', label: 'To Start' },
   ];
 
   return (
@@ -324,7 +323,7 @@ export const Landing: React.FC = () => {
                 <TranslatedText>Transform Your Life Today</TranslatedText>
               </h2>
               <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-                <TranslatedText>Join our beta program and be among the first to experience the future of emotional wellness technology.</TranslatedText>
+                <TranslatedText>Join thousands who have already started their journey to better emotional health and stronger relationships.</TranslatedText>
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button

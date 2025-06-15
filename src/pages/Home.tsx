@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Users, Sparkles, TrendingUp, Clock, Star, Crown, ArrowRight, Shield, Zap, Heart, Award, Target, BarChart3, Calendar, MessageCircle, Settings } from 'lucide-react';
+import { Brain, Users, Sparkles, TrendingUp, Clock, Star, Play, Crown, ArrowRight, Shield, Zap, Heart, Award, Target, BarChart3, X } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { TranslatedText } from '../components/UI/TranslatedText';
 import { TopBar } from '../components/Layout/TopBar';
 import { Footer } from '../components/Layout/Footer';
-import { ConflictTypesSlider } from '../components/Home/ConflictTypesSlider';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useSubscriptionStore } from '../stores/subscriptionStore';
@@ -23,27 +22,18 @@ interface UserStats {
   currentStreak: number;
 }
 
-interface RecentSession {
-  id: string;
-  session_type: string;
-  title?: string;
-  created_at: string;
-  status: string;
-}
-
 export const Home: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const { subscription, limits, loading, loadSubscription } = useSubscriptionStore();
   const [stats, setStats] = useState<UserStats | null>(null);
-  const [recentSessions, setRecentSessions] = useState<RecentSession[]>([]);
   const [loadingStats, setLoadingStats] = useState(true);
+  const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => {
     if (user) {
       loadSubscription(user.id);
       loadUserStats();
-      loadRecentSessions();
     }
   }, [user, loadSubscription]);
 
@@ -96,17 +86,6 @@ export const Home: React.FC = () => {
     }
   };
 
-  const loadRecentSessions = async () => {
-    if (!user) return;
-
-    try {
-      const sessions = await SessionService.getUserSessions(user.id);
-      setRecentSessions(sessions.slice(0, 3)); // Get last 3 sessions
-    } catch (error) {
-      console.error('Error loading recent sessions:', error);
-    }
-  };
-
   const calculateStreak = (sessions: any[]): number => {
     if (sessions.length === 0) return 0;
 
@@ -116,6 +95,7 @@ export const Home: React.FC = () => {
       .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
 
     let streak = 0;
+    const today = new Date().toDateString();
     let currentDate = new Date();
 
     for (const sessionDate of sessionDates) {
@@ -131,42 +111,26 @@ export const Home: React.FC = () => {
     return streak;
   };
 
-  const quickActions = [
+  const options = [
     {
       id: 'reflect',
-      title: 'Quick Reflection',
-      description: 'Start a 5-minute AI conversation',
+      title: 'Reflect Alone',
+      description: 'Private AI-powered sessions for personal emotional exploration and growth',
       icon: Brain,
       color: 'from-primary-500 to-primary-600',
+      features: ['AI Video Conversations', 'Emotion Tracking', 'Personal Insights', 'Voice Analysis'],
       route: '/reflect',
       available: true,
     },
     {
       id: 'resolve',
-      title: 'Resolve Conflict',
-      description: 'Get help with a relationship issue',
+      title: 'Resolve With Someone',
+      description: 'Guided conflict resolution sessions with AI mediation for better relationships',
       icon: Users,
       color: 'from-secondary-500 to-secondary-600',
+      features: ['AI Mediation', 'Safe Environment', 'Communication Tools', 'Shared Insights'],
       route: '/resolve',
       available: limits?.canCreateGroupSessions || false,
-    },
-    {
-      id: 'analytics',
-      title: 'View Progress',
-      description: 'Check your wellness journey',
-      icon: BarChart3,
-      color: 'from-accent-500 to-accent-600',
-      route: '/analytics',
-      available: true,
-    },
-    {
-      id: 'subscription',
-      title: 'Manage Plan',
-      description: 'Update your subscription',
-      icon: Crown,
-      color: 'from-warning-500 to-warning-600',
-      route: '/subscription',
-      available: true,
     }
   ];
 
@@ -228,36 +192,24 @@ export const Home: React.FC = () => {
       <TopBar />
       
       <div className="container mx-auto px-4 py-8 max-w-7xl flex-1">
-        {/* Personal Welcome */}
+        {/* Hero Welcome Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-8"
+          className="mb-12"
         >
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-neutral-800">
-                <TranslatedText>Welcome back, {user?.email?.split('@')[0] || 'Friend'}! 👋</TranslatedText>
-              </h1>
-              <p className="text-lg text-neutral-600 mt-2">
-                <TranslatedText>Ready to continue your wellness journey?</TranslatedText>
-              </p>
-            </div>
-            <div className="text-right">
-              <div className="text-sm text-neutral-500">Today</div>
-              <div className="text-lg font-semibold text-neutral-800">
-                {new Date().toLocaleDateString('en-US', { 
-                  weekday: 'long', 
-                  month: 'short', 
-                  day: 'numeric' 
-                })}
-              </div>
-            </div>
+          <div className="text-center mb-8">
+            <h1 className="text-4xl md:text-5xl font-bold text-neutral-800 mb-4">
+              <TranslatedText>Welcome back, {user?.email?.split('@')[0] || 'Friend'}! 👋</TranslatedText>
+            </h1>
+            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+              <TranslatedText>Continue your journey of emotional wellness and personal growth with AI-powered insights</TranslatedText>
+            </p>
           </div>
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* Premium Stats Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             {displayStats.map((stat, index) => (
               <motion.div
                 key={stat.label}
@@ -265,15 +217,15 @@ export const Home: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
               >
-                <Card className="text-center p-4 hover:shadow-medium transition-all duration-300">
-                  <div className={`w-10 h-10 ${stat.bgColor} rounded-xl mx-auto mb-2 flex items-center justify-center`}>
-                    <stat.icon className={`w-5 h-5 ${stat.color}`} />
+                <Card className="text-center p-6 hover:shadow-medium transition-all duration-300">
+                  <div className={`w-12 h-12 ${stat.bgColor} rounded-xl mx-auto mb-3 flex items-center justify-center`}>
+                    <stat.icon className={`w-6 h-6 ${stat.color}`} />
                   </div>
-                  <div className="text-2xl font-bold text-neutral-800">
+                  <div className="text-3xl font-bold text-neutral-800 mb-1">
                     {stat.value}
-                    {stat.unit && <span className="text-sm font-normal text-neutral-600 ml-1">{stat.unit}</span>}
+                    {stat.unit && <span className="text-lg font-normal text-neutral-600 ml-1">{stat.unit}</span>}
                   </div>
-                  <div className="text-xs text-neutral-500">
+                  <div className="text-sm text-neutral-500">
                     <TranslatedText>{stat.label}</TranslatedText>
                   </div>
                 </Card>
@@ -282,141 +234,133 @@ export const Home: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Quick Actions */}
+        {/* Premium AI Video Showcase */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-8"
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mb-12"
         >
-          <h2 className="text-2xl font-bold text-neutral-800 mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {quickActions.map((action, index) => (
-              <motion.div
-                key={action.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-              >
-                <Card 
-                  hover={action.available} 
-                  onClick={action.available ? () => navigate(action.route) : undefined} 
-                  className={`text-center p-4 h-full ${action.available ? 'cursor-pointer' : 'opacity-60'} group`}
-                >
-                  <div className={`w-12 h-12 bg-gradient-to-br ${action.color} rounded-xl mx-auto mb-3 flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                    <action.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="font-semibold text-neutral-800 text-sm mb-1">
-                    <TranslatedText>{action.title}</TranslatedText>
-                  </h3>
-                  <p className="text-xs text-neutral-600">
-                    <TranslatedText>{action.description}</TranslatedText>
-                  </p>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Main Content Grid */}
-        <div className="grid lg:grid-cols-3 gap-8 mb-8">
-          {/* Recent Activity */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="lg:col-span-2"
-          >
-            <Card className="h-full">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-semibold text-neutral-800">Recent Sessions</h3>
-                <Button
-                  onClick={() => navigate('/analytics')}
-                  variant="outline"
-                  size="sm"
-                  icon={ArrowRight}
-                >
-                  View All
-                </Button>
-              </div>
-              
-              {recentSessions.length > 0 ? (
+          <Card className="overflow-hidden bg-gradient-to-br from-neutral-900 to-neutral-800 text-white border-0">
+            <div className="grid lg:grid-cols-2 gap-8 p-8">
+              {/* Content Side */}
+              <div className="space-y-6">
                 <div className="space-y-4">
-                  {recentSessions.map((session) => (
-                    <div key={session.id} className="flex items-center space-x-4 p-3 bg-neutral-50 rounded-lg">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                        session.session_type === 'reflect_alone' ? 'bg-primary-100' : 'bg-secondary-100'
-                      }`}>
-                        {session.session_type === 'reflect_alone' ? (
-                          <Brain className={`w-5 h-5 text-primary-600`} />
-                        ) : (
-                          <Users className={`w-5 h-5 text-secondary-600`} />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-medium text-neutral-800">
-                          {session.title || (session.session_type === 'reflect_alone' ? 'Personal Reflection' : 'Conflict Resolution')}
-                        </div>
-                        <div className="text-sm text-neutral-600 flex items-center space-x-2">
-                          <Calendar className="w-3 h-3" />
-                          <span>{new Date(session.created_at).toLocaleDateString()}</span>
-                          <span className={`px-2 py-1 rounded-full text-xs ${
-                            session.status === 'completed' ? 'bg-success-100 text-success-700' : 'bg-warning-100 text-warning-700'
-                          }`}>
-                            {session.status}
-                          </span>
-                        </div>
-                      </div>
-                      <Button
-                        onClick={() => navigate(`/session/${session.id}`)}
-                        variant="ghost"
-                        size="sm"
-                        icon={ArrowRight}
-                      >
-                        View
-                      </Button>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-accent-400 rounded-full animate-pulse"></div>
+                    <span className="text-accent-400 text-sm font-medium uppercase tracking-wide">AI-Powered Sessions</span>
+                  </div>
+                  <h2 className="text-3xl md:text-4xl font-bold leading-tight">
+                    <TranslatedText>Your Personal AI Wellness Companion</TranslatedText>
+                  </h2>
+                  <p className="text-neutral-300 text-lg leading-relaxed">
+                    <TranslatedText>
+                      Experience personalized conversations that understand your unique emotional patterns, 
+                      provide real-time insights, and guide you toward meaningful growth and healing.
+                    </TranslatedText>
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {['Real-time Emotion Analysis', 'Personalized Responses', 'Voice & Video Support', 'Privacy Protected'].map((feature, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <Sparkles className="w-4 h-4 text-accent-400" />
+                      <span className="text-sm text-neutral-300">
+                        <TranslatedText>{feature}</TranslatedText>
+                      </span>
                     </div>
                   ))}
                 </div>
-              ) : (
-                <div className="text-center py-8">
-                  <MessageCircle className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
-                  <h4 className="font-medium text-neutral-800 mb-2">No sessions yet</h4>
-                  <p className="text-neutral-600 text-sm mb-4">Start your first session to begin tracking your progress</p>
+
+                <div className="flex space-x-4">
                   <Button
                     onClick={() => navigate('/reflect')}
-                    icon={Brain}
+                    variant="accent"
+                    size="lg"
+                    icon={Play}
+                    className="bg-accent-500 hover:bg-accent-600"
                   >
-                    Start Reflecting
+                    <TranslatedText>Start Session</TranslatedText>
+                  </Button>
+                  <Button
+                    onClick={() => navigate('/analytics')}
+                    variant="ghost"
+                    size="lg"
+                    className="text-white border-white/20 hover:bg-white/10"
+                  >
+                    <TranslatedText>View Analytics</TranslatedText>
                   </Button>
                 </div>
-              )}
-            </Card>
-          </motion.div>
+              </div>
 
-          {/* Achievements & Plan */}
-          <div className="space-y-6">
-            {/* Current Plan */}
-            {subscription && limits && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-              >
-                <Card>
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-neutral-800">Your Plan</h3>
+              {/* Video/Image Side */}
+              <div className="relative">
+                <div className="aspect-video bg-gradient-to-br from-neutral-700 to-neutral-600 rounded-2xl overflow-hidden relative">
+                  {/* Background Image from Unsplash */}
+                  <div 
+                    className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-60"
+                    style={{
+                      backgroundImage: `url('https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')`
+                    }}
+                  />
+                  
+                  {/* Overlay Content */}
+                  <div className="relative h-full flex items-center justify-center">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setShowVideo(true)}
+                      className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-large hover:bg-white/30 transition-colors group"
+                    >
+                      <Play className="w-8 h-8 text-white ml-1 group-hover:text-accent-200" />
+                    </motion.button>
+                  </div>
+
+                  {/* Duration Badge */}
+                  <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    3:42
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* Usage Overview & Achievements */}
+        <div className="grid lg:grid-cols-3 gap-8 mb-12">
+          {/* Usage Overview */}
+          {subscription && limits && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="lg:col-span-2"
+            >
+              <Card className="h-full">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-neutral-800">Your Plan Usage</h3>
+                  <div className="flex items-center space-x-3">
                     <span className="px-3 py-1 bg-gradient-to-r from-primary-100 to-secondary-100 text-primary-700 rounded-full text-sm font-medium flex items-center space-x-1">
                       <Crown className="w-3 h-3" />
                       <span>{subscription.plan_name}</span>
                     </span>
+                    <Button
+                      onClick={() => navigate('/subscription')}
+                      variant="outline"
+                      size="sm"
+                      icon={Crown}
+                    >
+                      Upgrade
+                    </Button>
                   </div>
-                  
-                  <div className="space-y-3">
+                </div>
+                
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-4">
                     <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm text-neutral-600">AI Minutes</span>
-                        <span className="text-sm font-medium">{limits.tavusMinutes} left</span>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-neutral-700">AI Minutes</span>
+                        <span className="text-sm text-neutral-600">{limits.tavusMinutes} left</span>
                       </div>
                       <div className="w-full bg-neutral-200 rounded-full h-2">
                         <div 
@@ -426,98 +370,156 @@ export const Home: React.FC = () => {
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="text-center p-2 bg-secondary-50 rounded-lg">
-                        <div className="text-lg font-bold text-secondary-600">
-                          {limits.soloSessionsToday === 'unlimited' ? '∞' : limits.soloSessionsToday}
-                        </div>
-                        <div className="text-xs text-secondary-700">Sessions Today</div>
+                    <div className="p-4 bg-secondary-50 rounded-xl">
+                      <div className="text-2xl font-bold text-secondary-600">
+                        {limits.soloSessionsToday === 'unlimited' ? '∞' : limits.soloSessionsToday}
                       </div>
-                      <div className="text-center p-2 bg-accent-50 rounded-lg">
-                        <div className="text-lg font-bold text-accent-600">
-                          {limits.insightsThisWeek === 'unlimited' ? '∞' : limits.insightsThisWeek}
-                        </div>
-                        <div className="text-xs text-accent-700">Insights Left</div>
-                      </div>
+                      <div className="text-sm text-secondary-700">Sessions Today</div>
                     </div>
-
-                    <Button
-                      onClick={() => navigate('/subscription')}
-                      variant="outline"
-                      size="sm"
-                      className="w-full"
-                      icon={Settings}
-                    >
-                      Manage Plan
-                    </Button>
                   </div>
-                </Card>
-              </motion.div>
-            )}
-
-            {/* Achievements */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-            >
-              <Card>
-                <h3 className="text-lg font-semibold text-neutral-800 mb-4">Achievements</h3>
-                <div className="space-y-3">
-                  {achievements.map((achievement, index) => (
-                    <div 
-                      key={index}
-                      className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 ${
-                        achievement.unlocked 
-                          ? 'bg-success-50 border border-success-200' 
-                          : 'bg-neutral-50 border border-neutral-200 opacity-60'
-                      }`}
-                    >
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                        achievement.unlocked 
-                          ? 'bg-success-500 text-white' 
-                          : 'bg-neutral-300 text-neutral-500'
-                      }`}>
-                        <achievement.icon className="w-4 h-4" />
+                  
+                  <div className="space-y-4">
+                    <div className="p-4 bg-accent-50 rounded-xl">
+                      <div className="text-2xl font-bold text-accent-600">
+                        {limits.insightsThisWeek === 'unlimited' ? '∞' : limits.insightsThisWeek}
                       </div>
-                      <div className="flex-1">
-                        <div className={`font-medium text-sm ${
-                          achievement.unlocked ? 'text-success-800' : 'text-neutral-600'
-                        }`}>
-                          {achievement.title}
-                        </div>
-                        <div className={`text-xs ${
-                          achievement.unlocked ? 'text-success-600' : 'text-neutral-500'
-                        }`}>
-                          {achievement.description}
-                        </div>
-                      </div>
+                      <div className="text-sm text-accent-700">Insights Left</div>
                     </div>
-                  ))}
+                    
+                    <div className="p-4 bg-neutral-50 rounded-xl">
+                      <div className={`text-2xl font-bold ${limits.canCreateGroupSessions ? 'text-success-600' : 'text-neutral-400'}`}>
+                        {limits.canCreateGroupSessions ? '✓' : '✗'}
+                      </div>
+                      <div className="text-sm text-neutral-600">Group Sessions</div>
+                    </div>
+                  </div>
                 </div>
               </Card>
             </motion.div>
-          </div>
+          )}
+
+          {/* Achievements */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+          >
+            <Card className="h-full">
+              <h3 className="text-xl font-semibold text-neutral-800 mb-6">Achievements</h3>
+              <div className="space-y-4">
+                {achievements.map((achievement, index) => (
+                  <div 
+                    key={index}
+                    className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 ${
+                      achievement.unlocked 
+                        ? 'bg-success-50 border border-success-200' 
+                        : 'bg-neutral-50 border border-neutral-200 opacity-60'
+                    }`}
+                  >
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                      achievement.unlocked 
+                        ? 'bg-success-500 text-white' 
+                        : 'bg-neutral-300 text-neutral-500'
+                    }`}>
+                      <achievement.icon className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1">
+                      <div className={`font-medium text-sm ${
+                        achievement.unlocked ? 'text-success-800' : 'text-neutral-600'
+                      }`}>
+                        {achievement.title}
+                      </div>
+                      <div className={`text-xs ${
+                        achievement.unlocked ? 'text-success-600' : 'text-neutral-500'
+                      }`}>
+                        {achievement.description}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </motion.div>
         </div>
 
-        {/* Conflict Types Slider */}
+        {/* Main Session Options */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.0 }}
-          className="mb-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 1.0 }}
+          className="grid md:grid-cols-2 gap-8 mb-12"
         >
-          <ConflictTypesSlider />
+          {options.map((option, index) => (
+            <motion.div
+              key={option.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 1.1 + index * 0.2 }}
+            >
+              <Card 
+                hover={option.available} 
+                onClick={option.available ? () => navigate(option.route) : undefined} 
+                className={`h-full ${option.available ? 'cursor-pointer' : 'opacity-60'} group`}
+              >
+                <div className="space-y-6 p-2">
+                  <div className="flex items-center space-x-4">
+                    <div className={`w-16 h-16 bg-gradient-to-br ${option.color} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                      <option.icon className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold text-neutral-800 mb-2">
+                        <TranslatedText>{option.title}</TranslatedText>
+                      </h3>
+                      <p className="text-neutral-600 leading-relaxed">
+                        <TranslatedText>{option.description}</TranslatedText>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    {option.features.map((feature, idx) => (
+                      <div key={idx} className="flex items-center space-x-2">
+                        <Sparkles className="w-4 h-4 text-accent-500" />
+                        <span className="text-sm text-neutral-600">
+                          <TranslatedText>{feature}</TranslatedText>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {option.available ? (
+                    <Button className="w-full" variant={index === 0 ? 'primary' : 'secondary'} size="lg">
+                      <TranslatedText>Start Session</TranslatedText>
+                    </Button>
+                  ) : (
+                    <Button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate('/subscription');
+                      }}
+                      className="w-full" 
+                      variant="outline"
+                      size="lg"
+                      icon={Crown}
+                    >
+                      <TranslatedText>Upgrade Required</TranslatedText>
+                    </Button>
+                  )}
+                </div>
+              </Card>
+            </motion.div>
+          ))}
         </motion.div>
 
-        {/* Upgrade CTA for Free Users */}
+        {/* Premium Upgrade CTA */}
         {subscription?.plan_id === 'awaknow_free' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.2 }}
+            transition={{ duration: 0.6, delay: 1.3 }}
           >
             <Card className="bg-gradient-to-r from-accent-500 via-accent-600 to-primary-600 text-white border-0 overflow-hidden relative">
+              {/* Background Pattern */}
               <div className="absolute inset-0 opacity-10">
                 <div 
                   className="w-full h-full bg-repeat"
@@ -527,23 +529,23 @@ export const Home: React.FC = () => {
                 />
               </div>
               
-              <div className="relative p-6">
+              <div className="relative p-8">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <Crown className="w-5 h-5 text-accent-200" />
+                    <div className="flex items-center space-x-2 mb-3">
+                      <Crown className="w-6 h-6 text-accent-200" />
                       <span className="text-accent-200 text-sm font-medium uppercase tracking-wide">Premium Experience</span>
                     </div>
-                    <h3 className="text-xl font-bold mb-2">
+                    <h3 className="text-2xl font-bold mb-2">
                       <TranslatedText>Unlock Your Full Potential</TranslatedText>
                     </h3>
-                    <p className="text-accent-100 mb-3 max-w-xl">
+                    <p className="text-accent-100 mb-4 max-w-2xl">
                       <TranslatedText>
                         Get unlimited sessions, advanced AI insights, group conflict resolution, 
-                        and priority support.
+                        and priority support. Transform your emotional wellness journey today.
                       </TranslatedText>
                     </p>
-                    <div className="flex items-center space-x-4 text-sm text-accent-100">
+                    <div className="flex items-center space-x-6 text-sm text-accent-100">
                       <div className="flex items-center space-x-1">
                         <Zap className="w-4 h-4" />
                         <span>Unlimited Sessions</span>
@@ -558,7 +560,7 @@ export const Home: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="ml-6">
+                  <div className="ml-8">
                     <Button 
                       onClick={() => navigate('/subscription')}
                       variant="accent" 
@@ -574,7 +576,58 @@ export const Home: React.FC = () => {
             </Card>
           </motion.div>
         )}
+
+        {/* Trust & Security Message */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.5 }}
+          className="text-center mt-12"
+        >
+          <div className="flex items-center justify-center space-x-2 text-neutral-600">
+            <Shield className="w-5 h-5 text-success-500" />
+            <p className="text-sm">
+              <TranslatedText>Your data is private, encrypted, and yours alone; even we can't see it. You can cancel anytime, no questions asked.</TranslatedText>
+            </p>
+          </div>
+        </motion.div>
       </div>
+
+      {/* Video Modal */}
+      {showVideo && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowVideo(false)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="relative w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowVideo(false)}
+              className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            {/* Embedded Video */}
+            <iframe
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1"
+              title="AwakNow Personal Dashboard Demo"
+              className="w-full h-full"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </motion.div>
+        </motion.div>
+      )}
 
       <Footer />
     </div>
