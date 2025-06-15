@@ -181,6 +181,44 @@ export const Landing: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex flex-col overflow-hidden">
       <TopBar />
       
+      {/* Bolt.new Hackathon Winner Badge */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, delay: 0.5 }}
+        className="fixed top-4 right-4 z-50"
+      >
+        <a
+          href="https://bolt.new/?utm_source=awaknow&utm_medium=Bolt.new+badge&utm_campaign=World%E2%80%99s_Largest_Hackathon&utm_term=hackathon&utm_content=winner"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block hover:scale-110 transition-transform duration-300 group"
+          aria-label="Winner of World's Largest Hackathon by Bolt.new"
+        >
+          <div className="relative">
+            {/* Badge Image */}
+            <img
+              src="/black_circle_360x360.png"
+              alt="Powered by Bolt.new - Winner of World's Largest Hackathon"
+              className="w-16 h-16 md:w-20 md:h-20 drop-shadow-lg group-hover:drop-shadow-xl transition-all duration-300"
+            />
+            
+            {/* Glow Effect on Hover */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-lg"></div>
+            
+            {/* Winner Badge Overlay */}
+            <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-accent-500 to-warning-500 rounded-full flex items-center justify-center shadow-lg">
+              <Award className="w-3 h-3 text-white" />
+            </div>
+          </div>
+          
+          {/* Tooltip */}
+          <div className="absolute top-full right-0 mt-2 px-3 py-2 bg-black text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
+            🏆 Hackathon Winner
+          </div>
+        </a>
+      </motion.div>
+      
       <div className="flex-1">
         {/* Hero Section - Premium Design with Consistent Fonts */}
         <section className="relative min-h-screen flex items-center justify-center bg-white">
