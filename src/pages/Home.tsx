@@ -29,7 +29,7 @@ interface ConflictType {
   icon: React.ComponentType<any>;
   color: string;
   bgImage: string;
-  techniques: string[];
+  techniques?: string[];
   stages?: string[];
   approaches?: string[];
   mechanisms?: string[];
@@ -42,7 +42,6 @@ export const Home: React.FC = () => {
   const { subscription, limits, loading, loadSubscription } = useSubscriptionStore();
   const [stats, setStats] = useState<UserStats | null>(null);
   const [loadingStats, setLoadingStats] = useState(true);
-  const [showVideo, setShowVideo] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const conflictTypes: ConflictType[] = [
@@ -347,14 +346,14 @@ export const Home: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Conflict Types Slider */}
+        {/* Conflict Types Slider - Full Width */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="mb-12"
+          className="mb-12 -mx-4"
         >
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-800 mb-4">
               <TranslatedText>Types of Conflicts</TranslatedText>
             </h2>
@@ -363,8 +362,8 @@ export const Home: React.FC = () => {
             </p>
           </div>
 
-          <div className="relative">
-            <Card className="overflow-hidden bg-gradient-to-br from-neutral-900 to-neutral-800 text-white border-0">
+          <div className="relative w-full">
+            <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-neutral-900 to-neutral-800 text-white">
               <div className="relative h-[500px] md:h-[600px]">
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -489,7 +488,7 @@ export const Home: React.FC = () => {
                   ))}
                 </div>
               </div>
-            </Card>
+            </div>
           </div>
         </motion.div>
 
@@ -759,42 +758,6 @@ export const Home: React.FC = () => {
           </div>
         </motion.div>
       </div>
-
-      {/* Video Modal */}
-      {showVideo && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
-          onClick={() => setShowVideo(false)}
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="relative w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setShowVideo(false)}
-              className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            
-            {/* Embedded Video */}
-            <iframe
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1"
-              title="AwakNow Personal Dashboard Demo"
-              className="w-full h-full"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </motion.div>
-        </motion.div>
-      )}
 
       <Footer />
     </div>
