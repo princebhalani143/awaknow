@@ -546,7 +546,7 @@ export const About: React.FC = () => {
                         <img
                           src={partner.logo}
                           alt={`${partner.name} logo`}
-                          className="w-full h-full object-contain"
+                          className="w-full h-full"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
