@@ -107,7 +107,7 @@ export default {
         'large': '0 10px 40px -10px rgba(0, 0, 0, 0.15), 0 20px 25px -5px rgba(0, 0, 0, 0.1)',
       },
       animation: {
-        'scroll': 'scroll 30s linear infinite',
+        'scroll': 'scroll 40s linear infinite',
       },
       keyframes: {
         scroll: {
