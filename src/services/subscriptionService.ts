@@ -5,28 +5,25 @@ import { SUBSCRIPTION_PLANS, getPlanById } from '../config/subscriptionPlans';
 export class SubscriptionService {
   static async getUserSubscription(userId: string): Promise<UserSubscription | null> {
     try {
+      // Get the most recent subscription for the user to handle multiple records
       const { data, error } = await supabase
         .from('user_subscriptions')
         .select('*')
         .eq('user_id', userId)
-        .single();
-
-      // If no subscription found, create a default free subscription
-      if (error && error.code === 'PGRST116') {
-        return await this.createDefaultSubscription(userId);
-      }
+        .order('created_at', { ascending: false })
+        .limit(1);
 
       if (error) {
         console.error('Error fetching subscription:', error);
         return null;
       }
 
-      // If data is null, create default subscription
-      if (!data) {
+      // If no subscription found, create a default free subscription
+      if (!data || data.length === 0) {
         return await this.createDefaultSubscription(userId);
       }
 
-      return data;
+      return data[0];
     } catch (error) {
       console.error('Error in getUserSubscription:', error);
       return null;

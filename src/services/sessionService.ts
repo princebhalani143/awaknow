@@ -149,10 +149,7 @@ export class SessionService {
     try {
       const { data: sessionData, error: sessionError } = await supabase
         .from('sessions')
-        .select(`
-          *,
-          participants:session_participants(*)
-        `)
+        .select('*')
         .eq('id', sessionId)
         .single();
 
@@ -162,14 +159,32 @@ export class SessionService {
       }
 
       // Check if user has access to this session
-      const hasAccess = sessionData.created_by === userId || 
-        sessionData.participants.some((p: any) => p.user_id === userId);
+      const hasAccess = sessionData.created_by === userId;
 
       if (!hasAccess) {
-        return null;
+        // Check if user is a participant (separate query to avoid RLS recursion)
+        const { data: participantData } = await supabase
+          .from('session_participants')
+          .select('id')
+          .eq('session_id', sessionId)
+          .eq('user_id', userId)
+          .single();
+
+        if (!participantData) {
+          return null;
+        }
       }
 
-      return sessionData;
+      // Get participants separately to avoid RLS issues
+      const { data: participants } = await supabase
+        .from('session_participants')
+        .select('*')
+        .eq('session_id', sessionId);
+
+      return {
+        ...sessionData,
+        participants: participants || []
+      };
     } catch (error) {
       console.error('Error in getSession:', error);
       return null;
@@ -178,13 +193,10 @@ export class SessionService {
 
   static async getUserSessions(userId: string): Promise<SessionData[]> {
     try {
-      // Query 1: Get sessions created by the user
+      // Get sessions created by the user (avoid complex joins that cause RLS recursion)
       const { data: createdSessions, error: createdError } = await supabase
         .from('sessions')
-        .select(`
-          *,
-          participants:session_participants(*)
-        `)
+        .select('*')
         .eq('created_by', userId)
         .order('created_at', { ascending: false });
 
@@ -193,36 +205,59 @@ export class SessionService {
         return [];
       }
 
-      // Query 2: Get sessions where user is a participant
-      const { data: participantSessions, error: participantError } = await supabase
-        .from('sessions')
-        .select(`
-          *,
-          participants:session_participants(*)
-        `)
-        .in('id', 
-          supabase
-            .from('session_participants')
-            .select('session_id')
-            .eq('user_id', userId)
-        )
-        .order('created_at', { ascending: false });
+      // Get session IDs where user is a participant
+      const { data: participantSessionIds, error: participantError } = await supabase
+        .from('session_participants')
+        .select('session_id')
+        .eq('user_id', userId);
 
       if (participantError) {
-        console.error('Error fetching participant sessions:', participantError);
-        return [];
+        console.error('Error fetching participant session IDs:', participantError);
+        return createdSessions || [];
       }
 
-      // Combine and deduplicate sessions
-      const allSessions = [...(createdSessions || []), ...(participantSessions || [])];
-      const uniqueSessions = allSessions.filter((session, index, self) => 
-        index === self.findIndex(s => s.id === session.id)
-      );
+      // Get sessions where user is a participant (but not creator)
+      const participantIds = (participantSessionIds || [])
+        .map(p => p.session_id)
+        .filter(id => !(createdSessions || []).some(s => s.id === id));
+
+      let participantSessions: any[] = [];
+      if (participantIds.length > 0) {
+        const { data: participantSessionsData, error: participantSessionsError } = await supabase
+          .from('sessions')
+          .select('*')
+          .in('id', participantIds)
+          .order('created_at', { ascending: false });
+
+        if (participantSessionsError) {
+          console.error('Error fetching participant sessions:', participantSessionsError);
+        } else {
+          participantSessions = participantSessionsData || [];
+        }
+      }
+
+      // Combine all sessions
+      const allSessions = [...(createdSessions || []), ...participantSessions];
 
       // Sort by created_at descending
-      uniqueSessions.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      allSessions.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-      return uniqueSessions;
+      // Add participants to each session (separate queries to avoid RLS issues)
+      const sessionsWithParticipants = await Promise.all(
+        allSessions.map(async (session) => {
+          const { data: participants } = await supabase
+            .from('session_participants')
+            .select('*')
+            .eq('session_id', session.id);
+
+          return {
+            ...session,
+            participants: participants || []
+          };
+        })
+      );
+
+      return sessionsWithParticipants;
     } catch (error) {
       console.error('Error in getUserSessions:', error);
       return [];
