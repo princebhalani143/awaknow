@@ -99,49 +99,57 @@ export const About: React.FC = () => {
       name: 'Bolt',
       description: 'Development platform and hackathon host',
       logo: '/bolt.jpg',
-      category: 'Development'
+      category: 'Development',
+      tier: 'primary'
     },
     {
       name: 'Tavus',
       description: 'AI video generation and conversational AI',
       logo: '/Tavus.png',
-      category: 'AI Technology'
+      category: 'AI Technology',
+      tier: 'primary'
     },
     {
       name: 'ElevenLabs',
       description: 'Advanced voice synthesis and audio AI',
       logo: '/ElevenLabs.png',
-      category: 'Voice AI'
+      category: 'Voice AI',
+      tier: 'primary'
     },
     {
       name: 'Supabase',
       description: 'Backend infrastructure and database',
       logo: '/Supabase.png',
-      category: 'Infrastructure'
+      category: 'Infrastructure',
+      tier: 'core'
     },
     {
       name: 'RevenueCat',
       description: 'Subscription management and billing',
       logo: '/revenuecat.png',
-      category: 'Payments'
+      category: 'Payments',
+      tier: 'core'
     },
     {
       name: 'Stripe',
       description: 'Payment processing and financial infrastructure',
       logo: '/stripe.jpg',
-      category: 'Payments'
+      category: 'Payments',
+      tier: 'core'
     },
     {
       name: 'Netlify',
       description: 'Web hosting and deployment platform',
       logo: '/netlify.png',
-      category: 'Hosting'
+      category: 'Hosting',
+      tier: 'infrastructure'
     },
     {
       name: 'Entri',
       description: 'Domain management and DNS services',
       logo: '/entri.png',
-      category: 'Domain'
+      category: 'Domain',
+      tier: 'infrastructure'
     },
   ];
 
@@ -393,7 +401,7 @@ export const About: React.FC = () => {
           </Card>
         </motion.div>
 
-        {/* Technology Partners - Enhanced with Auto-Scrolling Infinite Slider */}
+        {/* Technology Partners - Premium Static Design */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -407,111 +415,199 @@ export const About: React.FC = () => {
             </p>
           </div>
 
-          <Card className="p-8 overflow-hidden">
-            {/* Infinite Scrolling Container */}
-            <div className="relative">
-              {/* Gradient Overlays */}
-              <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white to-transparent z-10"></div>
-              <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white to-transparent z-10"></div>
-              
-              {/* Scrolling Content */}
-              <div className="flex animate-scroll">
-                {/* First Set */}
-                <div className="flex space-x-12 min-w-max">
-                  {techPartners.map((partner, index) => (
-                    <motion.div
-                      key={`first-${index}`}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.6, delay: 2.2 + index * 0.1 }}
-                      className="flex-shrink-0 text-center group hover:scale-110 transition-transform duration-300"
-                    >
-                      <div className="w-24 h-24 bg-white rounded-3xl mx-auto mb-4 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300 border border-neutral-100 p-3">
+          {/* Premium Partner Grid */}
+          <div className="space-y-12">
+            {/* Primary Partners - AI & Core Technology */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 2.2 }}
+            >
+              <div className="text-center mb-8">
+                <h3 className="text-xl font-semibold text-neutral-800 mb-2">AI & Core Technology</h3>
+                <div className="w-24 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mx-auto"></div>
+              </div>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {techPartners.filter(p => p.tier === 'primary').map((partner, index) => (
+                  <motion.div
+                    key={partner.name}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, delay: 2.4 + index * 0.1 }}
+                    className="group"
+                  >
+                    <Card className="text-center p-8 hover:shadow-2xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/95 backdrop-blur-sm relative overflow-hidden">
+                      {/* Premium Background Effect */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 to-secondary-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      
+                      <div className="relative z-10">
+                        <div className="w-24 h-24 bg-white rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-300 border border-neutral-100 p-4 group-hover:scale-110">
+                          <img
+                            src={partner.logo}
+                            alt={`${partner.name} logo`}
+                            className="w-full h-full object-contain"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              const parent = target.parentElement;
+                              if (parent) {
+                                parent.innerHTML = `<span class="text-2xl font-bold text-neutral-600">${partner.name.charAt(0)}</span>`;
+                              }
+                            }}
+                          />
+                        </div>
+                        <h4 className="text-xl font-bold text-neutral-800 mb-3 group-hover:text-primary-700 transition-colors duration-300">
+                          {partner.name}
+                        </h4>
+                        <p className="text-neutral-600 mb-4 leading-relaxed">
+                          {partner.description}
+                        </p>
+                        <span className="inline-block px-4 py-2 bg-gradient-to-r from-primary-100 to-secondary-100 text-primary-700 rounded-full text-sm font-medium">
+                          {partner.category}
+                        </span>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Core Infrastructure */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 2.6 }}
+            >
+              <div className="text-center mb-8">
+                <h3 className="text-xl font-semibold text-neutral-800 mb-2">Core Infrastructure</h3>
+                <div className="w-24 h-1 bg-gradient-to-r from-secondary-500 to-accent-500 rounded-full mx-auto"></div>
+              </div>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {techPartners.filter(p => p.tier === 'core').map((partner, index) => (
+                  <motion.div
+                    key={partner.name}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, delay: 2.8 + index * 0.1 }}
+                    className="group"
+                  >
+                    <Card className="text-center p-6 hover:shadow-xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/90 backdrop-blur-sm">
+                      <div className="w-20 h-20 bg-white rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 border border-neutral-100 p-3 group-hover:scale-110">
                         <img
                           src={partner.logo}
                           alt={`${partner.name} logo`}
                           className="w-full h-full object-contain"
                           onError={(e) => {
-                            // Fallback to text if image fails to load
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
                             const parent = target.parentElement;
                             if (parent) {
-                              parent.innerHTML = `<span class="text-2xl font-bold text-neutral-600">${partner.name.charAt(0)}</span>`;
+                              parent.innerHTML = `<span class="text-lg font-bold text-neutral-600">${partner.name.charAt(0)}</span>`;
                             }
                           }}
                         />
                       </div>
-                      <h4 className="font-semibold text-neutral-800 text-sm mb-1">{partner.name}</h4>
-                      <p className="text-xs text-neutral-600 mb-1 leading-tight max-w-[120px] mx-auto">{partner.description}</p>
-                      <span className="text-xs text-primary-600 font-medium px-2 py-1 bg-primary-50 rounded-full">
+                      <h4 className="text-lg font-semibold text-neutral-800 mb-2 group-hover:text-secondary-700 transition-colors duration-300">
+                        {partner.name}
+                      </h4>
+                      <p className="text-neutral-600 text-sm mb-3 leading-relaxed">
+                        {partner.description}
+                      </p>
+                      <span className="inline-block px-3 py-1 bg-secondary-100 text-secondary-700 rounded-full text-xs font-medium">
                         {partner.category}
                       </span>
-                    </motion.div>
-                  ))}
-                </div>
-                
-                {/* Duplicate Set for Seamless Loop */}
-                <div className="flex space-x-12 min-w-max ml-12">
-                  {techPartners.map((partner, index) => (
-                    <div
-                      key={`second-${index}`}
-                      className="flex-shrink-0 text-center group hover:scale-110 transition-transform duration-300"
-                    >
-                      <div className="w-24 h-24 bg-white rounded-3xl mx-auto mb-4 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300 border border-neutral-100 p-3">
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Infrastructure & Hosting */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 3.0 }}
+            >
+              <div className="text-center mb-8">
+                <h3 className="text-xl font-semibold text-neutral-800 mb-2">Infrastructure & Hosting</h3>
+                <div className="w-24 h-1 bg-gradient-to-r from-accent-500 to-warning-500 rounded-full mx-auto"></div>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                {techPartners.filter(p => p.tier === 'infrastructure').map((partner, index) => (
+                  <motion.div
+                    key={partner.name}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, delay: 3.2 + index * 0.1 }}
+                    className="group"
+                  >
+                    <Card className="text-center p-6 hover:shadow-xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/90 backdrop-blur-sm">
+                      <div className="w-18 h-18 bg-white rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 border border-neutral-100 p-3 group-hover:scale-110">
                         <img
                           src={partner.logo}
                           alt={`${partner.name} logo`}
                           className="w-full h-full object-contain"
                           onError={(e) => {
-                            // Fallback to text if image fails to load
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
                             const parent = target.parentElement;
                             if (parent) {
-                              parent.innerHTML = `<span class="text-2xl font-bold text-neutral-600">${partner.name.charAt(0)}</span>`;
+                              parent.innerHTML = `<span class="text-lg font-bold text-neutral-600">${partner.name.charAt(0)}</span>`;
                             }
                           }}
                         />
                       </div>
-                      <h4 className="font-semibold text-neutral-800 text-sm mb-1">{partner.name}</h4>
-                      <p className="text-xs text-neutral-600 mb-1 leading-tight max-w-[120px] mx-auto">{partner.description}</p>
-                      <span className="text-xs text-primary-600 font-medium px-2 py-1 bg-primary-50 rounded-full">
+                      <h4 className="text-lg font-semibold text-neutral-800 mb-2 group-hover:text-accent-700 transition-colors duration-300">
+                        {partner.name}
+                      </h4>
+                      <p className="text-neutral-600 text-sm mb-3 leading-relaxed">
+                        {partner.description}
+                      </p>
+                      <span className="inline-block px-3 py-1 bg-accent-100 text-accent-700 rounded-full text-xs font-medium">
                         {partner.category}
                       </span>
-                    </div>
-                  ))}
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Partnership Stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 3.4 }}
+            className="mt-16"
+          >
+            <Card className="bg-gradient-to-br from-primary-500 to-secondary-500 text-white border-0">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                <div>
+                  <div className="text-3xl font-bold mb-2">{techPartners.length}</div>
+                  <div className="text-primary-100 text-sm">Technology Partners</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold mb-2">100%</div>
+                  <div className="text-primary-100 text-sm">Uptime Guarantee</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold mb-2">24/7</div>
+                  <div className="text-primary-100 text-sm">AI Availability</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold mb-2">Enterprise</div>
+                  <div className="text-primary-100 text-sm">Grade Security</div>
                 </div>
               </div>
-            </div>
-            
-            {/* Partnership Stats */}
-            <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-              <div>
-                <div className="text-2xl font-bold text-primary-600 mb-1">{techPartners.length}</div>
-                <div className="text-sm text-neutral-600">Technology Partners</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-secondary-600 mb-1">100%</div>
-                <div className="text-sm text-neutral-600">Uptime Guarantee</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-accent-600 mb-1">24/7</div>
-                <div className="text-sm text-neutral-600">AI Availability</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-success-600 mb-1">Enterprise</div>
-                <div className="text-sm text-neutral-600">Grade Security</div>
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </motion.div>
         </motion.div>
 
         {/* CTA Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 2.4 }}
+          transition={{ duration: 0.8, delay: 3.6 }}
         >
           <Card className="bg-gradient-to-br from-primary-500 to-secondary-500 text-white border-0 text-center">
             <h2 className="text-3xl font-bold mb-4">Join Our Mission</h2>

@@ -177,55 +177,63 @@ export const Landing: React.FC = () => {
     },
   ];
 
-  // Enhanced Technology Partners with proper infinite scroll
+  // Enhanced Technology Partners with premium design
   const techPartners = [
     {
       name: 'Bolt',
       description: 'Development platform and hackathon host',
       logo: '/bolt.jpg',
-      category: 'Development'
+      category: 'Development',
+      tier: 'primary'
     },
     {
       name: 'Tavus',
       description: 'AI video generation and conversational AI',
       logo: '/Tavus.png',
-      category: 'AI Technology'
+      category: 'AI Technology',
+      tier: 'primary'
     },
     {
       name: 'ElevenLabs',
       description: 'Advanced voice synthesis and audio AI',
       logo: '/ElevenLabs.png',
-      category: 'Voice AI'
+      category: 'Voice AI',
+      tier: 'primary'
     },
     {
       name: 'Supabase',
       description: 'Backend infrastructure and database',
       logo: '/Supabase.png',
-      category: 'Infrastructure'
+      category: 'Infrastructure',
+      tier: 'core'
     },
     {
       name: 'RevenueCat',
       description: 'Subscription management and billing',
       logo: '/revenuecat.png',
-      category: 'Payments'
+      category: 'Payments',
+      tier: 'core'
     },
     {
       name: 'Stripe',
       description: 'Payment processing and financial infrastructure',
       logo: '/stripe.jpg',
-      category: 'Payments'
+      category: 'Payments',
+      tier: 'core'
     },
     {
       name: 'Netlify',
       description: 'Web hosting and deployment platform',
       logo: '/netlify.png',
-      category: 'Hosting'
+      category: 'Hosting',
+      tier: 'infrastructure'
     },
     {
       name: 'Entri',
       description: 'Domain management and DNS services',
       logo: '/entri.png',
-      category: 'Domain'
+      category: 'Domain',
+      tier: 'infrastructure'
     },
   ];
 
@@ -234,43 +242,44 @@ export const Landing: React.FC = () => {
       <TopBar />
       
       <div className="flex-1">
-        {/* Bolt.new Hackathon Winner Badge - Fixed Position and Responsive */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="absolute top-24 right-4 md:top-28 md:right-6 lg:top-32 lg:right-8 z-30"
+        {/* Bolt.new Hackathon Winner Badge - Enhanced Size and Responsiveness */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+          className="absolute top-20 right-4 sm:top-24 sm:right-6 md:top-28 md:right-8 lg:top-32 lg:right-10 xl:top-36 xl:right-12 z-30"
+        >
+          <a
+            href="https://bolt.new/?utm_source=awaknow.org&utm_medium=Bolt.new+badge&utm_campaign=World%E2%80%99s_Largest_Hackathon&utm_term=hackathon&utm_content=winner"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block hover:scale-110 transition-transform duration-300 group"
+            aria-label="Winner of World's Largest Hackathon by Bolt.new"
           >
-            <a
-              href="https://bolt.new/?utm_source=awaknow.org&utm_medium=Bolt.new+badge&utm_campaign=World%E2%80%99s_Largest_Hackathon&utm_term=hackathon&utm_content=winner"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block hover:scale-110 transition-transform duration-300 group"
-              aria-label="Winner of World's Largest Hackathon by Bolt.new"
-            >
-              <div className="relative">
-                {/* Badge Image - Responsive Sizing */}
-                <img
-                  src="/black_circle_360x360.png"
-                  alt="Powered by Bolt.new - Winner of World's Largest Hackathon"
-                  className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 drop-shadow-lg group-hover:drop-shadow-xl transition-all duration-300"
-                />
-                
-                {/* Glow Effect on Hover */}
-                <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-lg"></div>
-                
-                {/* Winner Badge Overlay - Responsive */}
-                <div className="absolute -top-1 -right-1 sm:-top-1.5 sm:-right-1.5 md:-top-2 md:-right-2 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 bg-gradient-to-r from-accent-500 to-warning-500 rounded-full flex items-center justify-center shadow-lg">
-                  <Award className="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 text-white" />
-                </div>
-              </div>
+            <div className="relative">
+              {/* Badge Image - Enhanced Responsive Sizing */}
+              <img
+                src="/black_circle_360x360.png"
+                alt="Powered by Bolt.new - Winner of World's Largest Hackathon"
+                className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 drop-shadow-xl group-hover:drop-shadow-2xl transition-all duration-300"
+              />
               
-              {/* Tooltip - Responsive */}
-              <div className="absolute top-full right-0 mt-2 px-2 py-1 sm:px-3 sm:py-2 bg-black text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
-                🏆 Hackathon Winner
+              {/* Glow Effect on Hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-primary-500/30 to-secondary-500/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-lg"></div>
+              
+              {/* Winner Badge Overlay - Enhanced Responsive */}
+              <div className="absolute -top-1 -right-1 sm:-top-1.5 sm:-right-1.5 md:-top-2 md:-right-2 lg:-top-3 lg:-right-3 w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 bg-gradient-to-r from-accent-500 to-warning-500 rounded-full flex items-center justify-center shadow-lg">
+                <Award className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 text-white" />
               </div>
-            </a>
-          </motion.div>
+            </div>
+            
+            {/* Tooltip - Enhanced Responsive */}
+            <div className="absolute top-full right-0 mt-2 px-2 py-1 sm:px-3 sm:py-2 bg-black text-white text-xs sm:text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
+              🏆 Hackathon Winner
+            </div>
+          </a>
+        </motion.div>
+
         {/* Hero Section - Premium Design with Consistent Fonts */}
         <section className="relative min-h-screen flex items-center justify-center bg-white">
           {/* Animated Background Elements */}
@@ -665,7 +674,7 @@ export const Landing: React.FC = () => {
           </div>
         </section>
 
-        {/* Technology Partners Section - Enhanced with Premium Design */}
+        {/* Technology Partners Section - Premium Static Design */}
         <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-br from-neutral-50 to-primary-50/30">
           <div className="container mx-auto px-4 max-w-6xl">
             <motion.div
@@ -680,109 +689,203 @@ export const Landing: React.FC = () => {
                 <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent"> Partners</span>
               </h2>
               <p className="text-base sm:text-lg text-neutral-600 max-w-3xl mx-auto leading-relaxed px-4">
-                Powered by industry-leading technologies and trusted partners who share our vision
+                Powered by industry-leading technologies and trusted partners who share our vision for emotional wellness
               </p>
             </motion.div>
 
-            <Card className="p-6 sm:p-8 overflow-hidden bg-white/90 backdrop-blur-sm">
-              {/* Infinite Scrolling Container - Enhanced */}
-              <div className="relative">
-                {/* Gradient Overlays - Responsive */}
-                <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-12 md:w-20 bg-gradient-to-r from-white to-transparent z-10"></div>
-                <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-12 md:w-20 bg-gradient-to-l from-white to-transparent z-10"></div>
-                
-                {/* Scrolling Content - Smooth Infinite Loop */}
-                <div className="flex animate-scroll">
-                  {/* First Set */}
-                  <div className="flex space-x-8 sm:space-x-12 md:space-x-16 min-w-max">
-                    {techPartners.map((partner, index) => (
-                      <motion.div
-                        key={`first-${index}`}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6, delay: index * 0.1 }}
-                        className="flex-shrink-0 text-center group hover:scale-110 transition-transform duration-300"
-                      >
-                        <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 bg-white rounded-2xl sm:rounded-3xl mx-auto mb-3 sm:mb-4 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300 border border-neutral-100 p-3 sm:p-4">
+            {/* Premium Partner Grid */}
+            <div className="space-y-12">
+              {/* Primary Partners - AI & Core Technology */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                <div className="text-center mb-8">
+                  <h3 className="text-xl font-semibold text-neutral-800 mb-2">AI & Core Technology</h3>
+                  <div className="w-24 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mx-auto"></div>
+                </div>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {techPartners.filter(p => p.tier === 'primary').map((partner, index) => (
+                    <motion.div
+                      key={partner.name}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                      className="group"
+                    >
+                      <Card className="text-center p-8 hover:shadow-2xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/95 backdrop-blur-sm relative overflow-hidden">
+                        {/* Premium Background Effect */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 to-secondary-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        
+                        <div className="relative z-10">
+                          <div className="w-24 h-24 bg-white rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-300 border border-neutral-100 p-4 group-hover:scale-110">
+                            <img
+                              src={partner.logo}
+                              alt={`${partner.name} logo`}
+                              className="w-full h-full object-contain"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                                const parent = target.parentElement;
+                                if (parent) {
+                                  parent.innerHTML = `<span class="text-2xl font-bold text-neutral-600">${partner.name.charAt(0)}</span>`;
+                                }
+                              }}
+                            />
+                          </div>
+                          <h4 className="text-xl font-bold text-neutral-800 mb-3 group-hover:text-primary-700 transition-colors duration-300">
+                            {partner.name}
+                          </h4>
+                          <p className="text-neutral-600 mb-4 leading-relaxed">
+                            {partner.description}
+                          </p>
+                          <span className="inline-block px-4 py-2 bg-gradient-to-r from-primary-100 to-secondary-100 text-primary-700 rounded-full text-sm font-medium">
+                            {partner.category}
+                          </span>
+                        </div>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Core Infrastructure */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
+                <div className="text-center mb-8">
+                  <h3 className="text-xl font-semibold text-neutral-800 mb-2">Core Infrastructure</h3>
+                  <div className="w-24 h-1 bg-gradient-to-r from-secondary-500 to-accent-500 rounded-full mx-auto"></div>
+                </div>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {techPartners.filter(p => p.tier === 'core').map((partner, index) => (
+                    <motion.div
+                      key={partner.name}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                      className="group"
+                    >
+                      <Card className="text-center p-6 hover:shadow-xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/90 backdrop-blur-sm">
+                        <div className="w-20 h-20 bg-white rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 border border-neutral-100 p-3 group-hover:scale-110">
                           <img
                             src={partner.logo}
                             alt={`${partner.name} logo`}
                             className="w-full h-full object-contain"
                             onError={(e) => {
-                              // Fallback to text if image fails to load
                               const target = e.target as HTMLImageElement;
                               target.style.display = 'none';
                               const parent = target.parentElement;
                               if (parent) {
-                                parent.innerHTML = `<span class="text-lg sm:text-xl md:text-2xl font-bold text-neutral-600">${partner.name.charAt(0)}</span>`;
+                                parent.innerHTML = `<span class="text-lg font-bold text-neutral-600">${partner.name.charAt(0)}</span>`;
                               }
                             }}
                           />
                         </div>
-                        <h4 className="font-semibold text-neutral-800 text-xs sm:text-sm mb-1">{partner.name}</h4>
-                        <p className="text-xs text-neutral-600 mb-1 leading-tight max-w-[100px] sm:max-w-[120px] mx-auto">{partner.description}</p>
-                        <span className="text-xs text-primary-600 font-medium px-2 py-1 bg-primary-50 rounded-full">
+                        <h4 className="text-lg font-semibold text-neutral-800 mb-2 group-hover:text-secondary-700 transition-colors duration-300">
+                          {partner.name}
+                        </h4>
+                        <p className="text-neutral-600 text-sm mb-3 leading-relaxed">
+                          {partner.description}
+                        </p>
+                        <span className="inline-block px-3 py-1 bg-secondary-100 text-secondary-700 rounded-full text-xs font-medium">
                           {partner.category}
                         </span>
-                      </motion.div>
-                    ))}
-                  </div>
-                  
-                  {/* Duplicate Set for Seamless Loop */}
-                  <div className="flex space-x-8 sm:space-x-12 md:space-x-16 min-w-max ml-8 sm:ml-12 md:ml-16">
-                    {techPartners.map((partner, index) => (
-                      <div
-                        key={`second-${index}`}
-                        className="flex-shrink-0 text-center group hover:scale-110 transition-transform duration-300"
-                      >
-                        <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 bg-white rounded-2xl sm:rounded-3xl mx-auto mb-3 sm:mb-4 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300 border border-neutral-100 p-3 sm:p-4">
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Infrastructure & Hosting */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+              >
+                <div className="text-center mb-8">
+                  <h3 className="text-xl font-semibold text-neutral-800 mb-2">Infrastructure & Hosting</h3>
+                  <div className="w-24 h-1 bg-gradient-to-r from-accent-500 to-warning-500 rounded-full mx-auto"></div>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                  {techPartners.filter(p => p.tier === 'infrastructure').map((partner, index) => (
+                    <motion.div
+                      key={partner.name}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                      className="group"
+                    >
+                      <Card className="text-center p-6 hover:shadow-xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/90 backdrop-blur-sm">
+                        <div className="w-18 h-18 bg-white rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 border border-neutral-100 p-3 group-hover:scale-110">
                           <img
                             src={partner.logo}
                             alt={`${partner.name} logo`}
                             className="w-full h-full object-contain"
                             onError={(e) => {
-                              // Fallback to text if image fails to load
                               const target = e.target as HTMLImageElement;
                               target.style.display = 'none';
                               const parent = target.parentElement;
                               if (parent) {
-                                parent.innerHTML = `<span class="text-lg sm:text-xl md:text-2xl font-bold text-neutral-600">${partner.name.charAt(0)}</span>`;
+                                parent.innerHTML = `<span class="text-lg font-bold text-neutral-600">${partner.name.charAt(0)}</span>`;
                               }
                             }}
                           />
                         </div>
-                        <h4 className="font-semibold text-neutral-800 text-xs sm:text-sm mb-1">{partner.name}</h4>
-                        <p className="text-xs text-neutral-600 mb-1 leading-tight max-w-[100px] sm:max-w-[120px] mx-auto">{partner.description}</p>
-                        <span className="text-xs text-primary-600 font-medium px-2 py-1 bg-primary-50 rounded-full">
+                        <h4 className="text-lg font-semibold text-neutral-800 mb-2 group-hover:text-accent-700 transition-colors duration-300">
+                          {partner.name}
+                        </h4>
+                        <p className="text-neutral-600 text-sm mb-3 leading-relaxed">
+                          {partner.description}
+                        </p>
+                        <span className="inline-block px-3 py-1 bg-accent-100 text-accent-700 rounded-full text-xs font-medium">
                           {partner.category}
                         </span>
-                      </div>
-                    ))}
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Partnership Stats */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+              className="mt-16"
+            >
+              <Card className="bg-gradient-to-br from-primary-500 to-secondary-500 text-white border-0">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                  <div>
+                    <div className="text-3xl font-bold mb-2">{techPartners.length}</div>
+                    <div className="text-primary-100 text-sm">Technology Partners</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold mb-2">100%</div>
+                    <div className="text-primary-100 text-sm">Uptime Guarantee</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold mb-2">24/7</div>
+                    <div className="text-primary-100 text-sm">AI Availability</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold mb-2">Enterprise</div>
+                    <div className="text-primary-100 text-sm">Grade Security</div>
                   </div>
                 </div>
-              </div>
-              
-              {/* Partnership Stats - Responsive */}
-              <div className="mt-8 sm:mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-center">
-                <div>
-                  <div className="text-xl sm:text-2xl font-bold text-primary-600 mb-1">{techPartners.length}</div>
-                  <div className="text-xs sm:text-sm text-neutral-600">Technology Partners</div>
-                </div>
-                <div>
-                  <div className="text-xl sm:text-2xl font-bold text-secondary-600 mb-1">100%</div>
-                  <div className="text-xs sm:text-sm text-neutral-600">Uptime Guarantee</div>
-                </div>
-                <div>
-                  <div className="text-xl sm:text-2xl font-bold text-accent-600 mb-1">24/7</div>
-                  <div className="text-xs sm:text-sm text-neutral-600">AI Availability</div>
-                </div>
-                <div>
-                  <div className="text-xl sm:text-2xl font-bold text-success-600 mb-1">Enterprise</div>
-                  <div className="text-xs sm:text-sm text-neutral-600">Grade Security</div>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </motion.div>
           </div>
         </section>
 
