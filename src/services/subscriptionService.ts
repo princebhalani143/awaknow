@@ -5,7 +5,7 @@ import { SUBSCRIPTION_PLANS, getPlanById } from '../config/subscriptionPlans';
 export class SubscriptionService {
   static async getUserSubscription(userId: string): Promise<UserSubscription | null> {
     try {
-      // Get the most recent subscription for the user to handle multiple records
+      // First try to get existing subscription
       const { data, error } = await supabase
         .from('user_subscriptions')
         .select('*')
@@ -15,10 +15,15 @@ export class SubscriptionService {
 
       if (error) {
         console.error('Error fetching subscription:', error);
+        
+        // If it's an RLS error, try to create default subscription
+        if (error.code === '42501') {
+          return await this.createDefaultSubscription(userId);
+        }
         return null;
       }
 
-      // If no subscription found, create a default free subscription
+      // If no subscription found, create a default one
       if (!data || data.length === 0) {
         return await this.createDefaultSubscription(userId);
       }
@@ -32,6 +37,14 @@ export class SubscriptionService {
 
   private static async createDefaultSubscription(userId: string): Promise<UserSubscription | null> {
     try {
+      // Verify user is authenticated
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user || user.id !== userId) {
+        console.error('Cannot create subscription: User not authenticated or ID mismatch');
+        return null;
+      }
+
       const freePlan = getPlanById('awaknow_free');
       if (!freePlan) {
         console.error('Free plan not found');
@@ -47,38 +60,44 @@ export class SubscriptionService {
         tavus_minutes_used: 0,
         solo_sessions_today: 0,
         insights_this_week: 0,
+        current_period_start: new Date().toISOString(),
+        current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
       };
 
-      // First try with regular client (for authenticated users)
-      let { data, error } = await supabase
+      // Try using the RPC function first (bypasses RLS)
+      const { data: rpcData, error: rpcError } = await supabase
+        .rpc('get_or_create_user_subscription', { target_user_id: userId });
+
+      if (!rpcError && rpcData) {
+        return rpcData;
+      }
+
+      // Fallback to direct insert
+      const { data, error } = await supabase
         .from('user_subscriptions')
         .insert(defaultSubscription)
         .select()
         .single();
 
-      // If that fails due to RLS, try to check if user is authenticated
-      if (error && error.code === '42501') {
-        // Check if we have a valid session
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (!user) {
-          console.error('Cannot create subscription: User not authenticated');
-          return null;
-        }
-
-        // Try again - sometimes there's a timing issue with auth state
-        const result = await supabase
-          .from('user_subscriptions')
-          .insert(defaultSubscription)
-          .select()
-          .single();
-
-        data = result.data;
-        error = result.error;
-      }
-
       if (error) {
         console.error('Error creating default subscription:', error);
+        
+        // If still failing, try one more time with service role context
+        if (error.code === '42501') {
+          // This should work with the new RLS policies
+          const { data: retryData, error: retryError } = await supabase
+            .from('user_subscriptions')
+            .insert(defaultSubscription)
+            .select()
+            .single();
+
+          if (retryError) {
+            console.error('Final attempt failed:', retryError);
+            return null;
+          }
+
+          return retryData;
+        }
         return null;
       }
 
