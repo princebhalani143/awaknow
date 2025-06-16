@@ -66,12 +66,6 @@ export class SubscriptionService {
           return null;
         }
 
-        // Ensure the userId matches the authenticated user
-        if (user.id !== userId) {
-          console.error('Cannot create subscription: User ID mismatch');
-          return null;
-        }
-
         // Try again - sometimes there's a timing issue with auth state
         const result = await supabase
           .from('user_subscriptions')
