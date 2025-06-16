@@ -112,7 +112,7 @@ export class TavusTestUtils {
       console.log('🎭 Testing mock conversation creation...');
       const mockRequest = {
         sessionId: 'test-session-' + Date.now(),
-        userId: 'test-user',
+        userId: '00000000-0000-4000-8000-000000000000', // Valid UUID format for testing
         prompt: 'Test reflection session',
         sessionType: 'reflect_alone' as const,
         participantContext: 'Test context'
