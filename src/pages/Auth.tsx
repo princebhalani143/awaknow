@@ -109,14 +109,14 @@ export const Auth: React.FC = () => {
     try {
       // Demo credentials
       const { error } = await supabase.auth.signInWithPassword({
-        email: 'demo@awaknow.com',
+        email: 'demo@awaknow.org',
         password: 'demo123456',
       });
       
       if (error) {
         // If demo user doesn't exist, create it
         const { error: signUpError } = await supabase.auth.signUp({
-          email: 'demo@awaknow.com',
+          email: 'demo@awaknow.org',
           password: 'demo123456',
           options: {
             data: {
@@ -129,11 +129,25 @@ export const Auth: React.FC = () => {
         
         // Try to sign in again
         const { error: signInError } = await supabase.auth.signInWithPassword({
-          email: 'demo@awaknow.com',
+          email: 'demo@awaknow.org',
           password: 'demo123456',
         });
         
         if (signInError) throw signInError;
+      }
+      
+      // After successful login, upgrade demo user to Resolve Together plan
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase
+          .from('user_subscriptions')
+          .update({
+            plan_id: 'awaknow_pro',
+            plan_name: 'Resolve Together',
+            tavus_minutes_limit: 500,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('user_id', user.id);
       }
       
       navigate('/home');
@@ -186,7 +200,7 @@ export const Auth: React.FC = () => {
                 {mode === 'register' && 'Create your account and begin exploring emotional wellness with AI'}
                 {mode === 'forgot-password' && 'Enter your email to receive a password reset link'}
                 {mode === 'verify-email' && 'We sent a verification link to your email address'}
-                {mode === 'demo-gate' && 'Answer the question below to access the demo account'}
+                {mode === 'demo-gate' && 'Answer the question below to access the demo account with full Resolve Together features'}
               </p>
             </div>
 
@@ -260,7 +274,7 @@ export const Auth: React.FC = () => {
                     icon={Zap}
                     iconPosition="left"
                   >
-                    Try Demo Account
+                    Try Demo Account (Full Access)
                   </Button>
 
                   <p className="text-sm text-neutral-600">
@@ -295,6 +309,17 @@ export const Auth: React.FC = () => {
                     </p>
                   </div>
 
+                  <div className="p-4 bg-success-50 rounded-lg border border-success-200">
+                    <h4 className="font-medium text-success-800 mb-2">Demo Account Features</h4>
+                    <ul className="text-sm text-success-700 space-y-1">
+                      <li>• Full Resolve Together plan access</li>
+                      <li>• 500 AI video minutes</li>
+                      <li>• Unlimited solo sessions</li>
+                      <li>• Group conflict resolution</li>
+                      <li>• All premium features unlocked</li>
+                    </ul>
+                  </div>
+
                   <Input
                     type="text"
                     placeholder="Enter your answer"
@@ -312,7 +337,7 @@ export const Auth: React.FC = () => {
                     icon={ArrowRight}
                     iconPosition="right"
                   >
-                    Access Demo
+                    Access Demo (Full Features)
                   </Button>
 
                   <button
