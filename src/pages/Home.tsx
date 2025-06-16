@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Users, Sparkles, TrendingUp, Clock, Star, Play, Crown, ArrowRight, Shield, Zap, Heart, Award, Target, BarChart3, X } from 'lucide-react';
+import { Brain, Users, Sparkles, TrendingUp, Clock, Star, Play, Crown, ArrowRight, Shield, Zap, Heart, Award, Target, BarChart3, X, TestTube } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { TranslatedText } from '../components/UI/TranslatedText';
@@ -234,6 +234,38 @@ export const Home: React.FC = () => {
           </div>
         </motion.div>
 
+        {/* Tavus Test Panel - Development Only */}
+        {import.meta.env.DEV && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="mb-8"
+          >
+            <Card className="bg-gradient-to-r from-accent-50 to-warning-50 border-accent-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <TestTube className="w-6 h-6 text-accent-600" />
+                  <div>
+                    <h3 className="font-semibold text-accent-800">Tavus Integration Test</h3>
+                    <p className="text-sm text-accent-700">
+                      Test your AI conversation setup with persona {TavusService.personaId}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => navigate('/tavus-test')}
+                  variant="accent"
+                  size="sm"
+                  icon={TestTube}
+                >
+                  Run Tests
+                </Button>
+              </div>
+            </Card>
+          </motion.div>
+        )}
+
         {/* Premium AI Video Showcase */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -429,7 +461,7 @@ export const Home: React.FC = () => {
                       }`}>
                         {achievement.title}
                       </div>
-                      <div className={`text-xs ${
+                      <div className={`text-xs mt-1 ${
                         achievement.unlocked ? 'text-success-600' : 'text-neutral-500'
                       }`}>
                         {achievement.description}

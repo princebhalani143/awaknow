@@ -15,6 +15,7 @@ import { Session } from './pages/Session';
 import { Subscription } from './pages/Subscription';
 import { BillingHistory } from './pages/BillingHistory';
 import { Analytics } from './pages/Analytics';
+import { TavusTest } from './pages/TavusTest';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsConditions } from './pages/TermsConditions';
 import { CookieConsent } from './components/UI/CookieConsent';
@@ -98,6 +99,10 @@ function App() {
         <Route 
           path="/analytics" 
           element={user ? <Analytics /> : <Navigate to="/auth" />} 
+        />
+        <Route 
+          path="/tavus-test" 
+          element={user ? <TavusTest /> : <Navigate to="/auth" />} 
         />
       </Routes>
       <CookieConsent />
