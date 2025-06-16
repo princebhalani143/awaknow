@@ -1,16 +1,23 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, Send, Heart, Brain, Smile, Frown, Meh, ArrowLeft } from 'lucide-react';
+import { Mic, Send, Heart, Brain, Smile, Frown, Meh, ArrowLeft, Video, Play, Pause, Square } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { TopBar } from '../components/Layout/TopBar';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
+import { SessionService } from '../services/sessionService';
+import { TavusService } from '../services/tavusService';
 
 export const Reflect: React.FC = () => {
   const navigate = useNavigate();
-  const [step, setStep] = useState<'prompt' | 'listening' | 'processing' | 'response'>('prompt');
+  const { user } = useAuthStore();
+  const [step, setStep] = useState<'prompt' | 'creating' | 'tavus-loading' | 'conversation' | 'response'>('prompt');
   const [input, setInput] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [tavusVideoUrl, setTavusVideoUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [emotions, setEmotions] = useState<Array<{ emotion: string; timestamp: Date; intensity: number }>>([]);
 
   const emotionIcons = {
@@ -20,49 +27,78 @@ export const Reflect: React.FC = () => {
     anxious: { icon: Brain, color: 'text-warning-500' },
   };
 
-  const handleStartRecording = () => {
-    setIsRecording(true);
-    setStep('listening');
-    // Simulate recording process
-    setTimeout(() => {
-      setStep('processing');
-      setTimeout(() => {
-        setStep('response');
-        // Add mock emotion data
-        setEmotions(prev => [...prev, {
-          emotion: 'reflective',
-          timestamp: new Date(),
-          intensity: 0.7
-        }]);
-      }, 2000);
-    }, 3000);
+  const handleStartSession = async () => {
+    if (!user) return;
+
+    setStep('creating');
+    setError(null);
+
+    try {
+      // Create session
+      const sessionResult = await SessionService.createSession(
+        user.id,
+        'reflect_alone',
+        'Personal Reflection Session',
+        input || 'Personal reflection and emotional exploration'
+      );
+
+      if (!sessionResult.success) {
+        setError(sessionResult.error || 'Failed to create session');
+        setStep('prompt');
+        return;
+      }
+
+      setSessionId(sessionResult.sessionId!);
+      setStep('tavus-loading');
+
+      // Create Tavus conversation
+      const tavusResult = await TavusService.createConversationalVideo({
+        sessionId: sessionResult.sessionId!,
+        userId: user.id,
+        prompt: input || 'I want to reflect on my thoughts and feelings',
+        sessionType: 'reflect_alone',
+        participantContext: 'Personal emotional wellness and reflection session'
+      });
+
+      if (tavusResult.success && tavusResult.videoUrl) {
+        setTavusVideoUrl(tavusResult.videoUrl);
+        setStep('conversation');
+      } else {
+        setError(tavusResult.error || 'Failed to create AI conversation');
+        setStep('prompt');
+      }
+    } catch (error) {
+      console.error('Error starting session:', error);
+      setError('Failed to start session. Please try again.');
+      setStep('prompt');
+    }
   };
 
-  const handleTextSubmit = () => {
-    if (input.trim()) {
-      setStep('processing');
-      setTimeout(() => {
-        setStep('response');
-        setEmotions(prev => [...prev, {
-          emotion: 'thoughtful',
-          timestamp: new Date(),
-          intensity: 0.6
-        }]);
-      }, 2000);
-    }
+  const handleEndSession = () => {
+    setStep('response');
+    // Add mock emotion data
+    setEmotions(prev => [...prev, {
+      emotion: 'reflective',
+      timestamp: new Date(),
+      intensity: 0.7
+    }]);
   };
 
   const handleNewReflection = () => {
     setStep('prompt');
     setInput('');
     setIsRecording(false);
+    setSessionId(null);
+    setTavusVideoUrl(null);
+    setError(null);
+    setEmotions([]);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50">
       <TopBar />
       
-      <div className="container mx-auto px-4 py-6 max-w-2xl">
+      <div className="container mx-auto px-4 py-6 max-w-4xl">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -101,48 +137,60 @@ export const Reflect: React.FC = () => {
                   Share your thoughts, feelings, or experiences. Our AI companion will listen and provide personalized insights.
                 </p>
 
+                {error && (
+                  <div className="mb-6 p-4 bg-error-50 border border-error-200 rounded-xl">
+                    <p className="text-error-800 text-sm">{error}</p>
+                  </div>
+                )}
+
                 {/* Text Input */}
                 <div className="space-y-4 mb-6">
                   <textarea
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Type your thoughts here..."
+                    placeholder="Type your thoughts here... (optional - you can also start directly with AI conversation)"
                     className="w-full h-32 p-4 border border-neutral-300 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
                   <Button
-                    onClick={handleTextSubmit}
-                    disabled={!input.trim()}
+                    onClick={handleStartSession}
                     className="w-full"
-                    icon={Send}
+                    icon={Video}
                     iconPosition="right"
                   >
-                    Share Your Thoughts
+                    Start AI Conversation
                   </Button>
                 </div>
-
-                <div className="flex items-center space-x-4 text-neutral-400">
-                  <div className="flex-1 h-px bg-neutral-200"></div>
-                  <span className="text-sm">or</span>
-                  <div className="flex-1 h-px bg-neutral-200"></div>
-                </div>
-
-                {/* Voice Input */}
-                <Button
-                  onClick={handleStartRecording}
-                  variant="secondary"
-                  className="w-full mt-6"
-                  icon={Mic}
-                  iconPosition="right"
-                >
-                  Speak Your Mind
-                </Button>
               </Card>
             </motion.div>
           )}
 
-          {step === 'listening' && (
+          {step === 'creating' && (
             <motion.div
-              key="listening"
+              key="creating"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.6 }}
+            >
+              <Card className="text-center">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  className="w-20 h-20 border-4 border-primary-200 border-t-primary-500 rounded-full mx-auto mb-6"
+                />
+                <h2 className="text-2xl font-semibold text-neutral-800 mb-4">
+                  Creating your session...
+                </h2>
+                <p className="text-neutral-600">
+                  Setting up your private reflection space
+                </p>
+              </Card>
+            </motion.div>
+          )}
+
+          {step === 'tavus-loading' && (
+            <motion.div
+              key="tavus-loading"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
@@ -154,55 +202,108 @@ export const Reflect: React.FC = () => {
                   transition={{ duration: 2, repeat: Infinity }}
                   className="w-24 h-24 bg-gradient-to-br from-secondary-500 to-accent-500 rounded-full mx-auto mb-6 flex items-center justify-center"
                 >
-                  <Mic className="w-12 h-12 text-white" />
+                  <Video className="w-12 h-12 text-white" />
                 </motion.div>
                 <h2 className="text-2xl font-semibold text-neutral-800 mb-4">
-                  I'm listening...
+                  Preparing your AI companion...
                 </h2>
-                <p className="text-neutral-600 mb-8">
-                  Speak freely about what's on your mind. Take your time.
+                <p className="text-neutral-600 mb-4">
+                  Creating a personalized conversation experience just for you
                 </p>
-                <div className="flex justify-center space-x-2 mb-6">
-                  {[...Array(5)].map((_, i) => (
+                <div className="flex justify-center space-x-2">
+                  {[...Array(3)].map((_, i) => (
                     <motion.div
                       key={i}
-                      animate={{ height: [8, 24, 8] }}
-                      transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
-                      className="w-2 bg-secondary-500 rounded-full"
+                      animate={{ opacity: [0.3, 1, 0.3] }}
+                      transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
+                      className="w-2 h-2 bg-primary-500 rounded-full"
                     />
                   ))}
                 </div>
-                <Button
-                  onClick={() => setStep('processing')}
-                  variant="outline"
-                >
-                  Done Speaking
-                </Button>
               </Card>
             </motion.div>
           )}
 
-          {step === 'processing' && (
+          {step === 'conversation' && (
             <motion.div
-              key="processing"
+              key="conversation"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.6 }}
+              className="space-y-6"
             >
-              <Card className="text-center">
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                  className="w-20 h-20 border-4 border-primary-200 border-t-primary-500 rounded-full mx-auto mb-6"
-                />
-                <h2 className="text-2xl font-semibold text-neutral-800 mb-4">
-                  Processing your reflection...
-                </h2>
-                <p className="text-neutral-600">
-                  Our AI is analyzing your thoughts and preparing personalized insights.
-                </p>
+              {/* AI Video Interface */}
+              <Card>
+                <div className="aspect-video bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-xl mb-4 relative overflow-hidden">
+                  {tavusVideoUrl ? (
+                    <iframe
+                      src={tavusVideoUrl}
+                      className="w-full h-full rounded-xl"
+                      allow="camera; microphone; autoplay"
+                      title="AI Conversation"
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full">
+                      <div className="text-center">
+                        <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                          <Brain className="w-8 h-8 text-white" />
+                        </div>
+                        <p className="text-neutral-600 font-medium">AI Companion Ready</p>
+                        <p className="text-sm text-neutral-500 mt-2">
+                          Your personalized conversation partner
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-success-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm text-neutral-600">Live Conversation</span>
+                  </div>
+                  <Button
+                    onClick={handleEndSession}
+                    variant="outline"
+                    size="sm"
+                    icon={Square}
+                  >
+                    End Session
+                  </Button>
+                </div>
               </Card>
+
+              {/* Session Info */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <Card>
+                  <h3 className="text-lg font-semibold text-neutral-800 mb-4">Session Guidelines</h3>
+                  <ul className="space-y-2 text-sm text-neutral-600">
+                    <li className="flex items-center space-x-2">
+                      <Heart className="w-4 h-4 text-primary-500" />
+                      <span>Speak openly about your feelings</span>
+                    </li>
+                    <li className="flex items-center space-x-2">
+                      <Brain className="w-4 h-4 text-secondary-500" />
+                      <span>Ask questions about your emotions</span>
+                    </li>
+                    <li className="flex items-center space-x-2">
+                      <Smile className="w-4 h-4 text-success-500" />
+                      <span>Take your time to reflect</span>
+                    </li>
+                  </ul>
+                </Card>
+
+                <Card>
+                  <h3 className="text-lg font-semibold text-neutral-800 mb-4">Privacy & Security</h3>
+                  <ul className="space-y-2 text-sm text-neutral-600">
+                    <li>🔒 End-to-end encrypted</li>
+                    <li>🤐 Completely confidential</li>
+                    <li>🗑️ Delete anytime</li>
+                    <li>📊 Your data, your control</li>
+                  </ul>
+                </Card>
+              </div>
             </motion.div>
           )}
 
@@ -214,17 +315,17 @@ export const Reflect: React.FC = () => {
               transition={{ duration: 0.6 }}
               className="space-y-6"
             >
-              {/* AI Video Response */}
-              <Card>
-                <div className="aspect-video bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-xl mb-4 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                      <Brain className="w-8 h-8 text-white" />
-                    </div>
-                    <p className="text-neutral-600">AI Video Response</p>
-                    <p className="text-sm text-neutral-500 mt-2">Personalized insights based on your reflection</p>
-                  </div>
+              {/* Session Complete */}
+              <Card className="text-center">
+                <div className="w-20 h-20 bg-gradient-to-br from-success-500 to-primary-500 rounded-full mx-auto mb-6 flex items-center justify-center">
+                  <Heart className="w-10 h-10 text-white" />
                 </div>
+                <h2 className="text-2xl font-semibold text-neutral-800 mb-4">
+                  Session Complete
+                </h2>
+                <p className="text-neutral-600 mb-8">
+                  Thank you for taking time to reflect. Here are your personalized insights.
+                </p>
               </Card>
 
               {/* Insights */}

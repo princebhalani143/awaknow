@@ -16,178 +16,192 @@ Add your Tavus API key to your `.env` file:
 VITE_TAVUS_API_KEY=your_actual_tavus_api_key_here
 ```
 
-## Step 2: Tavus API Integration
+**Important**: Replace `your_actual_tavus_api_key_here` with your real Tavus API key.
 
-The current implementation in `src/services/tavusService.ts` includes:
+## Step 2: Tavus API Integration Status
 
-### Mock Implementation (Currently Active)
-- Simulates Tavus API calls for development
-- Returns mock video URLs and session IDs
-- Tracks usage in the database
+### Current Implementation
+The integration now includes:
 
-### Real API Integration (Ready to Activate)
+✅ **Real API Integration**: Ready to use with proper API key
+✅ **Mock Fallback**: Automatically falls back to mock if API key is missing
+✅ **Error Handling**: Comprehensive error handling and fallback mechanisms
+✅ **Usage Tracking**: Tracks minutes used and updates subscription limits
+✅ **Database Integration**: Stores session data and usage statistics
 
-To enable real Tavus integration, uncomment and modify the `callTavusAPI` method in `TavusService`:
+### API Endpoints Used
+- `POST /v2/conversations` - Create new conversation
+- `GET /v2/conversations/{id}` - Get conversation status
+- `POST /v2/conversations/{id}/end` - End conversation
 
+## Step 3: How It Works
+
+### 1. Session Creation Flow
+```
+User starts session → Create session in DB → Call Tavus API → Return video URL → User joins conversation
+```
+
+### 2. API Request Structure
 ```typescript
-private static async callTavusAPI(request: TavusVideoRequest): Promise<TavusVideoResponse> {
-  try {
-    const response = await fetch(`${this.baseUrl}/conversations`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt: request.prompt,
-        context: request.participantContext,
-        session_type: request.sessionType,
-        // Add other Tavus-specific parameters based on their API docs
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Tavus API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    
-    return {
-      success: true,
-      videoUrl: data.video_url,
-      tavusSessionId: data.session_id,
-      minutesUsed: data.duration_minutes,
-    };
-  } catch (error) {
-    console.error('Tavus API error:', error);
-    return {
-      success: false,
-      error: 'Failed to create video with Tavus API',
-    };
+{
+  conversation_name: "reflect_alone_session_123",
+  persona_id: "persona_reflection_coach",
+  callback_url: "https://yourapp.com/api/tavus/callback",
+  properties: {
+    max_call_duration: 30,
+    participant_left_timeout: 60,
+    participant_absent_timeout: 120,
+    enable_recording: true,
+    enable_transcription: true,
+    language: "en"
   }
 }
 ```
 
-## Step 3: API Endpoint Configuration
+### 3. Response Handling
+- Success: Returns conversation URL for user to join
+- Error: Falls back to mock implementation
+- Usage: Tracks minutes and updates user limits
 
-Update the `baseUrl` in `TavusService` based on Tavus documentation:
+## Step 4: Configuration Steps
 
-```typescript
-private static baseUrl = 'https://api.tavus.io/v1'; // Verify this URL with Tavus docs
+### 1. Get Your Tavus API Key
+1. Sign up at [https://tavus.io](https://tavus.io)
+2. Go to your dashboard
+3. Navigate to API settings
+4. Copy your API key
+
+### 2. Update Environment Variables
+```bash
+# In your .env file
+VITE_TAVUS_API_KEY=your_real_api_key_here
 ```
 
-## Step 4: Request Parameters
+### 3. Configure Persona IDs
+Update the persona IDs in `TavusService.getPersonaId()`:
 
-Customize the API request parameters based on Tavus API specifications:
-
-### For Reflect Alone Sessions:
 ```typescript
-{
-  prompt: "User's reflection input",
-  context: "Personal emotional wellness session",
-  session_type: "reflect_alone",
-  // Add Tavus-specific parameters:
-  // persona_id: "your_ai_persona_id",
-  // voice_settings: { ... },
-  // video_settings: { ... }
+private static getPersonaId(sessionType: string): string {
+  switch (sessionType) {
+    case 'reflect_alone':
+      return 'your_reflection_persona_id'; // Replace with actual ID
+    case 'resolve_together':
+      return 'your_mediator_persona_id'; // Replace with actual ID
+    default:
+      return 'your_default_persona_id'; // Replace with actual ID
+  }
 }
 ```
 
-### For Resolve Together Sessions:
-```typescript
-{
-  prompt: "Conflict resolution context",
-  context: "Group mediation session",
-  session_type: "resolve_together",
-  participants: ["user1_id", "user2_id"],
-  // Add Tavus-specific parameters for group sessions
-}
-```
+## Step 5: Testing
 
-## Step 5: Error Handling
+### Development Mode (Mock)
+- If no API key is set, automatically uses mock responses
+- Simulates video URLs and tracks usage
+- Perfect for development and testing
 
-The service includes comprehensive error handling:
+### Production Mode (Real API)
+- Set your real Tavus API key
+- Makes actual API calls to Tavus
+- Returns real conversation URLs
 
-1. **Usage Limits**: Checks user's remaining Tavus minutes
-2. **API Errors**: Handles network and API response errors
-3. **Database Updates**: Tracks usage and updates user limits
-4. **User Feedback**: Provides clear error messages
+### Testing Steps
+1. **Without API Key**: Test mock functionality
+2. **With API Key**: Test real Tavus integration
+3. **Error Scenarios**: Test fallback mechanisms
+4. **Usage Limits**: Test subscription limit enforcement
 
-## Step 6: Testing
+## Step 6: Monitoring & Analytics
 
-### Development Testing (Mock Mode)
-1. Create a session in the app
-2. Verify mock video URLs are generated
-3. Check database for usage tracking
-4. Confirm subscription limits are enforced
-
-### Production Testing (Real API)
-1. Replace mock implementation with real API calls
-2. Test with small usage limits first
-3. Verify video generation and playback
-4. Monitor API response times and errors
-
-## Step 7: Usage Tracking
-
-The system automatically tracks:
+### Usage Tracking
 - Minutes used per session
 - Total usage per user
 - Monthly usage limits
-- Session-to-video mapping
+- Session success/failure rates
 
-## Step 8: Subscription Integration
+### Database Tables
+- `tavus_usage`: Tracks individual session usage
+- `user_subscriptions`: Tracks monthly limits
+- `sessions`: Stores Tavus session IDs and URLs
 
-Usage limits are enforced based on subscription plans:
+## Step 7: Troubleshooting
 
-- **Free**: 25 minutes/month
-- **Reflect+**: 100 minutes/month  
-- **Resolve Together**: 500 minutes/month
+### Common Issues
 
-## Step 9: Video Playback
+1. **"API Key Not Configured"**
+   - Check your `.env` file
+   - Ensure `VITE_TAVUS_API_KEY` is set
+   - Restart your development server
 
-Videos are displayed in the session interface:
-- Embedded video player
-- Progress tracking
-- Transcript display (if provided by Tavus)
-- Session notes integration
+2. **"Tavus API Error: 401"**
+   - Invalid API key
+   - Check key in Tavus dashboard
+   - Ensure no extra spaces in `.env`
 
-## Troubleshooting
+3. **"Insufficient Tavus Minutes"**
+   - User has reached monthly limit
+   - Check subscription plan
+   - Upgrade user's plan
 
-### Common Issues:
-
-1. **API Key Invalid**
-   - Verify key in Tavus dashboard
+4. **Mock Mode Always Active**
+   - API key not properly set
    - Check environment variable loading
+   - Verify `.env` file location
 
-2. **Rate Limiting**
-   - Implement retry logic with exponential backoff
-   - Monitor API usage in Tavus dashboard
+### Debug Mode
+Enable debug logging by checking browser console:
+- API requests and responses
+- Error messages and fallbacks
+- Usage tracking updates
 
-3. **Video Generation Timeout**
-   - Increase timeout values
-   - Implement progress indicators
-   - Add fallback messaging
+## Step 8: Production Deployment
 
-4. **Usage Tracking Mismatch**
-   - Verify database triggers
-   - Check subscription limit calculations
-   - Monitor for concurrent session issues
+### Before Going Live
+1. ✅ Set real Tavus API key
+2. ✅ Configure proper persona IDs
+3. ✅ Test with real API calls
+4. ✅ Set up callback URLs (if needed)
+5. ✅ Monitor usage and costs
+
+### Environment Variables for Production
+```env
+VITE_TAVUS_API_KEY=prod_api_key_here
+```
+
+## Step 9: Advanced Features
+
+### Callback Integration (Optional)
+Set up webhook endpoints to receive:
+- Conversation start/end events
+- Usage statistics
+- Recording URLs
+- Transcription data
+
+### Custom Personas
+Create custom AI personas in Tavus dashboard:
+- Reflection coach for solo sessions
+- Mediator for conflict resolution
+- Specialized coaches for different needs
+
+## Support & Resources
+
+### Tavus Resources
+- [Tavus Documentation](https://docs.tavus.io)
+- [API Reference](https://docs.tavus.io/api-reference)
+- [Tavus Dashboard](https://app.tavus.io)
+
+### AwakNow Integration
+- Check `TavusService` implementation
+- Review error handling in browser console
+- Test with different subscription plans
+- Monitor database usage tracking
 
 ## Next Steps
 
-1. **Get Tavus API Key**: Contact Tavus for API access
-2. **Review API Documentation**: Study Tavus-specific parameters
-3. **Test Integration**: Start with mock mode, then switch to real API
+1. **Get API Key**: Sign up for Tavus and get your API key
+2. **Test Integration**: Start with mock mode, then switch to real API
+3. **Configure Personas**: Set up custom AI personas for your use cases
 4. **Monitor Usage**: Track API costs and user engagement
-5. **Optimize Performance**: Implement caching and error recovery
+5. **Optimize**: Fine-tune based on user feedback and usage patterns
 
-## Support
-
-For Tavus-specific questions:
-- Tavus Documentation: [https://docs.tavus.io](https://docs.tavus.io)
-- Tavus Support: Contact through their dashboard
-
-For AwakNow integration questions:
-- Check the `TavusService` implementation
-- Review database schema for usage tracking
-- Test with subscription limits
+The integration is now ready to use! Simply add your Tavus API key to start using real AI conversations.
