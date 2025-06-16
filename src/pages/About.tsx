@@ -97,56 +97,56 @@ export const About: React.FC = () => {
   const techPartners = [
     {
       name: 'Bolt',
-      description: 'Development platform and hackathon host',
+      description: 'Development platform & hackathon host',
       logo: '/bolt.jpg',
       category: 'Development',
       tier: 'primary'
     },
     {
       name: 'Tavus',
-      description: 'AI video and conversational AI',
+      description: 'AI video & conversational AI',
       logo: '/Tavus.png',
       category: 'AI Technology',
       tier: 'primary'
     },
     {
       name: 'ElevenLabs',
-      description: 'Advanced voice synthesis and audio AI',
+      description: 'Advanced voice synthesis & audio AI',
       logo: '/ElevenLabs.png',
       category: 'Voice AI',
       tier: 'primary'
     },
     {
       name: 'Supabase',
-      description: 'Backend infrastructure and database',
+      description: 'Backend infrastructure & database',
       logo: '/Supabase.png',
       category: 'Infrastructure',
       tier: 'core'
     },
     {
       name: 'RevenueCat',
-      description: 'Subscription management and billing',
+      description: 'Subscription management & billing',
       logo: '/revenuecat.png',
       category: 'Payments',
       tier: 'core'
     },
     {
       name: 'Stripe',
-      description: 'Payment processing and infrastructure',
+      description: 'Payment processing & infrastructure',
       logo: '/stripe.jpg',
       category: 'Payments',
       tier: 'core'
     },
     {
       name: 'Netlify',
-      description: 'Web hosting and deployment platform',
+      description: 'Web hosting & deployment platform',
       logo: '/netlify.png',
       category: 'Hosting',
       tier: 'infrastructure'
     },
     {
       name: 'Entri',
-      description: 'Domain management and DNS services',
+      description: 'Domain management & DNS services',
       logo: '/entri.png',
       category: 'Domain',
       tier: 'infrastructure'
