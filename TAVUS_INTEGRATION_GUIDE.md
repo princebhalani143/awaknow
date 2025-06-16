@@ -1,7 +1,12 @@
 # Tavus Integration Guide for AwakNow
 
 ## Overview
-This guide provides step-by-step instructions for integrating Tavus conversational video AI into AwakNow.
+This guide provides step-by-step instructions for integrating Tavus conversational video AI into AwakNow using your specific Persona ID and Replica ID.
+
+## Your Tavus Configuration
+- **Persona ID**: `p035f1ebe15b`
+- **Replica ID**: `r4317e64d25a`
+- **API Endpoint**: `https://tavusapi.com/v2`
 
 ## Prerequisites
 1. **Tavus API Account**: Sign up at [https://tavus.io](https://tavus.io)
@@ -23,6 +28,8 @@ VITE_TAVUS_API_KEY=your_actual_tavus_api_key_here
 ### Current Implementation
 The integration now includes:
 
+✅ **Specific Persona/Replica**: Uses your exact IDs (`p035f1ebe15b` and `r4317e64d25a`)
+✅ **Persona Verification**: Validates persona exists using `GET /v2/personas/p035f1ebe15b`
 ✅ **Real API Integration**: Ready to use with proper API key
 ✅ **Mock Fallback**: Automatically falls back to mock if API key is missing
 ✅ **Error Handling**: Comprehensive error handling and fallback mechanisms
@@ -30,22 +37,24 @@ The integration now includes:
 ✅ **Database Integration**: Stores session data and usage statistics
 
 ### API Endpoints Used
-- `POST /v2/conversations` - Create new conversation
+- `GET /v2/personas/p035f1ebe15b` - Verify your persona exists
+- `POST /v2/conversations` - Create new conversation with your persona/replica
 - `GET /v2/conversations/{id}` - Get conversation status
 - `POST /v2/conversations/{id}/end` - End conversation
 
 ## Step 3: How It Works
 
-### 1. Session Creation Flow
+### 1. Persona Verification Flow
 ```
-User starts session → Create session in DB → Call Tavus API → Return video URL → User joins conversation
+App starts → Verify persona p035f1ebe15b exists → Create conversation with verified persona
 ```
 
 ### 2. API Request Structure
 ```typescript
 {
-  conversation_name: "reflect_alone_session_123",
-  persona_id: "persona_reflection_coach",
+  conversation_name: "awaknow_reflect_alone_session_123",
+  persona_id: "p035f1ebe15b",
+  replica_id: "r4317e64d25a",
   callback_url: "https://yourapp.com/api/tavus/callback",
   properties: {
     max_call_duration: 30,
@@ -60,7 +69,7 @@ User starts session → Create session in DB → Call Tavus API → Return video
 
 ### 3. Response Handling
 - Success: Returns conversation URL for user to join
-- Error: Falls back to mock implementation
+- Error: Falls back to mock implementation with your persona ID
 - Usage: Tracks minutes and updates user limits
 
 ## Step 4: Configuration Steps
@@ -77,39 +86,32 @@ User starts session → Create session in DB → Call Tavus API → Return video
 VITE_TAVUS_API_KEY=your_real_api_key_here
 ```
 
-### 3. Configure Persona IDs
-Update the persona IDs in `TavusService.getPersonaId()`:
-
-```typescript
-private static getPersonaId(sessionType: string): string {
-  switch (sessionType) {
-    case 'reflect_alone':
-      return 'your_reflection_persona_id'; // Replace with actual ID
-    case 'resolve_together':
-      return 'your_mediator_persona_id'; // Replace with actual ID
-    default:
-      return 'your_default_persona_id'; // Replace with actual ID
-  }
-}
+### 3. Verify Your Persona
+The app will automatically verify your persona `p035f1ebe15b` exists by calling:
+```
+GET https://tavusapi.com/v2/personas/p035f1ebe15b
 ```
 
 ## Step 5: Testing
 
 ### Development Mode (Mock)
 - If no API key is set, automatically uses mock responses
+- Shows your actual persona/replica IDs in the interface
 - Simulates video URLs and tracks usage
 - Perfect for development and testing
 
 ### Production Mode (Real API)
 - Set your real Tavus API key
+- Verifies persona `p035f1ebe15b` exists
 - Makes actual API calls to Tavus
 - Returns real conversation URLs
 
 ### Testing Steps
-1. **Without API Key**: Test mock functionality
+1. **Without API Key**: Test mock functionality with your persona IDs
 2. **With API Key**: Test real Tavus integration
-3. **Error Scenarios**: Test fallback mechanisms
-4. **Usage Limits**: Test subscription limit enforcement
+3. **Persona Verification**: Check browser console for persona validation
+4. **Error Scenarios**: Test fallback mechanisms
+5. **Usage Limits**: Test subscription limit enforcement
 
 ## Step 6: Monitoring & Analytics
 
@@ -118,9 +120,10 @@ private static getPersonaId(sessionType: string): string {
 - Total usage per user
 - Monthly usage limits
 - Session success/failure rates
+- Persona-specific analytics
 
 ### Database Tables
-- `tavus_usage`: Tracks individual session usage
+- `tavus_usage`: Tracks individual session usage with persona ID
 - `user_subscriptions`: Tracks monthly limits
 - `sessions`: Stores Tavus session IDs and URLs
 
@@ -133,24 +136,30 @@ private static getPersonaId(sessionType: string): string {
    - Ensure `VITE_TAVUS_API_KEY` is set
    - Restart your development server
 
-2. **"Tavus API Error: 401"**
+2. **"Persona verification failed"**
+   - Check if persona `p035f1ebe15b` exists in your Tavus account
+   - Verify API key has access to this persona
+   - Check browser console for detailed error messages
+
+3. **"Tavus API Error: 401"**
    - Invalid API key
    - Check key in Tavus dashboard
    - Ensure no extra spaces in `.env`
 
-3. **"Insufficient Tavus Minutes"**
-   - User has reached monthly limit
-   - Check subscription plan
-   - Upgrade user's plan
+4. **"Tavus API Error: 404"**
+   - Persona `p035f1ebe15b` not found
+   - Verify persona exists in your Tavus account
+   - Check persona ID spelling
 
-4. **Mock Mode Always Active**
+5. **Mock Mode Always Active**
    - API key not properly set
+   - Persona verification failed
    - Check environment variable loading
-   - Verify `.env` file location
 
 ### Debug Mode
 Enable debug logging by checking browser console:
-- API requests and responses
+- Persona verification requests/responses
+- API requests and responses with your persona ID
 - Error messages and fallbacks
 - Usage tracking updates
 
@@ -158,7 +167,7 @@ Enable debug logging by checking browser console:
 
 ### Before Going Live
 1. ✅ Set real Tavus API key
-2. ✅ Configure proper persona IDs
+2. ✅ Verify persona `p035f1ebe15b` is active
 3. ✅ Test with real API calls
 4. ✅ Set up callback URLs (if needed)
 5. ✅ Monitor usage and costs
@@ -170,18 +179,45 @@ VITE_TAVUS_API_KEY=prod_api_key_here
 
 ## Step 9: Advanced Features
 
+### Persona Information
+The app displays your persona information:
+- Persona ID: `p035f1ebe15b`
+- Replica ID: `r4317e64d25a`
+- Status: Live/Mock mode indicator
+
 ### Callback Integration (Optional)
 Set up webhook endpoints to receive:
 - Conversation start/end events
-- Usage statistics
+- Usage statistics for your persona
 - Recording URLs
 - Transcription data
 
-### Custom Personas
-Create custom AI personas in Tavus dashboard:
-- Reflection coach for solo sessions
-- Mediator for conflict resolution
-- Specialized coaches for different needs
+### Custom Conversation Names
+Conversations are named with pattern:
+```
+awaknow_{session_type}_{session_id}
+```
+
+## Step 10: API Reference
+
+### Get Persona Information
+```bash
+curl -X GET "https://tavusapi.com/v2/personas/p035f1ebe15b" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json"
+```
+
+### Create Conversation
+```bash
+curl -X POST "https://tavusapi.com/v2/conversations" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "conversation_name": "awaknow_test_session",
+    "persona_id": "p035f1ebe15b",
+    "replica_id": "r4317e64d25a"
+  }'
+```
 
 ## Support & Resources
 
@@ -192,7 +228,7 @@ Create custom AI personas in Tavus dashboard:
 
 ### AwakNow Integration
 - Check `TavusService` implementation
-- Review error handling in browser console
+- Review persona verification in browser console
 - Test with different subscription plans
 - Monitor database usage tracking
 
@@ -200,8 +236,20 @@ Create custom AI personas in Tavus dashboard:
 
 1. **Get API Key**: Sign up for Tavus and get your API key
 2. **Test Integration**: Start with mock mode, then switch to real API
-3. **Configure Personas**: Set up custom AI personas for your use cases
+3. **Verify Persona**: Ensure `p035f1ebe15b` is accessible
 4. **Monitor Usage**: Track API costs and user engagement
 5. **Optimize**: Fine-tune based on user feedback and usage patterns
 
-The integration is now ready to use! Simply add your Tavus API key to start using real AI conversations.
+The integration is now ready to use with your specific persona and replica IDs! Simply add your Tavus API key to start using real AI conversations with persona `p035f1ebe15b`.
+
+## Current Status Summary
+
+✅ **Persona ID**: `p035f1ebe15b` (hardcoded)
+✅ **Replica ID**: `r4317e64d25a` (hardcoded)
+✅ **API Integration**: Ready for your API key
+✅ **Verification**: Automatic persona validation
+✅ **Fallback**: Mock mode with your persona IDs
+✅ **UI**: Shows your specific persona information
+✅ **Database**: Tracks usage with persona context
+
+Just add your Tavus API key to `.env` and you're ready to go!

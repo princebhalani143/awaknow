@@ -19,7 +19,8 @@ export interface TavusVideoResponse {
 
 export interface TavusConversationRequest {
   conversation_name: string;
-  persona_id?: string;
+  persona_id: string;
+  replica_id: string;
   callback_url?: string;
   properties?: {
     max_call_duration?: number;
@@ -34,6 +35,10 @@ export interface TavusConversationRequest {
 export class TavusService {
   private static apiKey = import.meta.env.VITE_TAVUS_API_KEY;
   private static baseUrl = 'https://tavusapi.com/v2';
+  
+  // Your specific Tavus IDs
+  private static PERSONA_ID = 'p035f1ebe15b';
+  private static REPLICA_ID = 'r4317e64d25a';
 
   static async createConversationalVideo(request: TavusVideoRequest): Promise<TavusVideoResponse> {
     try {
@@ -49,6 +54,13 @@ export class TavusService {
       // Check if API key is configured
       if (!this.apiKey || this.apiKey === 'your_tavus_api_key') {
         console.warn('Tavus API key not configured, using mock response');
+        return await this.simulateTavusAPI(request);
+      }
+
+      // First, verify the persona exists
+      const personaValid = await this.verifyPersona();
+      if (!personaValid) {
+        console.warn('Persona verification failed, using mock response');
         return await this.simulateTavusAPI(request);
       }
 
@@ -88,12 +100,39 @@ export class TavusService {
     }
   }
 
+  private static async verifyPersona(): Promise<boolean> {
+    try {
+      console.log(`Verifying Tavus persona: ${this.PERSONA_ID}`);
+      
+      const response = await fetch(`${this.baseUrl}/personas/${this.PERSONA_ID}`, {
+        method: 'GET',
+        headers: {
+          'x-api-key': this.apiKey,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const personaData = await response.json();
+        console.log('Persona verified successfully:', personaData);
+        return true;
+      } else {
+        console.error('Persona verification failed:', response.status, await response.text());
+        return false;
+      }
+    } catch (error) {
+      console.error('Error verifying persona:', error);
+      return false;
+    }
+  }
+
   private static async callTavusAPI(request: TavusVideoRequest): Promise<TavusVideoResponse> {
     try {
-      // Create conversation request
+      // Create conversation request with your specific IDs
       const conversationRequest: TavusConversationRequest = {
-        conversation_name: `${request.sessionType}_${request.sessionId}`,
-        persona_id: this.getPersonaId(request.sessionType),
+        conversation_name: `awaknow_${request.sessionType}_${request.sessionId}`,
+        persona_id: this.PERSONA_ID,
+        replica_id: this.REPLICA_ID,
         callback_url: `${window.location.origin}/api/tavus/callback`,
         properties: {
           max_call_duration: 30, // 30 minutes max
@@ -129,23 +168,11 @@ export class TavusService {
         success: true,
         videoUrl: data.conversation_url || data.join_url,
         tavusSessionId: data.conversation_id,
-        minutesUsed: 0, // Will be updated via callback
+        minutesUsed: 0, // Will be updated via callback or when session ends
       };
     } catch (error) {
       console.error('Tavus API call failed:', error);
       throw error;
-    }
-  }
-
-  private static getPersonaId(sessionType: string): string {
-    // Default persona IDs - you should replace these with actual Tavus persona IDs
-    switch (sessionType) {
-      case 'reflect_alone':
-        return 'persona_reflection_coach'; // Replace with actual persona ID
-      case 'resolve_together':
-        return 'persona_mediator'; // Replace with actual persona ID
-      default:
-        return 'persona_default'; // Replace with actual persona ID
     }
   }
 
@@ -155,9 +182,9 @@ export class TavusService {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // Mock successful response
-    const mockVideoId = `mock_tavus_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    const mockVideoUrl = `https://mock-tavus.example.com/conversations/${mockVideoId}`;
+    // Mock successful response with your persona ID in the mock URL
+    const mockVideoId = `mock_${this.PERSONA_ID}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const mockVideoUrl = `https://mock-tavus.awaknow.com/conversations/${mockVideoId}?persona=${this.PERSONA_ID}&replica=${this.REPLICA_ID}`;
 
     const minutesUsed = Math.floor(Math.random() * 5) + 2; // Random 2-6 minutes
 
@@ -230,7 +257,7 @@ export class TavusService {
   static async getConversationStatus(conversationId: string): Promise<any> {
     try {
       if (!this.apiKey || this.apiKey === 'your_tavus_api_key') {
-        return { status: 'mock', duration: 300 }; // Mock 5 minutes
+        return { status: 'mock', duration: 300, persona_id: this.PERSONA_ID }; // Mock 5 minutes
       }
 
       const response = await fetch(`${this.baseUrl}/conversations/${conversationId}`, {
@@ -273,5 +300,46 @@ export class TavusService {
       console.error('Error ending conversation:', error);
       return false;
     }
+  }
+
+  // Get persona information
+  static async getPersonaInfo(): Promise<any> {
+    try {
+      if (!this.apiKey || this.apiKey === 'your_tavus_api_key') {
+        return {
+          persona_id: this.PERSONA_ID,
+          replica_id: this.REPLICA_ID,
+          name: 'AwakNow AI Companion',
+          description: 'Emotional wellness and reflection AI companion',
+          status: 'mock'
+        };
+      }
+
+      const response = await fetch(`${this.baseUrl}/personas/${this.PERSONA_ID}`, {
+        method: 'GET',
+        headers: {
+          'x-api-key': this.apiKey,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to get persona info: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error getting persona info:', error);
+      return null;
+    }
+  }
+
+  // Static getters for the IDs
+  static get personaId(): string {
+    return this.PERSONA_ID;
+  }
+
+  static get replicaId(): string {
+    return this.REPLICA_ID;
   }
 }

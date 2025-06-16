@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, Send, Heart, Brain, Smile, Frown, Meh, ArrowLeft, Video, Play, Pause, Square } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
+import { TavusVideo } from '../components/UI/TavusVideo';
 import { TopBar } from '../components/Layout/TopBar';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
@@ -51,13 +52,13 @@ export const Reflect: React.FC = () => {
       setSessionId(sessionResult.sessionId!);
       setStep('tavus-loading');
 
-      // Create Tavus conversation
+      // Create Tavus conversation with specific persona
       const tavusResult = await TavusService.createConversationalVideo({
         sessionId: sessionResult.sessionId!,
         userId: user.id,
         prompt: input || 'I want to reflect on my thoughts and feelings',
         sessionType: 'reflect_alone',
-        participantContext: 'Personal emotional wellness and reflection session'
+        participantContext: `Personal emotional wellness and reflection session. User context: ${input || 'General reflection'}`
       });
 
       if (tavusResult.success && tavusResult.videoUrl) {
@@ -112,7 +113,10 @@ export const Reflect: React.FC = () => {
             icon={ArrowLeft}
             className="!p-2"
           />
-          <h1 className="text-2xl font-bold text-neutral-800">Reflect Alone</h1>
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-neutral-800">Reflect Alone</h1>
+            <p className="text-sm text-neutral-600">Powered by Tavus AI • Persona: {TavusService.personaId}</p>
+          </div>
           <div className="w-10"></div>
         </motion.div>
 
@@ -134,7 +138,7 @@ export const Reflect: React.FC = () => {
                   What's on your mind today?
                 </h2>
                 <p className="text-neutral-600 mb-8">
-                  Share your thoughts, feelings, or experiences. Our AI companion will listen and provide personalized insights.
+                  Share your thoughts, feelings, or experiences. Our AI companion will listen and provide personalized insights using advanced Tavus technology.
                 </p>
 
                 {error && (
@@ -142,6 +146,19 @@ export const Reflect: React.FC = () => {
                     <p className="text-error-800 text-sm">{error}</p>
                   </div>
                 )}
+
+                {/* Tavus Info */}
+                <div className="mb-6 p-4 bg-primary-50 border border-primary-200 rounded-xl">
+                  <div className="flex items-center justify-center space-x-2 mb-2">
+                    <Brain className="w-5 h-5 text-primary-600" />
+                    <span className="text-primary-800 font-medium">AI-Powered Conversation</span>
+                  </div>
+                  <div className="text-xs text-primary-700 space-y-1">
+                    <div>Persona ID: {TavusService.personaId}</div>
+                    <div>Replica ID: {TavusService.replicaId}</div>
+                    <div>Technology: Tavus Conversational AI</div>
+                  </div>
+                </div>
 
                 {/* Text Input */}
                 <div className="space-y-4 mb-6">
@@ -208,7 +225,7 @@ export const Reflect: React.FC = () => {
                   Preparing your AI companion...
                 </h2>
                 <p className="text-neutral-600 mb-4">
-                  Creating a personalized conversation experience just for you
+                  Initializing Tavus AI with persona {TavusService.personaId}
                 </p>
                 <div className="flex justify-center space-x-2">
                   {[...Array(3)].map((_, i) => (
@@ -224,7 +241,7 @@ export const Reflect: React.FC = () => {
             </motion.div>
           )}
 
-          {step === 'conversation' && (
+          {step === 'conversation' && tavusVideoUrl && (
             <motion.div
               key="conversation"
               initial={{ opacity: 0, y: 20 }}
@@ -233,46 +250,12 @@ export const Reflect: React.FC = () => {
               transition={{ duration: 0.6 }}
               className="space-y-6"
             >
-              {/* AI Video Interface */}
-              <Card>
-                <div className="aspect-video bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-xl mb-4 relative overflow-hidden">
-                  {tavusVideoUrl ? (
-                    <iframe
-                      src={tavusVideoUrl}
-                      className="w-full h-full rounded-xl"
-                      allow="camera; microphone; autoplay"
-                      title="AI Conversation"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center h-full">
-                      <div className="text-center">
-                        <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                          <Brain className="w-8 h-8 text-white" />
-                        </div>
-                        <p className="text-neutral-600 font-medium">AI Companion Ready</p>
-                        <p className="text-sm text-neutral-500 mt-2">
-                          Your personalized conversation partner
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 bg-success-500 rounded-full animate-pulse"></div>
-                    <span className="text-sm text-neutral-600">Live Conversation</span>
-                  </div>
-                  <Button
-                    onClick={handleEndSession}
-                    variant="outline"
-                    size="sm"
-                    icon={Square}
-                  >
-                    End Session
-                  </Button>
-                </div>
-              </Card>
+              {/* Tavus Video Interface */}
+              <TavusVideo
+                videoUrl={tavusVideoUrl}
+                sessionId={sessionId || ''}
+                onSessionEnd={handleEndSession}
+              />
 
               {/* Session Info */}
               <div className="grid md:grid-cols-2 gap-6">
@@ -295,13 +278,25 @@ export const Reflect: React.FC = () => {
                 </Card>
 
                 <Card>
-                  <h3 className="text-lg font-semibold text-neutral-800 mb-4">Privacy & Security</h3>
-                  <ul className="space-y-2 text-sm text-neutral-600">
-                    <li>🔒 End-to-end encrypted</li>
-                    <li>🤐 Completely confidential</li>
-                    <li>🗑️ Delete anytime</li>
-                    <li>📊 Your data, your control</li>
-                  </ul>
+                  <h3 className="text-lg font-semibold text-neutral-800 mb-4">AI Technology</h3>
+                  <div className="space-y-2 text-sm text-neutral-600">
+                    <div className="flex justify-between">
+                      <span>Platform:</span>
+                      <span className="font-medium">Tavus AI</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Persona:</span>
+                      <span className="font-mono text-xs">{TavusService.personaId}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Replica:</span>
+                      <span className="font-mono text-xs">{TavusService.replicaId}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Privacy:</span>
+                      <span className="text-success-600">🔒 Encrypted</span>
+                    </div>
+                  </div>
                 </Card>
               </div>
             </motion.div>
@@ -324,7 +319,7 @@ export const Reflect: React.FC = () => {
                   Session Complete
                 </h2>
                 <p className="text-neutral-600 mb-8">
-                  Thank you for taking time to reflect. Here are your personalized insights.
+                  Thank you for taking time to reflect. Here are your personalized insights from your Tavus AI conversation.
                 </p>
               </Card>
 
