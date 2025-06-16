@@ -49,11 +49,39 @@ export class SubscriptionService {
         insights_this_week: 0,
       };
 
-      const { data, error } = await supabase
+      // First try with regular client (for authenticated users)
+      let { data, error } = await supabase
         .from('user_subscriptions')
         .insert(defaultSubscription)
         .select()
         .single();
+
+      // If that fails due to RLS, try to check if user is authenticated
+      if (error && error.code === '42501') {
+        // Check if we have a valid session
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+          console.error('Cannot create subscription: User not authenticated');
+          return null;
+        }
+
+        // Ensure the userId matches the authenticated user
+        if (user.id !== userId) {
+          console.error('Cannot create subscription: User ID mismatch');
+          return null;
+        }
+
+        // Try again - sometimes there's a timing issue with auth state
+        const result = await supabase
+          .from('user_subscriptions')
+          .insert(defaultSubscription)
+          .select()
+          .single();
+
+        data = result.data;
+        error = result.error;
+      }
 
       if (error) {
         console.error('Error creating default subscription:', error);
