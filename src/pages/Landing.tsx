@@ -70,7 +70,7 @@ export const Landing: React.FC = () => {
       id: 'environmental',
       title: 'Environmental Conflict',
       subtitle: 'Conflicts over natural resources, land use, pollution, and environmental conservation',
-      image: 'https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      image: 'https://images.unsplash.com/photo-1704485862384-fdd0dc413f47?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
       techniques: [
         'Sustainable resource management',
         'Stakeholder engagement',
