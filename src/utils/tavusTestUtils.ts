@@ -37,7 +37,7 @@ export class TavusTestUtils {
     // Test 2: Persona ID Configuration
     try {
       const personaId = TavusService.personaId;
-      if (personaId === 'p035f1ebe15b') {
+      if (personaId === 'ped1380851e4') {
         results.push({
           test: 'Persona ID Configuration',
           status: 'pass',
@@ -47,7 +47,7 @@ export class TavusTestUtils {
         results.push({
           test: 'Persona ID Configuration',
           status: 'fail',
-          message: `Incorrect persona ID: ${personaId}, expected: p035f1ebe15b`
+          message: `Incorrect persona ID: ${personaId}, expected: ped1380851e4`
         });
       }
     } catch (error) {
