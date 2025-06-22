@@ -204,53 +204,31 @@ export class SubscriptionService {
   }
 
   static async incrementSoloSessionCount(userId: string): Promise<boolean> {
-    try {
-      const today = new Date().toISOString().split('T')[0];
-      
-      const { error } = await supabase
-        .from('user_subscriptions')
-        .update({
-          last_solo_session_date: today,
-          solo_sessions_today: supabase.sql`CASE 
-            WHEN last_solo_session_date = ${today} THEN solo_sessions_today + 1 
-            ELSE 1 
-          END`,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('user_id', userId);
-
-      if (error) {
-        console.error('Error incrementing solo session count:', error);
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error in incrementSoloSessionCount:', error);
-      return false;
-    }
+	  try {
+		const { error } = await supabase.rpc('increment_solo_session_count', { uid: userId });
+		if (error) {
+		  console.error('Error incrementing solo session count via RPC:', error);
+		  return false;
+		}
+		return true;
+	  } catch (error) {
+		console.error('Error in incrementSoloSessionCount:', error);
+		return false;
+	  }
   }
 
   static async incrementTavusUsage(userId: string, minutesUsed: number): Promise<boolean> {
-    try {
-      const { error } = await supabase
-        .from('user_subscriptions')
-        .update({
-          tavus_minutes_used: supabase.sql`tavus_minutes_used + ${minutesUsed}`,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('user_id', userId);
-
-      if (error) {
-        console.error('Error incrementing Tavus usage:', error);
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error in incrementTavusUsage:', error);
-      return false;
-    }
+	  try {
+		const { error } = await supabase.rpc('increment_tavus_usage', { uid: userId, minutes: minutesUsed });
+		if (error) {
+		  console.error('Error incrementing Tavus usage via RPC:', error);
+		  return false;
+		}
+		return true;
+	  } catch (error) {
+		console.error('Error in incrementTavusUsage:', error);
+		return false;
+	  }
   }
 
   static async getRemainingLimits(userId: string) {
