@@ -165,7 +165,7 @@ export const TavusVideo: React.FC<TavusVideoProps> = ({
         </div>
 
         {/* Controls Overlay */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+        <div className="overlay-control-hide absolute bottom-4 left-1/2 transform -translate-x-1/2">
           <div className="flex items-center space-x-3 bg-black/70 backdrop-blur-sm rounded-full px-4 py-2">
             <button
               onClick={() => setIsMuted(!isMuted)}
