@@ -308,7 +308,7 @@ export const About: React.FC = () => {
               <div className="relative">
                 <div className="aspect-square bg-gradient-to-br from-primary-100 to-secondary-100 rounded-2xl overflow-hidden">
                   <img
-                    src="/prince-bhalani.jpeg"
+                    src="/prince-bhalani.jpg"
                     alt="Prince Bhalani, Founder of AwakNow"
                     className="w-full h-full object-cover"
                   />
