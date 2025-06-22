@@ -43,7 +43,8 @@ export class TavusService {
   static async createConversationalVideo(request: TavusVideoRequest): Promise<TavusVideoResponse> {
     try {
       // Check if user has enough Tavus minutes
-      const canUse = await SubscriptionService.canUseTavusMinutes(request.userId, 5); // Estimate 5 minutes
+      // const canUse = await SubscriptionService.canUseTavusMinutes(request.userId, 5); // Estimate 5 minutes
+      const canUse = await SubscriptionService.incrementTavusUsage(request.userId, -50); // subtracts minutes used
       if (!canUse) {
         return {
           success: false,
