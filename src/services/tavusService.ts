@@ -140,7 +140,7 @@ export class TavusService {
           participant_absent_timeout: 120, // 2 minutes
           enable_recording: true,
           enable_transcription: true,
-          language: 'en',
+          language: 'English',
         },
       };
 
