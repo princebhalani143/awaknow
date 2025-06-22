@@ -62,7 +62,7 @@ App starts → Verify persona p035f1ebe15b exists → Create conversation with v
     participant_absent_timeout: 120,
     enable_recording: true,
     enable_transcription: true,
-    language: "en"
+    language: "English"
   }
 }
 ```
