@@ -35,7 +35,7 @@ export interface TavusConversationRequest {
 export class TavusService {
   private static apiKey = import.meta.env.VITE_TAVUS_API_KEY;
   private static baseUrl = 'https://tavusapi.com/v2';
-  private static PERSONA_ID = 'p035f1ebe15b';
+  private static PERSONA_ID = 'ped1380851e4';
   private static REPLICA_ID = 'r4317e64d25a';
 
   static async createConversationalVideo(request: TavusVideoRequest): Promise<TavusVideoResponse> {
