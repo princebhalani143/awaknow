@@ -395,10 +395,7 @@ export const Home: React.FC = () => {
                         <span className="text-sm text-neutral-600">{limits.tavusMinutes} left</span>
                       </div>
                       <div className="w-full bg-neutral-200 rounded-full h-2">
-                        <div 
-                          className="bg-gradient-to-r from-primary-500 to-primary-600 h-2 rounded-full transition-all duration-500"
-                          style={{ width: `${Math.max(10, (limits.tavusMinutes / subscription.tavus_minutes_limit) * 100)}%` }}
-                        />
+                        <div className="bg-gradient-to-r from-primary-500 to-primary-600 h-2 rounded-full transition-all duration-500"/>
                       </div>
                     </div>
                     
