@@ -6,7 +6,7 @@ This guide provides step-by-step instructions for integrating Tavus conversation
 ## Your Tavus Configuration
 - **Persona ID**: `p035f1ebe15b`
 - **Replica ID**: `r4317e64d25a`
-- **API Endpoint**: `https://tavusapi.com/v2`
+- **API Endpoint**: `https://tavusapi.com/v2/personas`
 
 ## Prerequisites
 1. **Tavus API Account**: Sign up at [https://tavus.io](https://tavus.io)
