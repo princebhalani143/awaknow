@@ -52,7 +52,7 @@ export class TavusService {
       }
 
       // Check if API key is configured
-      if (!this.apiKey || this.apiKey === 'your_tavus_api_key') {
+      if (!this.apiKey || this.apiKey === 'VITE_TAVUS_API_KEY') {
         console.warn('Tavus API key not configured, using mock response');
         return await this.simulateTavusAPI(request);
       }
