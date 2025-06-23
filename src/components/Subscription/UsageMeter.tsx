@@ -48,8 +48,8 @@ export const UsageMeter: React.FC<UsageMeterProps> = ({ limits, subscription }) 
             </div>
             <span className="text-sm text-neutral-600">
               {limits.tavusMinutes} / {subscription.tavus_minutes_limit}
-              <p>Each additional minute will incur a charge of $0.20 USD, billed to your card.</p>
             </span>
+            <p>Each additional minute will incur a charge of $0.20 USD, billed to your card.</p>
           </div>
           <div className="w-full bg-neutral-200 rounded-full h-2">
             <motion.div
