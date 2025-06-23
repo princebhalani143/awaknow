@@ -55,7 +55,7 @@ export class TavusService {
         return { success: false, error: 'You already have an active Tavus session.' };
       }
 
-      const canUse = await SubscriptionService.incrementTavusUsage(request.userId, -50);
+      const canUse = await SubscriptionService.incrementTavusUsage(request.userId, 5);
       if (!canUse) {
         return { success: false, error: 'Not enough Tavus credits.' };
       }
