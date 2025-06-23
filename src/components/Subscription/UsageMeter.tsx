@@ -47,7 +47,7 @@ export const UsageMeter: React.FC<UsageMeterProps> = ({ limits, subscription }) 
               <span className="text-sm font-medium text-neutral-700">AI Video Minutes</span>
             </div>
             <span className="text-sm text-neutral-600">
-              {limits.tavusMinutes} / {subscription.tavus_minutes_limit} / pay as you go usage
+              {limits.tavusMinutes} / {subscription.tavus_minutes_limit} (pay as you go usage)
             </span>
             
           </div>
