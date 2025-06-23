@@ -390,10 +390,10 @@ export const Home: React.FC = () => {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div className="p-4 bg-neutral-50 rounded-xl">
-                      <div className={`text-2xl font-bold ${limits.canCreateGroupSessions ? 'text-success-600' : 'text-neutral-400'}`}>
-                        {limits.canCreateGroupSessions ? '✓' : '✗'}
+                      <div className={`text-2xl font-bold ${limits.tavusMinutes ? 'text-success-600' : 'text-neutral-400'}`}>
+                        {limits.tavusMinutes ? 'used' : 'left'}
                       </div>
-                      <div className="text-sm text-neutral-600">Group Sessions</div>
+                      <div className="text-sm text-neutral-600">AI Minutes</div>
                     </div>
                     <div>
                       <div className="flex items-center justify-between mb-2">
