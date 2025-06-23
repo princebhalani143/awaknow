@@ -393,7 +393,7 @@ export const Home: React.FC = () => {
                       <div className="text-2xl font-bold text-secondary-600">
                         {limits.tavusMinutes === '500' ? '∞' : limits.tavusMinutes}
                       </div>
-                      <div className="text-sm text-neutral-600">AI Minutes (used)</div>
+                      <div className="text-sm text-neutral-600">AI Minutes Count</div>
                     </div>
                     <div>
                     </div>
