@@ -313,7 +313,7 @@ export const Auth: React.FC = () => {
                     <h4 className="font-medium text-success-800 mb-2">Demo Account Features</h4>
                     <ul className="text-sm text-success-700 space-y-1">
                       <li>• Full Resolve Together plan access</li>
-                      <li>• 500 AI video minutes</li>
+                      <li>• 15000 AI video minutes</li>
                       <li>• Unlimited solo sessions</li>
                       <li>• Group conflict resolution</li>
                       <li>• All premium features unlocked</li>
