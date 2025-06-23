@@ -47,13 +47,13 @@ export const UsageMeter: React.FC<UsageMeterProps> = ({ limits, subscription }) 
               <span className="text-sm font-medium text-neutral-700">AI Video Minutes</span>
             </div>
             <span className="text-sm text-neutral-600">
-              {formatLimit(limits.soloSessionsToday)} remaining
+              {limits.tavusMinutes} / {subscription.tavus_minutes_limit}
             </span>
           </div>
           <div className="w-full bg-neutral-200 rounded-full h-2">
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: `${Math.max(0, tavusPercentage)}%` }}
+              animate={{ width: `${Math.max(0, 100)}%` }}
               transition={{ duration: 0.8, ease: "easeOut" }}
               className={`h-2 rounded-full ${getUsageColor(tavusPercentage)}`}
             />
