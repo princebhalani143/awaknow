@@ -389,6 +389,12 @@ export const Home: React.FC = () => {
                 
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-4">
+                    <div className="p-4 bg-neutral-50 rounded-xl">
+                      <div className={`text-2xl font-bold ${limits.canCreateGroupSessions ? 'text-success-600' : 'text-neutral-400'}`}>
+                        {limits.canCreateGroupSessions ? '✓' : '✗'}
+                      </div>
+                      <div className="text-sm text-neutral-600">Group Sessions</div>
+                    </div>
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm font-medium text-neutral-700">AI Minutes</span>
