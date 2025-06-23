@@ -46,8 +46,13 @@ export const UsageMeter: React.FC<UsageMeterProps> = ({ limits, subscription }) 
               <Video className="w-4 h-4 text-primary-500" />
               <span className="text-sm font-medium text-neutral-700">AI Video Minutes</span>
             </div>
+            <!--
             <span className="text-sm text-neutral-600">
               {limits.tavusMinutes} / {subscription.tavus_minutes_limit}
+            </span>
+            -->
+            <span className="text-sm text-neutral-600">
+              {formatLimit(limits.soloSessionsToday)} remaining
             </span>
           </div>
           <div className="w-full bg-neutral-200 rounded-full h-2">
