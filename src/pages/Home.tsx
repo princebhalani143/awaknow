@@ -398,6 +398,13 @@ export const Home: React.FC = () => {
                         <div className="bg-gradient-to-r from-primary-500 to-primary-600 h-2 rounded-full transition-all duration-500"/>
                       </div>
                     </div>
+
+                    <div className="p-4 bg-neutral-50 rounded-xl">
+                      <div className={`text-2xl font-bold ${limits.tavusMinutes ? 'text-success-600' : 'text-neutral-400'}`}>
+                        {limits.tavusMinutes ? '✓' : '✗'}
+                      </div>
+                      <div className="text-sm text-neutral-600">AI Minutes</div>
+                    </div>
                     
                     <div className="p-4 bg-secondary-50 rounded-xl">
                       <div className="text-2xl font-bold text-secondary-600">
