@@ -29,7 +29,7 @@ export const Plans: React.FC = () => {
     {
       category: 'Session Limits',
       items: [
-        { name: 'AI Video Minutes', free: '25/month', reflect: '100/month', resolve: '500/month' },
+        { name: 'AI Video Minutes', free: '25/month', reflect: '100/month', resolve: '15000/month' },
         { name: 'Solo Sessions', free: '1/day', reflect: 'Unlimited', resolve: 'Unlimited' },
         { name: 'AI Insights', free: '1/week', reflect: 'Unlimited', resolve: 'Unlimited' },
         { name: 'Group Sessions', free: false, reflect: false, resolve: true },
