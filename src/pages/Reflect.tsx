@@ -29,50 +29,48 @@ export const Reflect: React.FC = () => {
   };
 
   const handleStartSession = async () => {
-    if (!user) return;
+	  if (!user || sessionId) return; // ✅ Prevents re-creation if session already exists
 
-    setStep('creating');
-    setError(null);
+	  setStep('creating');
+	  setError(null);
 
-    try {
-      // Create session
-      const sessionResult = await SessionService.createSession(
-        user.id,
-        'reflect_alone',
-        'Personal Reflection Session',
-        input || 'Personal reflection and emotional exploration'
-      );
+	  try {
+		const sessionResult = await SessionService.createSession(
+		  user.id,
+		  'reflect_alone',
+		  'Personal Reflection Session',
+		  input || 'Personal reflection and emotional exploration'
+		);
 
-      if (!sessionResult.success) {
-        setError(sessionResult.error || 'Failed to create session');
-        setStep('prompt');
-        return;
-      }
+		if (!sessionResult.success) {
+		  setError(sessionResult.error || 'Failed to create session');
+		  setStep('prompt');
+		  return;
+		}
 
-      setSessionId(sessionResult.sessionId!);
-      setStep('tavus-loading');
+		setSessionId(sessionResult.sessionId!);
+		setStep('tavus-loading');
 
-      // Create Tavus conversation with specific persona
-      const tavusResult = await TavusService.createConversationalVideo({
-        sessionId: sessionResult.sessionId!,
-        userId: user.id,
-        prompt: input || 'I want to reflect on my thoughts and feelings',
-        sessionType: 'reflect_alone',
-        participantContext: `Personal emotional wellness and reflection session. User context: ${input || 'General reflection'}`
-      });
+		const tavusResult = await TavusService.createConversationalVideo({
+		  sessionId: sessionResult.sessionId!,
+		  userId: user.id,
+		  prompt: input || 'I want to reflect on my thoughts and feelings',
+		  sessionType: 'reflect_alone',
+		  participantContext: `Personal emotional wellness and reflection session. User context: ${input || 'General reflection'}`
+		});
 
-      if (tavusResult.success && tavusResult.videoUrl) {
-        setTavusVideoUrl(tavusResult.videoUrl);
-        setStep('conversation');
-      } else {
-        setError(tavusResult.error || 'Failed to create AI conversation');
-        setStep('prompt');
-      }
-    } catch (error) {
-      console.error('Error starting session:', error);
-      setError('Failed to start session. Please try again.');
-      setStep('prompt');
-    }
+		if (tavusResult.success && tavusResult.videoUrl) {
+		  setTavusVideoUrl(tavusResult.videoUrl);
+		  setStep('conversation');
+		} else {
+		  setError(tavusResult.error || 'Failed to create AI conversation');
+		  setStep('prompt');
+		}
+	  } catch (error) {
+		console.error('Error starting session:', error);
+		setError('Failed to start session. Please try again.');
+		setStep('prompt');
+	  }
   };
 
   const handleEndSession = () => {
