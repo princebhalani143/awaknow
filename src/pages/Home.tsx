@@ -396,13 +396,6 @@ export const Home: React.FC = () => {
                       <div className="text-sm text-neutral-600">AI Minutes</div>
                     </div>
                     <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-neutral-700">AI Minutes</span>
-                        <span className="text-sm text-neutral-600">{limits.tavusMinutes} used</span>
-                      </div>
-                      <div className="w-full bg-neutral-200 rounded-full h-2">
-                        <div className="bg-gradient-to-r from-primary-500 to-primary-600 h-2 rounded-full transition-all duration-500"/>
-                      </div>
                     </div>
                     
                     <div className="p-4 bg-secondary-50 rounded-xl">
