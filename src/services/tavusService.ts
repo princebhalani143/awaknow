@@ -87,7 +87,8 @@ export class TavusService {
       const data = await response.json();
 
       if (!response.ok || !data?.conversation_id) {
-        return { success: false, error: 'Failed to create Tavus session.' };
+        console.error('Tavus API error response:', data);  // 👈 for dev console
+        return { success: false, error: data?.message || 'Failed to create Tavus session.' };
       }
 
       await supabase.from('tavus_sessions').insert([{
