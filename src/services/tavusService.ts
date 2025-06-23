@@ -45,12 +45,22 @@ export class TavusService {
 
     try {
       const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+
+      // Step 1: Mark old active sessions as completed
+      await supabase
+        .from('tavus_sessions')
+        .update({ status: 'completed' })
+        .eq('user_id', request.userId)
+        .eq('status', 'active')
+        .lt('created_at', tenMinutesAgo);
+      
+      // Step 2: Check if any *recent* active session exists
       const { data: existingSession } = await supabase
         .from('tavus_sessions')
         .select('*')
         .eq('user_id', request.userId)
         .eq('status', 'active')
-        .gt('created_at', tenMinutesAgo) // Only consider sessions newer than 10 minutes
+        .gt('created_at', tenMinutesAgo)
         .maybeSingle();
       
       if (existingSession) {
