@@ -44,13 +44,15 @@ export class TavusService {
     }
 
     try {
+      const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
       const { data: existingSession } = await supabase
         .from('tavus_sessions')
         .select('*')
         .eq('user_id', request.userId)
         .eq('status', 'active')
+        .gt('created_at', tenMinutesAgo) // Only consider sessions newer than 10 minutes
         .maybeSingle();
-
+      
       if (existingSession) {
         return { success: false, error: 'You already have an active Tavus session.' };
       }
