@@ -44,18 +44,30 @@ export class TavusService {
     }
 
     try {
+      const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+
+      // Step 1: Mark old active sessions as completed
+      await supabase
+        .from('tavus_sessions')
+        .update({ status: 'completed' })
+        .eq('user_id', request.userId)
+        .eq('status', 'active')
+        .lt('created_at', tenMinutesAgo);
+      
+      // Step 2: Check if any *recent* active session exists
       const { data: existingSession } = await supabase
         .from('tavus_sessions')
         .select('*')
         .eq('user_id', request.userId)
         .eq('status', 'active')
+        .gt('created_at', tenMinutesAgo)
         .maybeSingle();
-
+      
       if (existingSession) {
         return { success: false, error: 'You already have an active Tavus session.' };
       }
 
-      const canUse = await SubscriptionService.incrementTavusUsage(request.userId, 5);
+      const canUse = await SubscriptionService.incrementTavusUsage(request.userId, -50);
       if (!canUse) {
         return { success: false, error: 'Not enough Tavus credits.' };
       }
@@ -87,8 +99,7 @@ export class TavusService {
       const data = await response.json();
 
       if (!response.ok || !data?.conversation_id) {
-        console.error('Tavus API error response:', data);  // 👈 for dev console
-        return { success: false, error: data?.message || 'Failed to create Tavus session.' };
+        return { success: false, error: 'Failed to create Tavus session.' };
       }
 
       await supabase.from('tavus_sessions').insert([{
