@@ -401,7 +401,7 @@ export const Home: React.FC = () => {
                     
                     <div className="p-4 bg-secondary-50 rounded-xl">
                       <div className="text-2xl font-bold text-secondary-600">
-                        {limizts.soloSessionsToday === 'unlimited' ? '∞' : limits.soloSessionsToday}
+                        {limits.soloSessionsToday === 'unlimited' ? '∞' : limits.soloSessionsToday}
                       </div>
                       <div className="text-sm text-secondary-700">Sessions Today</div>
                     </div>
