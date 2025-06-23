@@ -51,14 +51,6 @@ export const UsageMeter: React.FC<UsageMeterProps> = ({ limits, subscription }) 
             </span>
             <p className="text-sm text-neutral-600">+ pay as you go usage</p>
           </div>
-          <div className="w-full bg-neutral-200 rounded-full h-2">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${Math.max(0, 100)}%` }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className={`h-2 rounded-full ${getUsageColor(tavusPercentage)}`}
-            />
-          </div>
           {limits.tavusMinutes <= 5 && (
             <p className="text-xs text-warning-600 mt-1">
               Running low on video minutes. Consider upgrading your plan.
