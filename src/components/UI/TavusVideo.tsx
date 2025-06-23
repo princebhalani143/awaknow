@@ -37,6 +37,24 @@ export const TavusVideo: React.FC<TavusVideoProps> = ({
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+  const handleUnload = () => {
+    // Avoid awaiting here – instead trigger it and forget
+    if (sessionId) {
+      TavusService.endConversation(sessionId);
+      TavusService.markSessionCompleted(sessionId);
+    }
+  };
+
+  window.addEventListener('beforeunload', handleUnload);
+
+  return () => {
+    window.removeEventListener('beforeunload', handleUnload);
+    // Optional: also call cleanup when component unmounts
+    handleUnload();
+  };
+}, [sessionId]);
+
   const loadPersonaInfo = async () => {
     try {
       const info = await TavusService.getPersonaInfo();
