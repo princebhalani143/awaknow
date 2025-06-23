@@ -52,7 +52,7 @@ export const SUBSCRIPTION_PLANS: Record<string, SubscriptionPlan> = {
       annual: 199.99,
     },
     features: {
-      tavusMinutes: 'unlimited',
+      tavusMinutes: 15000,
       soloSessionsPerDay: 'unlimited',
       insightsPerWeek: 'unlimited',
       groupSessions: true,
