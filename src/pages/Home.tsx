@@ -401,7 +401,7 @@ export const Home: React.FC = () => {
 
                     <div className="p-4 bg-neutral-50 rounded-xl">
                       <div className={`text-2xl font-bold ${limits.tavusMinutes ? 'text-success-600' : 'text-neutral-400'}`}>
-                        {limits.tavusMinutes ? '✓' : '✗'}
+                        {limits.tavusMinutes ? '{limits.tavusMinutes}' : '{limits.tavusMinutes}'}
                       </div>
                       <div className="text-sm text-neutral-600">AI Minutes</div>
                     </div>
