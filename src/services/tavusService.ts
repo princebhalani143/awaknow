@@ -15,6 +15,7 @@ export interface TavusVideoResponse {
   tavusSessionId?: string;
   minutesUsed?: number;
   error?: string;
+  fallback?: boolean;
 }
 
 export interface TavusConversationRequest {
@@ -37,10 +38,11 @@ export class TavusService {
   private static baseUrl = 'https://tavusapi.com/v2';
   private static PERSONA_ID = 'ped1380851e4';
   private static REPLICA_ID = 'r4317e64d25a';
+  private static FALLBACK_VIDEO = '/tavus-fall-back.mp4';
 
   static async createConversationalVideo(request: TavusVideoRequest): Promise<TavusVideoResponse> {
     if (!this.apiKey || this.apiKey === 'your_tavus_api_key') {
-      return await this.simulateTavusAPI(request);
+      return await this.useFallback(request, 'Missing or invalid Tavus API key');
     }
 
     try {
@@ -52,12 +54,12 @@ export class TavusService {
         .maybeSingle();
 
       if (existingSession) {
-        return { success: false, error: 'You already have an active Tavus session.' };
+        return await this.useFallback(request, 'You already have an active Tavus session.');
       }
 
       const canUse = await SubscriptionService.incrementTavusUsage(request.userId, 5);
       if (!canUse) {
-        return { success: false, error: 'Not enough Tavus credits.' };
+        return await this.useFallback(request, 'Not enough Tavus credits.');
       }
 
       const conversationRequest: TavusConversationRequest = {
@@ -87,8 +89,7 @@ export class TavusService {
       const data = await response.json();
 
       if (!response.ok || !data?.conversation_id) {
-        console.error('Tavus API error response:', data);  // 👈 for dev console
-        return { success: false, error: data?.message || 'Failed to create Tavus session.' };
+        return await this.useFallback(request, data?.message || 'Failed to create Tavus session.');
       }
 
       await supabase.from('tavus_sessions').insert([{
@@ -102,44 +103,30 @@ export class TavusService {
         tavusSessionId: data.conversation_id,
         videoUrl: data.conversation_url || data.join_url,
         minutesUsed: 5,
+        fallback: false,
       };
     } catch (error: any) {
-      return { success: false, error: error.message };
+      return await this.useFallback(request, error.message || 'Unexpected error occurred');
     }
   }
 
-  static async simulateTavusAPI(request: TavusVideoRequest): Promise<TavusVideoResponse> {
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    const mockVideoId = `mock_${this.PERSONA_ID}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    const mockVideoUrl = `https://mock-tavus.awaknow.com/conversations/${mockVideoId}?persona=${this.PERSONA_ID}&replica=${this.REPLICA_ID}`;
-
-    const minutesUsed = Math.floor(Math.random() * 5) + 2;
-
-    await SubscriptionService.incrementTavusUsage(request.userId, minutesUsed);
-
-    await supabase.from('tavus_usage').insert({
-      user_id: request.userId,
-      session_id: request.sessionId,
-      minutes_used: minutesUsed,
-      tavus_video_id: mockVideoId,
-    });
-
-    await supabase
-      .from('sessions')
+  private static async useFallback(request: TavusVideoRequest, error: string): Promise<TavusVideoResponse> {
+    await supabase.from('sessions')
       .update({
-        tavus_video_url: mockVideoUrl,
-        tavus_session_id: mockVideoId,
-        tavus_minutes_used: minutesUsed,
+        tavus_video_url: this.FALLBACK_VIDEO,
+        tavus_session_id: 'fallback',
+        tavus_minutes_used: 0,
         updated_at: new Date().toISOString(),
       })
       .eq('id', request.sessionId);
 
     return {
       success: true,
-      videoUrl: mockVideoUrl,
-      tavusSessionId: mockVideoId,
-      minutesUsed,
+      videoUrl: this.FALLBACK_VIDEO,
+      tavusSessionId: 'fallback',
+      minutesUsed: 0,
+      error,
+      fallback: true,
     };
   }
 
