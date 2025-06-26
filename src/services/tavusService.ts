@@ -57,7 +57,7 @@ export class TavusService {
         return await this.useFallback(request, 'You already have an active Tavus session.');
       }
 
-      const canUse = await SubscriptionService.incrementTavusUsage(request.userId, 5);
+      const canUse = await SubscriptionService.incrementTavusUsage(request.userId, 1);
       if (!canUse) {
         return await this.useFallback(request, 'Not enough Tavus credits.');
       }
