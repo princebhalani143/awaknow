@@ -102,7 +102,7 @@ export class TavusService {
         success: true,
         tavusSessionId: data.conversation_id,
         videoUrl: data.conversation_url || data.join_url,
-        minutesUsed: 5,
+        minutesUsed: 1,
         fallback: false,
       };
     } catch (error: any) {
