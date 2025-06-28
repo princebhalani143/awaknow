@@ -48,25 +48,21 @@ export const Footer: React.FC = () => {
     <footer className="bg-white border-t border-neutral-200 py-6 mt-auto">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-          {/* Left Section - Copyright */}
-          <div className="text-center md:text-left">
-            <div className="text-sm text-neutral-600">
-              © 2025 AwakNow
-            </div>
-            <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-1">
-              <button
-                onClick={() => navigate('/privacy-policy')}
-                className="text-sm text-neutral-600 hover:text-primary-600 transition-colors"
-              >
-                Privacy Policy
-              </button>
-              <button
-                onClick={() => navigate('/terms-conditions')}
-                className="text-sm text-neutral-600 hover:text-primary-600 transition-colors"
-              >
-                Terms & Conditions
-              </button>
-            </div>
+          {/* Left Section - Copyright and Links in one line */}
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
+            <span className="text-sm text-neutral-600">© 2025 AwakNow</span>
+            <button
+              onClick={() => navigate('/privacy-policy')}
+              className="text-sm text-neutral-600 hover:text-primary-600 transition-colors"
+            >
+              Privacy Policy
+            </button>
+            <button
+              onClick={() => navigate('/terms-conditions')}
+              className="text-sm text-neutral-600 hover:text-primary-600 transition-colors"
+            >
+              Terms & Conditions
+            </button>
           </div>
           
           {/* Right Section - Social Media Icons */}
