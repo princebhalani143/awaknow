@@ -37,9 +37,9 @@ export class TavusService {
   private static apiKey = import.meta.env.VITE_TAVUS_API_KEY;
   private static baseUrl = 'https://tavusapi.com/v2';
   
-  // Updated Persona Details
-  private static PERSONA_ID = 'p7e13c73f41f';
-  private static REPLICA_ID = 'r4317e64d25a';
+  // Get Persona and Replica IDs from environment variables with fallbacks
+  private static PERSONA_ID = import.meta.env.VITE_TAVUS_PERSONA_ID || 'p7e13c73f41f';
+  private static REPLICA_ID = import.meta.env.VITE_TAVUS_REPLICA_ID || 'r4317e64d25a';
   
   // Fallback video - consistent across all failures
   private static FALLBACK_VIDEO = '/tavus-fall-back.mp4';
@@ -121,7 +121,7 @@ export class TavusService {
         return await this.useFallback(request, 'Insufficient AI video minutes. Please upgrade your plan or wait for your monthly reset.');
       }
 
-      console.log('🚀 Creating Tavus conversation with new persona:', this.PERSONA_ID);
+      console.log('🚀 Creating Tavus conversation with persona:', this.PERSONA_ID);
 
       const conversationRequest: TavusConversationRequest = {
         conversation_name: `awaknow_${request.sessionType}_${request.sessionId}`,
@@ -253,19 +253,19 @@ export class TavusService {
     }
   }
 
-  static async markSessionCompleted(tavusSessionId: string, userId?: string): Promise<void> {
-    if (!tavusSessionId || tavusSessionId === 'fallback') {
+  static async markSessionCompleted(sessionId: string, userId?: string): Promise<void> {
+    if (!sessionId || sessionId === 'fallback') {
       return;
     }
 
     try {
-      console.log('✅ Marking session as completed:', tavusSessionId);
+      console.log('✅ Marking session as completed:', sessionId);
       
       // Update database
       await supabase
         .from('tavus_sessions')
         .update({ status: 'completed' })
-        .eq('tavus_session_id', tavusSessionId);
+        .eq('tavus_session_id', sessionId);
 
       // Remove from active sessions tracking
       if (userId) {
@@ -274,7 +274,7 @@ export class TavusService {
       }
 
       // End the actual Tavus conversation
-      await this.endConversation(tavusSessionId);
+      await this.endConversation(sessionId);
     } catch (error) {
       console.error('❌ Error marking session completed:', error);
     }
@@ -383,7 +383,7 @@ export class TavusService {
     }
   }
 
-  // Getters for the updated persona details
+  // Getters for the persona details
   static get personaId(): string {
     return this.PERSONA_ID;
   }

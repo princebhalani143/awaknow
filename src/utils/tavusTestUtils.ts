@@ -34,20 +34,48 @@ export class TavusTestUtils {
       });
     }
 
-    // Test 2: Updated Persona ID Configuration
+    // Test 2: Environment Variables for Persona/Replica IDs
+    try {
+      const envPersonaId = import.meta.env.VITE_TAVUS_PERSONA_ID;
+      const envReplicaId = import.meta.env.VITE_TAVUS_REPLICA_ID;
+      
+      if (envPersonaId && envReplicaId) {
+        results.push({
+          test: 'Environment Variables',
+          status: 'pass',
+          message: `✅ Persona/Replica IDs configured in environment variables`
+        });
+      } else {
+        results.push({
+          test: 'Environment Variables',
+          status: 'pass', // Still pass, just using fallbacks
+          message: `⚠️ Using fallback Persona/Replica IDs (environment variables not set)`
+        });
+      }
+    } catch (error) {
+      results.push({
+        test: 'Environment Variables',
+        status: 'fail',
+        message: `Error checking environment variables: ${error}`
+      });
+    }
+
+    // Test 3: Updated Persona ID Configuration
     try {
       const personaId = TavusService.personaId;
-      if (personaId === 'p7e13c73f41f') {
+      const expectedPersonaId = import.meta.env.VITE_TAVUS_PERSONA_ID || 'p7e13c73f41f';
+      
+      if (personaId === expectedPersonaId) {
         results.push({
           test: 'Persona ID Configuration',
           status: 'pass',
-          message: `✅ Updated persona ID: ${personaId}`
+          message: `✅ Using correct persona ID: ${personaId}`
         });
       } else {
         results.push({
           test: 'Persona ID Configuration',
           status: 'fail',
-          message: `❌ Incorrect persona ID: ${personaId}, expected: p7e13c73f41f`
+          message: `❌ Incorrect persona ID: ${personaId}, expected: ${expectedPersonaId}`
         });
       }
     } catch (error) {
@@ -58,10 +86,12 @@ export class TavusTestUtils {
       });
     }
 
-    // Test 3: Replica ID Configuration
+    // Test 4: Replica ID Configuration
     try {
       const replicaId = TavusService.replicaId;
-      if (replicaId === 'r4317e64d25a') {
+      const expectedReplicaId = import.meta.env.VITE_TAVUS_REPLICA_ID || 'r4317e64d25a';
+      
+      if (replicaId === expectedReplicaId) {
         results.push({
           test: 'Replica ID Configuration',
           status: 'pass',
@@ -71,7 +101,7 @@ export class TavusTestUtils {
         results.push({
           test: 'Replica ID Configuration',
           status: 'fail',
-          message: `Incorrect replica ID: ${replicaId}, expected: r4317e64d25a`
+          message: `Incorrect replica ID: ${replicaId}, expected: ${expectedReplicaId}`
         });
       }
     } catch (error) {
@@ -82,7 +112,7 @@ export class TavusTestUtils {
       });
     }
 
-    // Test 4: Persona Verification API Call
+    // Test 5: Persona Verification API Call
     try {
       console.log('🔍 Testing persona verification...');
       const personaInfo = await TavusService.getPersonaInfo();
@@ -107,7 +137,7 @@ export class TavusTestUtils {
       });
     }
 
-    // Test 5: Session Management Test
+    // Test 6: Session Management Test
     try {
       console.log('🔒 Testing session management...');
       
@@ -163,7 +193,7 @@ export class TavusTestUtils {
       });
     }
 
-    // Test 6: Fallback Video Test
+    // Test 7: Fallback Video Test
     try {
       console.log('🎬 Testing fallback video...');
       const fallbackVideo = TavusService.fallbackVideo;
@@ -215,7 +245,7 @@ export class TavusTestUtils {
     
     if (passCount === totalCount) {
       console.log('🎉 All tests passed! Tavus integration is ready.');
-      console.log('🔧 Updated with new persona: p7e13c73f41f');
+      console.log('🔧 Using persona ID from environment variables or fallback');
       console.log('🛡️ Session management and cleanup working properly');
     } else {
       console.log('⚠️  Some tests failed. Check the issues above.');

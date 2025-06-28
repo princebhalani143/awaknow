@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Play, CheckCircle, XCircle, RefreshCw, Eye, Settings } from 'lucide-react';
+import { Play, CheckCircle, XCircle, RefreshCw, Eye, Settings, User, Brain } from 'lucide-react';
 import { Button } from './Button';
 import { Card } from './Card';
 import { TavusTestUtils } from '../../utils/tavusTestUtils';
@@ -80,10 +80,16 @@ export const TavusTestPanel: React.FC = () => {
             <div>
               <span className="text-neutral-600">Persona ID:</span>
               <div className="font-mono text-primary-600">{TavusService.personaId}</div>
+              <div className="text-xs text-neutral-500">
+                {import.meta.env.VITE_TAVUS_PERSONA_ID ? 'From environment variable' : 'Using fallback value'}
+              </div>
             </div>
             <div>
               <span className="text-neutral-600">Replica ID:</span>
               <div className="font-mono text-secondary-600">{TavusService.replicaId}</div>
+              <div className="text-xs text-neutral-500">
+                {import.meta.env.VITE_TAVUS_REPLICA_ID ? 'From environment variable' : 'Using fallback value'}
+              </div>
             </div>
             <div>
               <span className="text-neutral-600">API Key:</span>
