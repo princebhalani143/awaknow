@@ -228,3 +228,7 @@
   border-left: 4px solid #f97316 !important;
   padding-left: 8px !important;
 }
+
+article > div {
+    padding: 0!important;
+}
