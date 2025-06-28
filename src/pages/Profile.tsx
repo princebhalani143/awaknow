@@ -694,10 +694,7 @@ export const Profile: React.FC = () => {
             
             {/* Usage Meter */}
             {subscription && limits && (
-              <Card className="mb-6">
-                
                 <UsageMeter limits={limits} subscription={subscription} />
-              </Card>
             )}
             
             {/* Available Plans */}
