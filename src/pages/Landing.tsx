@@ -600,27 +600,8 @@ export const Landing: React.FC = () => {
                 </motion.div>
               </div>
 
-              {/* Navigation Controls */}
+              {/* Slide Indicators */}
               <div className="flex items-center justify-center mt-8 sm:mt-12">
-                {/* Previous/Next Buttons for Desktop */}
-                <div className="hidden md:flex items-center space-x-4 mr-6">
-                  <button
-                    onClick={prevSlide}
-                    className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
-                    aria-label="Previous slide"
-                  >
-                    <ArrowRight className="w-5 h-5 rotate-180" />
-                  </button>
-                  <button
-                    onClick={nextSlide}
-                    className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
-                    aria-label="Next slide"
-                  >
-                    <ArrowRight className="w-5 h-5" />
-                  </button>
-                </div>
-
-                {/* Slide Indicators */}
                 <div className="flex space-x-3">
                   {conflictSlides.map((_, index) => (
                     <button
