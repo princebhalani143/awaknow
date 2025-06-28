@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Brain, Heart, Users, Shield, Target, Zap, ArrowRight, CheckCircle, Star, Award, Globe, Lightbulb, TrendingUp, Trophy, Rocket } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
+import { LogoCarousel } from '../components/UI/LogoCarousel';
 import { TopBar } from '../components/Layout/TopBar';
 import { Footer } from '../components/Layout/Footer';
 import { useNavigate } from 'react-router-dom';
@@ -92,65 +93,6 @@ export const About: React.FC = () => {
     { icon: TrendingUp, title: 'Beta Platform', description: 'Successfully launched beta with core AI features' },
     { icon: Shield, title: 'Privacy Certified', description: 'HIPAA-compliant with end-to-end encryption' },
     { icon: Brain, title: 'AI Innovation', description: 'Advanced emotion recognition and response algorithms' },
-  ];
-
-  const techPartners = [
-    {
-      name: 'Bolt',
-      description: 'Development platform and hackathon host',
-      logo: '/bolt.jpg',
-      category: 'Development',
-      tier: 'primary'
-    },
-    {
-      name: 'Tavus',
-      description: 'AI video generation and conversational AI',
-      logo: '/Tavus.png',
-      category: 'AI Technology',
-      tier: 'primary'
-    },
-    {
-      name: 'ElevenLabs',
-      description: 'Advanced voice synthesis and lifelike audio AI',
-      logo: '/ElevenLabs.png',
-      category: 'Voice AI',
-      tier: 'primary'
-    },
-    {
-      name: 'Supabase',
-      description: 'Backend infrastructure and database',
-      logo: '/Supabase.png',
-      category: 'Infrastructure',
-      tier: 'core'
-    },
-    {
-      name: 'RevenueCat',
-      description: 'Subscription management and billing',
-      logo: '/revenuecat.png',
-      category: 'Payments',
-      tier: 'core'
-    },
-    {
-      name: 'Stripe',
-      description: 'Payment processing and infrastructure',
-      logo: '/stripe.jpg',
-      category: 'Payments',
-      tier: 'core'
-    },
-    {
-      name: 'Netlify',
-      description: 'Web hosting and deployment platform',
-      logo: '/netlify.png',
-      category: 'Hosting',
-      tier: 'infrastructure'
-    },
-    {
-      name: 'Entri',
-      description: 'Domain management and DNS services',
-      logo: '/entri.png',
-      category: 'Domain',
-      tier: 'infrastructure'
-    },
   ];
 
   return (
@@ -401,175 +343,18 @@ export const About: React.FC = () => {
           </Card>
         </motion.div>
 
-        {/* Technology Partners - Premium Static Design */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 2.0 }}
-          className="mb-16"
-        >
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-neutral-800 mb-4">Our Technology Partners</h2>
-            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              Powered by industry-leading technologies and trusted partners who share our vision
-            </p>
-          </div>
-
-          {/* Premium Partner Grid */}
-          <div className="space-y-12">
-            {/* Primary Partners - AI & Core Technology */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 2.2 }}
-            >
-              <div className="text-center mb-8">
-                <h3 className="text-xl font-semibold text-neutral-800 mb-2">AI & Core Technology</h3>
-                <div className="w-24 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mx-auto"></div>
-              </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {techPartners.filter(p => p.tier === 'primary').map((partner, index) => (
-                  <motion.div
-                    key={partner.name}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, delay: 2.4 + index * 0.1 }}
-                    className="group"
-                  >
-                    <Card className="text-center p-8 hover:shadow-2xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/95 backdrop-blur-sm relative overflow-hidden">
-                      {/* Premium Background Effect */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 to-secondary-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                      
-                      <div className="relative z-10">
-                        <div className="mx-auto mb-4 flex items-center justify-center">
-                          <img
-                            src={partner.logo}
-                            alt={`${partner.name} logo`}
-                            className="w-full h-full object-contain"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = 'none';
-                              const parent = target.parentElement;
-                              if (parent) {
-                                parent.innerHTML = `<span class="text-2xl font-bold text-neutral-600">${partner.name.charAt(0)}</span>`;
-                              }
-                            }}
-                          />
-                        </div>
-                        <p className="text-neutral-600 mb-4 leading-relaxed">
-                          {partner.description}
-                        </p>
-                        <span className="inline-block px-4 py-2 bg-gradient-to-r from-primary-100 to-secondary-100 text-primary-700 rounded-full text-sm font-medium">
-                          {partner.category}
-                        </span>
-                      </div>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Core Infrastructure */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 2.6 }}
-            >
-              <div className="text-center mb-8">
-                <h3 className="text-xl font-semibold text-neutral-800 mb-2">Core Infrastructure</h3>
-                <div className="w-24 h-1 bg-gradient-to-r from-secondary-500 to-accent-500 rounded-full mx-auto"></div>
-              </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {techPartners.filter(p => p.tier === 'core').map((partner, index) => (
-                  <motion.div
-                    key={partner.name}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, delay: 2.8 + index * 0.1 }}
-                    className="group"
-                  >
-                    <Card className="text-center p-6 hover:shadow-xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/90 backdrop-blur-sm">
-                      <div className="mx-auto mb-4 flex items-center justify-center">
-                        <img
-                          src={partner.logo}
-                          alt={`${partner.name} logo`}
-                          className="w-full h-full object-contain"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            const parent = target.parentElement;
-                            if (parent) {
-                              parent.innerHTML = `<span class="text-lg font-bold text-neutral-600">${partner.name.charAt(0)}</span>`;
-                            }
-                          }}
-                        />
-                      </div>
-                      <p className="text-neutral-600 text-sm mb-3 leading-relaxed">
-                        {partner.description}
-                      </p>
-                      <span className="inline-block px-3 py-1 bg-secondary-100 text-secondary-700 rounded-full text-xs font-medium">
-                        {partner.category}
-                      </span>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Infrastructure & Hosting */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 3.0 }}
-            >
-              <div className="text-center mb-8">
-                <h3 className="text-xl font-semibold text-neutral-800 mb-2">Infrastructure & Hosting</h3>
-                <div className="w-24 h-1 bg-gradient-to-r from-accent-500 to-warning-500 rounded-full mx-auto"></div>
-              </div>
-              <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
-                {techPartners.filter(p => p.tier === 'infrastructure').map((partner, index) => (
-                  <motion.div
-                    key={partner.name}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, delay: 3.2 + index * 0.1 }}
-                    className="group"
-                  >
-                    <Card className="text-center p-6 hover:shadow-xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/90 backdrop-blur-sm">
-                      <div className="mx-auto mb-4 flex items-center justify-center">
-                        <img
-                          src={partner.logo}
-                          alt={`${partner.name} logo`}
-                          className="w-full h-full object-contain"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            const parent = target.parentElement;
-                            if (parent) {
-                              parent.innerHTML = `<span class="text-lg font-bold text-neutral-600">${partner.name.charAt(0)}</span>`;
-                            }
-                          }}
-                        />
-                      </div>
-                      <p className="text-neutral-600 text-sm mb-3 leading-relaxed">
-                        {partner.description}
-                      </p>
-                      <span className="inline-block px-3 py-1 bg-accent-100 text-accent-700 rounded-full text-xs font-medium">
-                        {partner.category}
-                      </span>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </motion.div>
+        {/* Logo Carousel Section */}
+        <LogoCarousel 
+          title="Our Technology Partners"
+          subtitle="Powered by industry-leading technologies and trusted partners who share our vision"
+        />
 
         {/* CTA Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 3.6 }}
+          transition={{ duration: 0.8, delay: 2.0 }}
+          className="mt-16"
         >
           <Card className="bg-gradient-to-br from-primary-500 to-secondary-500 text-white border-0 text-center">
             <h2 className="text-3xl font-bold mb-4">Join Our Mission</h2>
