@@ -599,7 +599,7 @@ export const Landing: React.FC = () => {
           </div>
         </section>
 
-        {/* How It Works Section - Responsive */}
+        {/* How It Works Section - Responsive with Fixed Line */}
         <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-br from-white to-secondary-50/30">
           <div className="container mx-auto px-4 max-w-6xl">
             <motion.div
@@ -618,10 +618,16 @@ export const Landing: React.FC = () => {
               </p>
             </motion.div>
 
-            {/* Flow Design - Responsive */}
+            {/* Flow Design - Responsive with Fixed Line */}
             <div className="relative">
-              {/* Connection Lines - Hidden on mobile */}
-              <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-primary-200 via-secondary-200 to-accent-200 rounded-full transform -translate-y-1/2 z-0"></div>
+              {/* Connection Lines - Only show on large screens and animate in */}
+              <motion.div 
+                initial={{ opacity: 0, scaleX: 0 }}
+                whileInView={{ opacity: 1, scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, delay: 0.5 }}
+                className="hidden lg:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-primary-200 via-secondary-200 to-accent-200 rounded-full transform -translate-y-1/2 z-0 origin-left"
+              />
               
               <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 relative z-10">
                 {steps.map((step, index) => (
@@ -714,7 +720,7 @@ export const Landing: React.FC = () => {
           subtitle="Powered by cutting-edge technology partners who share our vision for emotional wellness"
         />
 
-        {/* Ready to Begin CTA Section - Responsive */}
+        {/* Ready to Begin CTA Section - Responsive with Fixed Line Height */}
         <section className="py-16 sm:py-20 md:py-24 bg-white">
           <div className="container mx-auto px-4 max-w-6xl">
             <motion.div
@@ -745,7 +751,7 @@ export const Landing: React.FC = () => {
                   
                   <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 sm:mb-6 leading-tight">
                     Transform Your Life
-                    <span className="block bg-gradient-to-r from-accent-200 to-white bg-clip-text text-transparent">
+                    <span className="block bg-gradient-to-r from-accent-200 to-white bg-clip-text text-transparent leading-tight">
                       Starting Today
                     </span>
                   </h2>
