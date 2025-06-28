@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Brain, Users, Shield, Target, Zap, ArrowRight, CheckCircle, Star, Award, Globe, Lightbulb, TrendingUp, Trophy, Rocket, Play, Sparkles, X, ChevronLeft, ChevronRight, AlertTriangle, MessageCircle } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
+import { Heart, Brain, Users, Shield, Target, Zap, ArrowRight, CheckCircle, Star, Award, Globe, Lightbulb, TrendingUp, Trophy, Rocket, Play, Sparkles, X, AlertTriangle, MessageCircle } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { TranslatedText } from '../components/UI/TranslatedText';
@@ -13,6 +13,10 @@ export const Landing: React.FC = () => {
   const navigate = useNavigate();
   const [showVideo, setShowVideo] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragConstraintsRef = useRef(null);
+  const x = useMotionValue(0);
+  const dragStartX = useRef(0);
 
   const conflictSlides = [
     {
@@ -89,6 +93,40 @@ export const Landing: React.FC = () => {
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + conflictSlides.length) % conflictSlides.length);
   };
+
+  const handleDragStart = () => {
+    setIsDragging(true);
+    dragStartX.current = x.get();
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+    const dragEndX = x.get();
+    const dragDifference = dragEndX - dragStartX.current;
+    
+    // If dragged more than 100px, change slide
+    if (Math.abs(dragDifference) > 100) {
+      if (dragDifference > 0) {
+        prevSlide();
+      } else {
+        nextSlide();
+      }
+    }
+    
+    // Reset position
+    x.set(0);
+  };
+
+  // Auto-advance slides every 8 seconds if not dragging
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (!isDragging) {
+        nextSlide();
+      }
+    }, 8000);
+    
+    return () => clearInterval(timer);
+  }, [isDragging]);
 
   const stats = [
     { value: 'Beta', label: 'Current Stage' },
@@ -377,7 +415,7 @@ export const Landing: React.FC = () => {
           </div>
         </section>
 
-        {/* Full-Width Conflict Types Slider - Modernized */}
+        {/* Full-Width Conflict Types Slider - Modernized with Drag Interaction */}
         <section className="w-full bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white py-16 sm:py-20 md:py-24 relative overflow-hidden">
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-5">
@@ -404,13 +442,24 @@ export const Landing: React.FC = () => {
               <p className="text-base sm:text-lg text-neutral-300 max-w-3xl mx-auto leading-relaxed px-4">
                 Explore different conflict types and their resolution stages with AI-powered guidance
               </p>
+              <p className="text-sm text-neutral-400 mt-2">
+                <span className="inline-block animate-pulse">⟺</span> Swipe or drag to explore conflict types <span className="inline-block animate-pulse">⟺</span>
+              </p>
             </motion.div>
 
-            {/* Modern Carousel with 3D Effect */}
-            <div className="relative">
-              <div className="overflow-hidden">
-                <div className="relative">
-                  {/* Main Slide */}
+            {/* Modern Carousel with Drag Interaction */}
+            <div className="relative" ref={dragConstraintsRef}>
+              <div className="overflow-hidden touch-pan-y">
+                <motion.div
+                  drag="x"
+                  dragConstraints={dragConstraintsRef}
+                  dragElastic={0.1}
+                  dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
+                  onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
+                  style={{ x }}
+                  className="cursor-grab active:cursor-grabbing"
+                >
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={currentSlide}
@@ -503,10 +552,10 @@ export const Landing: React.FC = () => {
                       </div>
                     </motion.div>
                   </AnimatePresence>
-                </div>
+                </motion.div>
               </div>
 
-              {/* Modern Navigation Controls */}
+              {/* Modern Slide Indicators */}
               <div className="flex items-center justify-center mt-8 sm:mt-12">
                 {/* Slide Indicators */}
                 <div className="flex space-x-3">
@@ -524,29 +573,13 @@ export const Landing: React.FC = () => {
                           className="absolute inset-0 bg-gradient-to-r from-accent-400 to-primary-400"
                           initial={{ x: '-100%' }}
                           animate={{ x: '0%' }}
-                          transition={{ duration: 5, repeat: Infinity }}
+                          transition={{ duration: 8, repeat: Infinity }}
                         />
                       )}
                     </button>
                   ))}
                 </div>
               </div>
-
-              {/* Arrow Navigation - Absolute Positioned */}
-              <button
-                onClick={prevSlide}
-                className="absolute top-1/2 left-4 transform -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-black/30 hover:bg-black/50 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 backdrop-blur-sm z-20"
-                aria-label="Previous slide"
-              >
-                <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" />
-              </button>
-              <button
-                onClick={nextSlide}
-                className="absolute top-1/2 right-4 transform -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-black/30 hover:bg-black/50 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 backdrop-blur-sm z-20"
-                aria-label="Next slide"
-              >
-                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" />
-              </button>
             </div>
           </div>
         </section>
