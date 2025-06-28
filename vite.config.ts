@@ -7,4 +7,20 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  // Fix for SPA routing - serve index.html for all routes
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
+  },
+  // Development server configuration for SPA routing
+  server: {
+    historyApiFallback: true,
+  },
+  // Preview server configuration for SPA routing
+  preview: {
+    historyApiFallback: true,
+  },
 });

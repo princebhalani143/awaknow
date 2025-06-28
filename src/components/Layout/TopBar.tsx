@@ -127,11 +127,21 @@ export const TopBar: React.FC = () => {
     setActionMessage('');
   };
 
-  const navigationItems = [
+  // Navigation items - show different items based on login status
+  const publicNavigationItems = [
     { label: 'About', path: '/about' },
     { label: 'Plans', path: '/plans' },
     { label: 'Insights', path: '/blog' },
   ];
+
+  const loggedInNavigationItems = [
+    { label: 'Home', path: '/home' },
+    { label: 'Reflect', path: '/reflect' },
+    { label: 'Resolve', path: '/resolve' },
+    { label: 'Analytics', path: '/analytics' },
+  ];
+
+  const navigationItems = user ? loggedInNavigationItems : publicNavigationItems;
 
   return (
     <>
@@ -148,20 +158,18 @@ export const TopBar: React.FC = () => {
           </button>
         </div>
 
-        {/* Desktop Navigation */}
-        {!user && (
-          <div className="hidden md:flex items-center space-x-6">
-            {navigationItems.map((item) => (
-              <button
-                key={item.path}
-                onClick={() => navigate(item.path)}
-                className="text-neutral-600 hover:text-primary-600 transition-colors font-medium"
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-        )}
+        {/* Desktop Navigation - Show for both logged in and logged out users */}
+        <div className="hidden md:flex items-center space-x-6">
+          {navigationItems.map((item) => (
+            <button
+              key={item.path}
+              onClick={() => navigate(item.path)}
+              className="text-neutral-600 hover:text-primary-600 transition-colors font-medium"
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
 
         <div className="flex items-center space-x-3">
           {/* Subscription Badge */}
@@ -172,15 +180,13 @@ export const TopBar: React.FC = () => {
             </div>
           )}
 
-          {/* Mobile Menu Button */}
-          {!user && (
-            <button
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="md:hidden w-10 h-10 bg-neutral-100 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-neutral-200 transition-colors"
-            >
-              {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          )}
+          {/* Mobile Menu Button - Show for all users */}
+          <button
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            className="md:hidden w-10 h-10 bg-neutral-100 rounded-xl flex items-center justify-center text-neutral-600 hover:bg-neutral-200 transition-colors"
+          >
+            {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
 
           {/* User Icon - Always visible */}
           <div className="relative">
@@ -293,9 +299,9 @@ export const TopBar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Navigation Menu */}
+      {/* Mobile Navigation Menu - Show for all users */}
       <AnimatePresence>
-        {!user && showMobileMenu && (
+        {showMobileMenu && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
@@ -315,6 +321,19 @@ export const TopBar: React.FC = () => {
                   {item.label}
                 </button>
               ))}
+              
+              {/* Add auth button for mobile when not logged in */}
+              {!user && (
+                <button
+                  onClick={() => {
+                    navigate('/auth');
+                    setShowMobileMenu(false);
+                  }}
+                  className="block w-full text-left px-3 py-2 text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-lg transition-colors font-medium"
+                >
+                  Sign In
+                </button>
+              )}
             </div>
           </motion.div>
         )}
