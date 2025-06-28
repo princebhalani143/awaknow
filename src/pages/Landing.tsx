@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useMotionValue } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useDragControls } from 'framer-motion';
 import { Heart, Brain, Users, Shield, Target, Zap, ArrowRight, CheckCircle, Star, Award, Globe, Lightbulb, TrendingUp, Trophy, Rocket, Play, Sparkles, X, AlertTriangle, MessageCircle } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { TranslatedText } from '../components/UI/TranslatedText';
 import { LogoCarousel } from '../components/UI/LogoCarousel';
+import { AccessibilityWidget } from '../components/UI/AccessibilityWidget';
 import { useNavigate } from 'react-router-dom';
 import { TopBar } from '../components/Layout/TopBar';
 import { Footer } from '../components/Layout/Footer';
@@ -14,10 +15,8 @@ export const Landing: React.FC = () => {
   const [showVideo, setShowVideo] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const dragConstraintsRef = useRef(null);
+  const dragControls = useDragControls();
   const x = useMotionValue(0);
-  const dragStartX = useRef(0);
-  const touchStartX = useRef(0);
   const sliderRef = useRef<HTMLDivElement>(null);
 
   const conflictSlides = [
@@ -96,19 +95,21 @@ export const Landing: React.FC = () => {
     setCurrentSlide((prev) => (prev - 1 + conflictSlides.length) % conflictSlides.length);
   };
 
+  // Enhanced drag handling
   const handleDragStart = () => {
     setIsDragging(true);
-    dragStartX.current = x.get();
   };
 
-  const handleDragEnd = () => {
+  const handleDragEnd = (event: any, info: any) => {
     setIsDragging(false);
-    const dragEndX = x.get();
-    const dragDifference = dragEndX - dragStartX.current;
     
-    // If dragged more than 100px, change slide
-    if (Math.abs(dragDifference) > 100) {
-      if (dragDifference > 0) {
+    const dragThreshold = 100;
+    const velocity = info.velocity.x;
+    const offset = info.offset.x;
+    
+    // Use velocity for more responsive dragging
+    if (Math.abs(velocity) > 500 || Math.abs(offset) > dragThreshold) {
+      if (velocity > 0 || offset > 0) {
         prevSlide();
       } else {
         nextSlide();
@@ -119,34 +120,60 @@ export const Landing: React.FC = () => {
     x.set(0);
   };
 
-  // Handle touch events for mobile swipe
+  // Touch event handling for mobile
   useEffect(() => {
     const slider = sliderRef.current;
     if (!slider) return;
 
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let isTouchDrag = false;
+
     const handleTouchStart = (e: TouchEvent) => {
-      touchStartX.current = e.touches[0].clientX;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      isTouchDrag = false;
     };
 
-    const handleTouchEnd = (e: TouchEvent) => {
-      const touchEndX = e.changedTouches[0].clientX;
-      const difference = touchEndX - touchStartX.current;
-      
-      // If swiped more than 50px, change slide
-      if (Math.abs(difference) > 50) {
-        if (difference > 0) {
-          prevSlide();
-        } else {
-          nextSlide();
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isTouchDrag) {
+        const deltaX = Math.abs(e.touches[0].clientX - touchStartX);
+        const deltaY = Math.abs(e.touches[0].clientY - touchStartY);
+        
+        // Only start horizontal drag if horizontal movement is greater than vertical
+        if (deltaX > deltaY && deltaX > 10) {
+          isTouchDrag = true;
+          e.preventDefault(); // Prevent scrolling
         }
+      } else {
+        e.preventDefault(); // Continue preventing scroll during drag
       }
     };
 
-    slider.addEventListener('touchstart', handleTouchStart);
-    slider.addEventListener('touchend', handleTouchEnd);
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (isTouchDrag) {
+        const touchEndX = e.changedTouches[0].clientX;
+        const difference = touchEndX - touchStartX;
+        
+        // Require minimum swipe distance
+        if (Math.abs(difference) > 50) {
+          if (difference > 0) {
+            prevSlide();
+          } else {
+            nextSlide();
+          }
+        }
+      }
+      isTouchDrag = false;
+    };
+
+    slider.addEventListener('touchstart', handleTouchStart, { passive: true });
+    slider.addEventListener('touchmove', handleTouchMove, { passive: false });
+    slider.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     return () => {
       slider.removeEventListener('touchstart', handleTouchStart);
+      slider.removeEventListener('touchmove', handleTouchMove);
       slider.removeEventListener('touchend', handleTouchEnd);
     };
   }, []);
@@ -438,7 +465,7 @@ export const Landing: React.FC = () => {
           </div>
         </section>
 
-        {/* Full-Width Conflict Types Slider - Modernized with Drag Interaction */}
+        {/* Full-Width Conflict Types Slider - Enhanced with Better Drag */}
         <section className="w-full bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white py-16 sm:py-20 md:py-24 relative overflow-hidden">
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-5">
@@ -467,18 +494,20 @@ export const Landing: React.FC = () => {
               </p>
             </motion.div>
 
-            {/* Modern Carousel with Drag Interaction */}
-            <div className="relative" ref={dragConstraintsRef}>
-              <div className="overflow-hidden touch-pan-y" ref={sliderRef}>
+            {/* Enhanced Carousel with Better Drag Support */}
+            <div className="relative" ref={sliderRef}>
+              <div className="overflow-hidden touch-pan-y">
                 <motion.div
                   drag="x"
-                  dragConstraints={dragConstraintsRef}
-                  dragElastic={0.1}
+                  dragControls={dragControls}
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
                   dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
                   onDragStart={handleDragStart}
                   onDragEnd={handleDragEnd}
                   style={{ x }}
-                  className="cursor-grab active:cursor-grabbing"
+                  className="cursor-grab active:cursor-grabbing select-none"
+                  whileDrag={{ cursor: 'grabbing' }}
                 >
                   <AnimatePresence mode="wait">
                     <motion.div
@@ -497,6 +526,7 @@ export const Landing: React.FC = () => {
                               src={conflictSlides[currentSlide].image}
                               alt={conflictSlides[currentSlide].title}
                               className="w-full h-full object-cover"
+                              draggable={false}
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
                           </div>
@@ -570,8 +600,26 @@ export const Landing: React.FC = () => {
                 </motion.div>
               </div>
 
-              {/* Modern Slide Indicators */}
+              {/* Navigation Controls */}
               <div className="flex items-center justify-center mt-8 sm:mt-12">
+                {/* Previous/Next Buttons for Desktop */}
+                <div className="hidden md:flex items-center space-x-4 mr-6">
+                  <button
+                    onClick={prevSlide}
+                    className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+                    aria-label="Previous slide"
+                  >
+                    <ArrowRight className="w-5 h-5 rotate-180" />
+                  </button>
+                  <button
+                    onClick={nextSlide}
+                    className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+                    aria-label="Next slide"
+                  >
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                </div>
+
                 {/* Slide Indicators */}
                 <div className="flex space-x-3">
                   {conflictSlides.map((_, index) => (
@@ -594,6 +642,13 @@ export const Landing: React.FC = () => {
                     </button>
                   ))}
                 </div>
+              </div>
+
+              {/* Swipe Instruction for Mobile */}
+              <div className="md:hidden text-center mt-6">
+                <p className="text-sm text-neutral-400">
+                  Swipe left or right to explore different conflict types
+                </p>
               </div>
             </div>
           </div>
@@ -841,6 +896,9 @@ export const Landing: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Accessibility Widget */}
+      <AccessibilityWidget />
 
       <Footer />
     </div>
