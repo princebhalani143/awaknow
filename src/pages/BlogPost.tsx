@@ -179,7 +179,7 @@ export const BlogPost: React.FC = () => {
           className="mt-12"
         >
           <h3 className="text-2xl font-bold text-neutral-800 mb-6">Related Articles</h3>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2">
             <Card hover className="cursor-pointer" onClick={() => navigate('/blog/ai-powered-conflict-resolution')}>
               <div className="aspect-video bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-xl mb-4">
                 <img
