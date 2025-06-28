@@ -12,7 +12,6 @@ export const Landing: React.FC = () => {
   const navigate = useNavigate();
   const [showVideo, setShowVideo] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [currentPartnerSlide, setCurrentPartnerSlide] = useState(0);
 
   const conflictSlides = [
     {
@@ -178,87 +177,65 @@ export const Landing: React.FC = () => {
     },
   ];
 
-  // Enhanced Technology Partners with carousel design
+  // Enhanced Technology Partners with premium design
   const techPartners = [
     {
       name: 'Bolt',
-      role: 'Development Platform',
-      description: 'Powering our development workflow and hosting the world\'s largest hackathon where AwakNow emerged victorious.',
+      description: 'Development platform and hackathon host',
       logo: '/bolt.jpg',
-      category: 'DEVELOPMENT',
-      tier: 'primary',
-      features: ['Rapid Development', 'Cloud Infrastructure', 'Hackathon Platform'],
-      demoUrl: 'https://bolt.new'
+      category: 'Development',
+      tier: 'primary'
     },
     {
       name: 'Tavus',
-      role: 'AI Video Generation',
-      description: 'Enabling lifelike AI conversations with advanced video generation and conversational AI technology.',
+      description: 'AI video generation and conversational AI',
       logo: '/Tavus.png',
-      category: 'AI TECHNOLOGY',
-      tier: 'primary',
-      features: ['Video AI', 'Conversational AI', 'Real-time Processing'],
-      demoUrl: 'https://tavus.io'
+      category: 'AI Technology',
+      tier: 'primary'
     },
     {
       name: 'ElevenLabs',
-      role: 'Voice AI',
-      description: 'Providing cutting-edge voice synthesis and audio AI for natural, human-like voice interactions.',
+      description: 'Advanced voice synthesis and lifelike audio AI',
       logo: '/ElevenLabs.png',
-      category: 'VOICE AI',
-      tier: 'primary',
-      features: ['Voice Synthesis', 'Audio AI', 'Natural Speech'],
-      demoUrl: 'https://elevenlabs.io'
+      category: 'Voice AI',
+      tier: 'primary'
     },
     {
       name: 'Supabase',
-      role: 'Backend Infrastructure',
-      description: 'Secure, scalable database and authentication infrastructure powering our platform\'s core functionality.',
+      description: 'Backend infrastructure and database',
       logo: '/Supabase.png',
-      category: 'INFRASTRUCTURE',
-      tier: 'core',
-      features: ['Database', 'Authentication', 'Real-time APIs'],
-      demoUrl: 'https://supabase.com'
+      category: 'Infrastructure',
+      tier: 'core'
     },
     {
       name: 'RevenueCat',
-      role: 'Subscription Management',
-      description: 'Streamlined subscription billing and management for seamless user experience across all platforms.',
+      description: 'Subscription management and billing',
       logo: '/revenuecat.png',
-      category: 'PAYMENTS',
-      tier: 'core',
-      features: ['Subscription Billing', 'Analytics', 'Cross-platform'],
-      demoUrl: 'https://revenuecat.com'
+      category: 'Payments',
+      tier: 'core'
     },
     {
       name: 'Stripe',
-      role: 'Payment Processing',
-      description: 'Secure, reliable payment processing infrastructure ensuring safe and smooth transactions.',
+      description: 'Payment processing and infrastructure',
       logo: '/stripe.jpg',
-      category: 'PAYMENTS',
-      tier: 'core',
-      features: ['Payment Processing', 'Security', 'Global Support'],
-      demoUrl: 'https://stripe.com'
-    }
+      category: 'Payments',
+      tier: 'core'
+    },
+    {
+      name: 'Netlify',
+      description: 'Web hosting and deployment platform',
+      logo: '/netlify.png',
+      category: 'Hosting',
+      tier: 'infrastructure'
+    },
+    {
+      name: 'Entri',
+      description: 'Domain management and DNS services',
+      logo: '/entri.png',
+      category: 'Domain',
+      tier: 'infrastructure'
+    },
   ];
-
-  const nextPartnerSlide = () => {
-    setCurrentPartnerSlide((prev) => (prev + 1) % techPartners.length);
-  };
-
-  const prevPartnerSlide = () => {
-    setCurrentPartnerSlide((prev) => (prev - 1 + techPartners.length) % techPartners.length);
-  };
-
-  // Get visible partners (show 3 at a time on desktop, 1 on mobile)
-  const getVisiblePartners = () => {
-    const partners = [];
-    for (let i = 0; i < 3; i++) {
-      const index = (currentPartnerSlide + i) % techPartners.length;
-      partners.push(techPartners[index]);
-    }
-    return partners;
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex flex-col overflow-hidden">
@@ -697,9 +674,9 @@ export const Landing: React.FC = () => {
           </div>
         </section>
 
-        {/* Technology Partners Section - NEW CAROUSEL DESIGN */}
-        <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-br from-neutral-50 to-primary-50/30 relative overflow-hidden">
-          <div className="container mx-auto px-4 max-w-7xl">
+        {/* Technology Partners Section - Premium Static Design */}
+        <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-br from-neutral-50 to-primary-50/30">
+          <div className="container mx-auto px-4 max-w-6xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -708,148 +685,167 @@ export const Landing: React.FC = () => {
               className="text-center mb-12 sm:mb-16"
             >
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-800 mb-4 sm:mb-6 px-4">
-                Reimagine digital experiences with
-                <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent"> conversational AI</span>
+                Our Technology
+                <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent"> Partners</span>
               </h2>
               <p className="text-base sm:text-lg text-neutral-600 max-w-3xl mx-auto leading-relaxed px-4">
                 Powered by industry-leading technologies and trusted partners who share our vision for emotional wellness
               </p>
             </motion.div>
 
-            {/* Carousel Container */}
-            <div className="relative">
-              {/* Partner Cards Carousel */}
-              <div className="flex items-center justify-center">
-                {/* Previous Button */}
-                <button
-                  onClick={prevPartnerSlide}
-                  className="hidden md:flex w-12 h-12 bg-white/80 hover:bg-white rounded-full items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 mr-8 z-10"
-                >
-                  <ChevronLeft className="w-6 h-6 text-neutral-600" />
-                </button>
-
-                {/* Cards Container */}
-                <div className="flex-1 max-w-5xl">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                    {getVisiblePartners().map((partner, index) => (
-                      <motion.div
-                        key={`${partner.name}-${currentPartnerSlide}-${index}`}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.6, delay: index * 0.1 }}
-                        className="group"
-                      >
-                        <Card className="h-full overflow-hidden hover:shadow-2xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/95 backdrop-blur-sm relative">
-                          {/* Category Badge */}
-                          <div className="absolute top-4 left-4 z-10">
-                            <span className="px-3 py-1 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-full text-xs font-medium uppercase tracking-wide">
-                              {partner.category}
-                            </span>
-                          </div>
-
-                          {/* Background Image/Logo */}
-                          <div className="aspect-video bg-gradient-to-br from-neutral-100 to-neutral-200 relative overflow-hidden">
+            {/* Premium Partner Grid */}
+            <div className="space-y-12">
+              {/* Primary Partners - AI & Core Technology */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                <div className="text-center mb-8">
+                  <h3 className="text-xl font-semibold text-neutral-800 mb-2">AI & Core Technology</h3>
+                  <div className="w-24 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mx-auto"></div>
+                </div>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {techPartners.filter(p => p.tier === 'primary').map((partner, index) => (
+                    <motion.div
+                      key={partner.name}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                      className="group"
+                    >
+                      <Card className="text-center p-8 hover:shadow-2xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/95 backdrop-blur-sm relative overflow-hidden">
+                        {/* Premium Background Effect */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 to-secondary-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        
+                        <div className="relative z-10">
+                          <div className="mx-auto mb-4 flex items-center justify-center">
                             <img
                               src={partner.logo}
                               alt={`${partner.name} logo`}
-                              className="w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500"
+                              className="w-full h-full object-contain"
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement;
                                 target.style.display = 'none';
+                                const parent = target.parentElement;
+                                if (parent) {
+                                  parent.innerHTML = `<span class="text-2xl font-bold text-neutral-600">${partner.name.charAt(0)}</span>`;
+                                }
                               }}
                             />
-                            
-                            {/* Overlay Content */}
-                            <div className="absolute inset-0 flex flex-col justify-center items-center p-6 text-center">
-                              <div className="w-16 h-16 bg-white rounded-2xl shadow-lg mb-4 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                                <img
-                                  src={partner.logo}
-                                  alt={`${partner.name} logo`}
-                                  className="w-10 h-10 object-contain"
-                                  onError={(e) => {
-                                    const target = e.target as HTMLImageElement;
-                                    target.style.display = 'none';
-                                    const parent = target.parentElement;
-                                    if (parent) {
-                                      parent.innerHTML = `<span class="text-xl font-bold text-neutral-600">${partner.name.charAt(0)}</span>`;
-                                    }
-                                  }}
-                                />
-                              </div>
-                              <h3 className="text-xl font-bold text-neutral-800 mb-2">{partner.role}</h3>
-                              <p className="text-neutral-600 text-sm leading-relaxed mb-4">
-                                {partner.description}
-                              </p>
-                            </div>
                           </div>
-
-                          {/* Features List */}
-                          <div className="p-6">
-                            <div className="flex flex-wrap gap-2 mb-4">
-                              {partner.features.map((feature, idx) => (
-                                <span
-                                  key={idx}
-                                  className="px-2 py-1 bg-neutral-100 text-neutral-600 rounded-full text-xs"
-                                >
-                                  {feature}
-                                </span>
-                              ))}
-                            </div>
-                            
-                            <Button
-                              onClick={() => window.open(partner.demoUrl, '_blank')}
-                              variant="outline"
-                              size="sm"
-                              className="w-full group-hover:bg-primary-50 group-hover:border-primary-300 transition-colors duration-300"
-                            >
-                              Learn More
-                            </Button>
-                          </div>
-                        </Card>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Next Button */}
-                <button
-                  onClick={nextPartnerSlide}
-                  className="hidden md:flex w-12 h-12 bg-white/80 hover:bg-white rounded-full items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 ml-8 z-10"
-                >
-                  <ChevronRight className="w-6 h-6 text-neutral-600" />
-                </button>
-              </div>
-
-              {/* Mobile Navigation */}
-              <div className="flex md:hidden items-center justify-center mt-8 space-x-4">
-                <button
-                  onClick={prevPartnerSlide}
-                  className="w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300"
-                >
-                  <ChevronLeft className="w-5 h-5 text-neutral-600" />
-                </button>
-
-                <div className="flex space-x-2">
-                  {techPartners.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentPartnerSlide(index)}
-                      className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                        index === currentPartnerSlide 
-                          ? 'bg-primary-500 scale-125' 
-                          : 'bg-neutral-300 hover:bg-neutral-400'
-                      }`}
-                    />
+                          <p className="text-neutral-600 mb-4 leading-relaxed">
+                            {partner.description}
+                          </p>
+                          <span className="inline-block px-4 py-2 bg-gradient-to-r from-primary-100 to-secondary-100 text-primary-700 rounded-full text-sm font-medium">
+                            {partner.category}
+                          </span>
+                        </div>
+                      </Card>
+                    </motion.div>
                   ))}
                 </div>
+              </motion.div>
 
-                <button
-                  onClick={nextPartnerSlide}
-                  className="w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300"
-                >
-                  <ChevronRight className="w-5 h-5 text-neutral-600" />
-                </button>
-              </div>
+              {/* Core Infrastructure */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
+                <div className="text-center mb-8">
+                  <h3 className="text-xl font-semibold text-neutral-800 mb-2">Core Infrastructure</h3>
+                  <div className="w-24 h-1 bg-gradient-to-r from-secondary-500 to-accent-500 rounded-full mx-auto"></div>
+                </div>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {techPartners.filter(p => p.tier === 'core').map((partner, index) => (
+                    <motion.div
+                      key={partner.name}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                      className="group"
+                    >
+                      <Card className="text-center p-6 hover:shadow-xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/90 backdrop-blur-sm">
+                        <div className="mx-auto mb-4 flex items-center justify-center">
+                          <img
+                            src={partner.logo}
+                            alt={`${partner.name} logo`}
+                            className="w-full h-full object-contain"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              const parent = target.parentElement;
+                              if (parent) {
+                                parent.innerHTML = `<span class="text-lg font-bold text-neutral-600">${partner.name.charAt(0)}</span>`;
+                              }
+                            }}
+                          />
+                        </div>
+                        <p className="text-neutral-600 text-sm mb-3 leading-relaxed">
+                          {partner.description}
+                        </p>
+                        <span className="inline-block px-3 py-1 bg-secondary-100 text-secondary-700 rounded-full text-xs font-medium">
+                          {partner.category}
+                        </span>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Infrastructure & Hosting */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+              >
+                <div className="text-center mb-8">
+                  <h3 className="text-xl font-semibold text-neutral-800 mb-2">Infrastructure & Hosting</h3>
+                  <div className="w-24 h-1 bg-gradient-to-r from-accent-500 to-warning-500 rounded-full mx-auto"></div>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                  {techPartners.filter(p => p.tier === 'infrastructure').map((partner, index) => (
+                    <motion.div
+                      key={partner.name}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                      className="group"
+                    >
+                      <Card className="text-center p-6 hover:shadow-xl transition-all duration-500 group-hover:scale-105 border-0 bg-white/90 backdrop-blur-sm">
+                        <div className="mx-auto mb-4 flex items-center justify-center">
+                          <img
+                            src={partner.logo}
+                            alt={`${partner.name} logo`}
+                            className="w-full h-full object-contain"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              const parent = target.parentElement;
+                              if (parent) {
+                                parent.innerHTML = `<span class="text-lg font-bold text-neutral-600">${partner.name.charAt(0)}</span>`;
+                              }
+                            }}
+                          />
+                        </div>
+                        <p className="text-neutral-600 text-sm mb-3 leading-relaxed">
+                          {partner.description}
+                        </p>
+                        <span className="inline-block px-3 py-1 bg-accent-100 text-accent-700 rounded-full text-xs font-medium">
+                          {partner.category}
+                        </span>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
             </div>
           </div>
         </section>
