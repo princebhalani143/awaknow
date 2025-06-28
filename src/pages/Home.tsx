@@ -379,14 +379,16 @@ export const Home: React.FC = () => {
                       <Crown className="w-3 h-3" />
                       <span>{subscription.plan_name}</span>
                     </span>
-                    <Button
-                      onClick={() => navigate('/subscription')}
-                      variant="outline"
-                      size="sm"
-                      icon={Crown}
-                    >
-                      Upgrade
-                    </Button>
+                    {subscription.plan_id !== 'awaknow_pro' && (
+                      <Button
+                        onClick={() => navigate('/subscription')}
+                        variant="outline"
+                        size="sm"
+                        icon={Crown}
+                      >
+                        Upgrade
+                      </Button>
+                    )}
                   </div>
                 </div>
                 
@@ -540,7 +542,7 @@ export const Home: React.FC = () => {
           ))}
         </motion.div>
 
-        {/* Premium Upgrade CTA */}
+        {/* Premium Upgrade CTA - Only show for free users */}
         {subscription?.plan_id === 'awaknow_free' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}

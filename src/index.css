@@ -2,12 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-.hidden.md\:flex.items-center.space-x-6 {
+/* Custom styles */
+.main-navigation {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
 }
-.overlay-control-hide {
-  display:none
+
+/* Remove unused video controls */
+.tavus-video-controls {
+  display: none;
 }

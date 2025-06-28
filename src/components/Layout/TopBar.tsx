@@ -156,7 +156,7 @@ export const TopBar: React.FC = () => {
         </div>
 
         {/* Desktop Navigation - Show for both logged in and logged out users */}
-        <div className="hidden md:flex items-center space-x-6">
+        <div className="hidden md:flex items-center space-x-6 main-navigation">
           {navigationItems.map((item) => (
             <button
               key={item.path}

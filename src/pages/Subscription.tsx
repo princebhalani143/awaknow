@@ -144,6 +144,29 @@ export const Subscription: React.FC = () => {
   const currentPlan = getCurrentPlan();
   const currentSubscription = purchaseHistory.length > 0 ? purchaseHistory[0] : null;
 
+  // Filter out plans that are higher than the current plan
+  const getFilteredPlans = () => {
+    if (!currentPlan || currentPlan.id === 'awaknow_free') {
+      return Object.values(SUBSCRIPTION_PLANS);
+    }
+    
+    // If user is on Reflect+, only show Free and Reflect+ (hide Resolve Together)
+    if (currentPlan.id === 'awaknow_growth') {
+      return Object.values(SUBSCRIPTION_PLANS).filter(
+        plan => plan.id === 'awaknow_free' || plan.id === 'awaknow_growth' || plan.id === 'awaknow_pro'
+      );
+    }
+    
+    // If user is on Resolve Together, only show Free and Resolve Together (hide Reflect+)
+    if (currentPlan.id === 'awaknow_pro') {
+      return Object.values(SUBSCRIPTION_PLANS).filter(
+        plan => plan.id === 'awaknow_free' || plan.id === 'awaknow_pro'
+      );
+    }
+    
+    return Object.values(SUBSCRIPTION_PLANS);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex flex-col">
@@ -287,7 +310,7 @@ export const Subscription: React.FC = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {Object.values(SUBSCRIPTION_PLANS).map((plan, index) => (
+            {getFilteredPlans().map((plan, index) => (
               <PlanCard
                 key={plan.id}
                 plan={plan}
