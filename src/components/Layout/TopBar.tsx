@@ -14,7 +14,6 @@ export const TopBar: React.FC = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [showAccountDeletion, setShowAccountDeletion] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
@@ -49,7 +48,6 @@ export const TopBar: React.FC = () => {
       if (error) throw error;
       
       setActionMessage('Password updated successfully');
-      setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
       
@@ -115,7 +113,6 @@ export const TopBar: React.FC = () => {
 
   const closePasswordChange = () => {
     setShowPasswordChange(false);
-    setCurrentPassword('');
     setNewPassword('');
     setConfirmPassword('');
     setActionMessage('');

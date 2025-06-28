@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import { SessionData, SessionParticipant } from '../types/subscription';
+import { SessionData } from '../types/subscription';
 import { SubscriptionService } from './subscriptionService';
 import { TavusService } from './tavusService';
 

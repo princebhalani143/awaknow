@@ -264,6 +264,3 @@ export class TavusTestUtils {
     }
   }
 }
-
-// Note: Auto-run tests removed to prevent foreign key constraint errors
-// Tests should only be run manually by authenticated users
