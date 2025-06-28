@@ -4,7 +4,6 @@ import { Calendar, User, ArrowRight, Search, Tag, Clock, Heart, Brain, Users, Li
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { Input } from '../components/UI/Input';
-import { NewsletterSubscription } from '../components/UI/NewsletterSubscription';
 import { TopBar } from '../components/Layout/TopBar';
 import { Footer } from '../components/Layout/Footer';
 import { useNavigate } from 'react-router-dom';
@@ -334,24 +333,6 @@ export const Blog: React.FC = () => {
               </motion.div>
             ))}
           </div>
-        </motion.div>
-
-        {/* Newsletter Signup - Now Functional */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.2 }}
-          className="mt-16"
-        >
-          <Card className="bg-gradient-to-br from-primary-500 to-secondary-500 text-white border-0">
-            <NewsletterSubscription 
-              source="blog_page"
-              subscriptionType="wellness_insights"
-              title="Stay Updated with Wellness Insights"
-              description="Get the latest articles, research findings, and practical tips delivered to your inbox weekly."
-              placeholder="Enter your email address"
-            />
-          </Card>
         </motion.div>
       </div>
 

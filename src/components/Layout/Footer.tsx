@@ -2,7 +2,6 @@ import React from 'react';
 import { Heart, ExternalLink, Facebook, Instagram, Twitter, Linkedin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProtectedEmail } from '../../utils/emailProtection';
-import { NewsletterSubscription } from '../UI/NewsletterSubscription';
 
 export const Footer: React.FC = () => {
   const navigate = useNavigate();
@@ -37,23 +36,6 @@ export const Footer: React.FC = () => {
   return (
     <footer className="bg-white border-t border-neutral-200 py-6 mt-auto">
       <div className="container mx-auto px-4">
-        {/* Newsletter Subscription */}
-        <div className="max-w-xl mx-auto mb-8 pb-8 border-b border-neutral-200">
-          <div className="text-center">
-            <h3 className="text-lg font-semibold text-neutral-800 mb-2">Subscribe to Our Newsletter</h3>
-            <p className="text-sm text-neutral-600 mb-4">
-              Get the latest wellness insights and updates delivered to your inbox
-            </p>
-            <div className="flex">
-              <NewsletterSubscription 
-                source="footer"
-                className="w-full"
-                placeholder="Your email address"
-              />
-            </div>
-          </div>
-        </div>
-
         <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
           {/* Copyright */}
           <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 text-sm text-neutral-600 text-center sm:text-left">
