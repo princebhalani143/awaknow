@@ -48,33 +48,44 @@ export const Footer: React.FC = () => {
     <footer className="bg-white border-t border-neutral-200 py-6 mt-auto">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-          {/* Copyright */}
-          <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 text-sm text-neutral-600 text-center sm:text-left">
-            <span>© 2025 AwakNow | Vision of</span>
-            <a
-              href="https://linkedin.com/in/princebhalani"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary-600 hover:text-primary-700 font-medium transition-colors inline-flex items-center space-x-1"
-            >
-              <span>Prince Bhalani</span>
-              <ExternalLink className="w-3 h-3" />
-            </a>
-            <button
-              onClick={() => navigate('/privacy-policy')}
-              className="text-neutral-600 hover:text-primary-600 transition-colors"
-            >
-              Privacy Policy
-            </button>
-            <button
-              onClick={() => navigate('/terms-conditions')}
-              className="text-neutral-600 hover:text-primary-600 transition-colors"
-            >
-              Terms & Conditions
-            </button>
+          {/* Left Section - Copyright */}
+          <div className="text-center md:text-left">
+            <div className="text-sm text-neutral-600">
+              © 2025 AwakNow
+            </div>
+            <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-1">
+              <button
+                onClick={() => navigate('/privacy-policy')}
+                className="text-sm text-neutral-600 hover:text-primary-600 transition-colors"
+              >
+                Privacy Policy
+              </button>
+              <button
+                onClick={() => navigate('/terms-conditions')}
+                className="text-sm text-neutral-600 hover:text-primary-600 transition-colors"
+              >
+                Terms & Conditions
+              </button>
+            </div>
+          </div>
+          
+          {/* Center Section - Vision */}
+          <div className="text-center">
+            <div className="text-sm text-neutral-600">
+              Vision of
+              <a
+                href="https://linkedin.com/in/princebhalani"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary-600 hover:text-primary-700 font-medium transition-colors inline-flex items-center space-x-1 ml-1"
+              >
+                <span>Prince Bhalani</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
           </div>
 
-          {/* Social Media Icons */}
+          {/* Right Section - Social Media Icons */}
           <div className="flex items-center space-x-4">
             {socialLinks.map((social) => (
               <a

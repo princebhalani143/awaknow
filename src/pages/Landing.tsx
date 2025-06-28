@@ -17,6 +17,8 @@ export const Landing: React.FC = () => {
   const dragConstraintsRef = useRef(null);
   const x = useMotionValue(0);
   const dragStartX = useRef(0);
+  const touchStartX = useRef(0);
+  const sliderRef = useRef<HTMLDivElement>(null);
 
   const conflictSlides = [
     {
@@ -116,6 +118,38 @@ export const Landing: React.FC = () => {
     // Reset position
     x.set(0);
   };
+
+  // Handle touch events for mobile swipe
+  useEffect(() => {
+    const slider = sliderRef.current;
+    if (!slider) return;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      const difference = touchEndX - touchStartX.current;
+      
+      // If swiped more than 50px, change slide
+      if (Math.abs(difference) > 50) {
+        if (difference > 0) {
+          prevSlide();
+        } else {
+          nextSlide();
+        }
+      }
+    };
+
+    slider.addEventListener('touchstart', handleTouchStart);
+    slider.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      slider.removeEventListener('touchstart', handleTouchStart);
+      slider.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, []);
 
   const stats = [
     { value: 'Beta', label: 'Current Stage' },
@@ -435,7 +469,7 @@ export const Landing: React.FC = () => {
 
             {/* Modern Carousel with Drag Interaction */}
             <div className="relative" ref={dragConstraintsRef}>
-              <div className="overflow-hidden touch-pan-y">
+              <div className="overflow-hidden touch-pan-y" ref={sliderRef}>
                 <motion.div
                   drag="x"
                   dragConstraints={dragConstraintsRef}
@@ -449,9 +483,9 @@ export const Landing: React.FC = () => {
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={currentSlide}
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.5 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
                       transition={{ duration: 0.5, ease: "easeInOut" }}
                       className="relative"
                     >
@@ -709,7 +743,7 @@ export const Landing: React.FC = () => {
                     <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-accent-200" />
                   </motion.div>
                   
-                  <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 sm:mb-6">
+                  <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4 sm:mb-6 leading-tight">
                     Transform Your Life
                     <span className="block bg-gradient-to-r from-accent-200 to-white bg-clip-text text-transparent">
                       Starting Today
