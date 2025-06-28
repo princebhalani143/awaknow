@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { 
   ArrowLeft, 
@@ -16,8 +16,13 @@ import {
   Receipt,
   Crown,
   BarChart3,
-  Shield,
-  LogOut
+  LogOut,
+  CreditCard,
+  Calendar,
+  Clock,
+  Settings,
+  Edit,
+  X
 } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
@@ -29,11 +34,14 @@ import { useAuthStore } from '../stores/authStore';
 import { supabase } from '../lib/supabase';
 import { supportedLanguages } from '../utils/i18n';
 import { useSubscriptionStore } from '../stores/subscriptionStore';
+import { UsageMeter } from '../components/Subscription/UsageMeter';
+import { PlanCard } from '../components/Subscription/PlanCard';
+import { SUBSCRIPTION_PLANS } from '../config/subscriptionPlans';
 
 export const Profile: React.FC = () => {
   const navigate = useNavigate();
   const { user, setUser, signOut } = useAuthStore();
-  const { subscription } = useSubscriptionStore();
+  const { subscription, limits, loading: subscriptionLoading, loadSubscription, getCurrentPlan } = useSubscriptionStore();
   
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -60,7 +68,16 @@ export const Profile: React.FC = () => {
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteMessage, setDeleteMessage] = useState('');
+
+  // Active tab state
+  const [activeTab, setActiveTab] = useState<'profile' | 'subscription' | 'billing' | 'analytics'>('profile');
   
+  // Refs for scrolling to sections
+  const profileRef = useRef<HTMLDivElement>(null);
+  const subscriptionRef = useRef<HTMLDivElement>(null);
+  const billingRef = useRef<HTMLDivElement>(null);
+  const analyticsRef = useRef<HTMLDivElement>(null);
+
   // Load user data
   useEffect(() => {
     if (!user) {
@@ -89,13 +106,35 @@ export const Profile: React.FC = () => {
           setLanguage(data.language || 'en');
           setAvatarUrl(data.avatar_url || '');
         }
+
+        // Load subscription data
+        if (user.id) {
+          loadSubscription(user.id);
+        }
       } catch (error) {
         console.error('Error in loadUserProfile:', error);
       }
     };
     
     loadUserProfile();
-  }, [user, navigate]);
+  }, [user, navigate, loadSubscription]);
+
+  // Handle tab changes with scrolling
+  useEffect(() => {
+    const scrollToActiveTab = () => {
+      if (activeTab === 'profile' && profileRef.current) {
+        profileRef.current.scrollIntoView({ behavior: 'smooth' });
+      } else if (activeTab === 'subscription' && subscriptionRef.current) {
+        subscriptionRef.current.scrollIntoView({ behavior: 'smooth' });
+      } else if (activeTab === 'billing' && billingRef.current) {
+        billingRef.current.scrollIntoView({ behavior: 'smooth' });
+      } else if (activeTab === 'analytics' && analyticsRef.current) {
+        analyticsRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    scrollToActiveTab();
+  }, [activeTab]);
   
   // Handle avatar file selection
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -322,6 +361,9 @@ export const Profile: React.FC = () => {
       return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
     }
   };
+
+  // Get current plan
+  const currentPlan = getCurrentPlan();
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex flex-col">
@@ -342,23 +384,23 @@ export const Profile: React.FC = () => {
             className="!p-2"
           />
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-neutral-800">Your Profile</h1>
-            <p className="text-neutral-600">Manage your account and settings</p>
+            <h1 className="text-3xl font-bold text-neutral-800">Account Settings</h1>
+            <p className="text-neutral-600">Manage your profile, subscription, and preferences</p>
           </div>
           <div className="w-10"></div>
         </motion.div>
-        
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Sidebar */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="lg:col-span-1 space-y-6"
-          >
-            {/* Profile Card */}
-            <Card className="text-center p-6">
-              <div className="relative mx-auto mb-4 w-24 h-24">
+
+        {/* Profile Header Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mb-8"
+        >
+          <Card className="p-6">
+            <div className="flex flex-col md:flex-row items-center gap-6">
+              {/* Avatar */}
+              <div className="relative">
                 <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center overflow-hidden border-4 border-white shadow-md">
                   {avatarPreview || avatarUrl ? (
                     <img 
@@ -381,77 +423,42 @@ export const Profile: React.FC = () => {
                 </label>
               </div>
               
-              <h3 className="text-lg font-semibold text-neutral-800 mb-1">
-                {fullName || 'Your Name'}
-              </h3>
-              <p className="text-sm text-neutral-500 mb-4">
-                {email || 'your.email@example.com'}
-              </p>
-              
-              {subscription && (
-                <div className="flex items-center justify-center space-x-2 mb-4">
-                  <div className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    subscription.plan_id === 'awaknow_free' 
-                      ? 'bg-neutral-100 text-neutral-700' 
-                      : 'bg-gradient-to-r from-accent-100 to-primary-100 text-primary-700'
-                  }`}>
-                    {subscription.plan_id !== 'awaknow_free' && (
-                      <Crown className="w-3 h-3 inline-block mr-1" />
-                    )}
-                    {subscription.plan_name} Plan
+              {/* User Info */}
+              <div className="flex-1 text-center md:text-left">
+                <h2 className="text-2xl font-bold text-neutral-800">
+                  {fullName || 'Welcome!'}
+                </h2>
+                <p className="text-neutral-600">{email || user?.email}</p>
+                
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mt-2">
+                  {subscription && (
+                    <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+                      subscription.plan_id === 'awaknow_free' 
+                        ? 'bg-neutral-100 text-neutral-700' 
+                        : 'bg-gradient-to-r from-accent-100 to-primary-100 text-primary-700'
+                    }`}>
+                      {subscription.plan_id !== 'awaknow_free' && (
+                        <Crown className="w-3 h-3 inline-block mr-1" />
+                      )}
+                      {subscription.plan_name} Plan
+                    </div>
+                  )}
+                  
+                  <div className="px-3 py-1 bg-neutral-100 text-neutral-700 rounded-full text-sm">
+                    Member since {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
                   </div>
                 </div>
-              )}
-              
-              <div className="text-xs text-neutral-500 mb-6">
-                Member since {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
               </div>
               
-              {/* Navigation Links */}
-              <div className="space-y-2">
-                <Button
-                  onClick={() => navigate('/subscription')}
-                  variant="outline"
-                  icon={Crown}
-                  className="w-full justify-start"
-                >
-                  Subscription
-                </Button>
-                
-                <Button
-                  onClick={() => navigate('/billing-history')}
-                  variant="outline"
-                  icon={Receipt}
-                  className="w-full justify-start"
-                >
-                  Billing History
-                </Button>
-                
-                <Button
-                  onClick={() => navigate('/analytics')}
-                  variant="outline"
-                  icon={BarChart3}
-                  className="w-full justify-start"
-                >
-                  Analytics
-                </Button>
-                
+              {/* Quick Actions */}
+              <div className="flex flex-wrap justify-center gap-2">
                 <Button
                   onClick={() => setShowPasswordChange(true)}
                   variant="outline"
+                  size="sm"
                   icon={Lock}
-                  className="w-full justify-start"
                 >
                   Change Password
-                </Button>
-                
-                <Button
-                  onClick={() => setShowAccountDeletion(true)}
-                  variant="outline"
-                  icon={Trash2}
-                  className="w-full justify-start text-error-600 hover:bg-error-50 hover:border-error-200"
-                >
-                  Delete Account
                 </Button>
                 
                 <Button
@@ -460,39 +467,91 @@ export const Profile: React.FC = () => {
                     navigate('/');
                   }}
                   variant="outline"
+                  size="sm"
                   icon={LogOut}
-                  className="w-full justify-start text-error-600 hover:bg-error-50 hover:border-error-200"
+                  className="text-error-600 hover:bg-error-50 hover:border-error-200"
                 >
                   Sign Out
                 </Button>
               </div>
-            </Card>
+            </div>
+          </Card>
+        </motion.div>
+        
+        {/* Navigation Tabs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-8"
+        >
+          <div className="flex overflow-x-auto space-x-2 p-1 bg-white rounded-xl shadow-sm border border-neutral-200">
+            <button
+              onClick={() => setActiveTab('profile')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap flex items-center space-x-2 ${
+                activeTab === 'profile' 
+                  ? 'bg-primary-500 text-white' 
+                  : 'text-neutral-600 hover:bg-neutral-100'
+              }`}
+            >
+              <User className="w-4 h-4" />
+              <span>Profile</span>
+            </button>
             
-            {/* Privacy Info */}
-            <Card className="p-4">
-              <div className="flex items-center space-x-3 mb-3">
-                <div className="w-8 h-8 bg-success-100 rounded-lg flex items-center justify-center">
-                  <Shield className="w-4 h-4 text-success-600" />
-                </div>
-                <h3 className="font-medium text-neutral-800">Privacy & Security</h3>
-              </div>
-              <p className="text-xs text-neutral-600 leading-relaxed">
-                Your personal information is protected with end-to-end encryption. We never share your data with third parties.
-                Learn more in our <a href="/privacy-policy" className="text-primary-600 hover:underline">Privacy Policy</a>.
-              </p>
-            </Card>
-          </motion.div>
-          
-          {/* Main Content */}
+            <button
+              onClick={() => setActiveTab('subscription')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap flex items-center space-x-2 ${
+                activeTab === 'subscription' 
+                  ? 'bg-secondary-500 text-white' 
+                  : 'text-neutral-600 hover:bg-neutral-100'
+              }`}
+            >
+              <Crown className="w-4 h-4" />
+              <span>Subscription</span>
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('billing')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap flex items-center space-x-2 ${
+                activeTab === 'billing' 
+                  ? 'bg-accent-500 text-white' 
+                  : 'text-neutral-600 hover:bg-neutral-100'
+              }`}
+            >
+              <Receipt className="w-4 h-4" />
+              <span>Billing</span>
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap flex items-center space-x-2 ${
+                activeTab === 'analytics' 
+                  ? 'bg-success-500 text-white' 
+                  : 'text-neutral-600 hover:bg-neutral-100'
+              }`}
+            >
+              <BarChart3 className="w-4 h-4" />
+              <span>Analytics</span>
+            </button>
+          </div>
+        </motion.div>
+        
+        {/* Profile Section */}
+        <div ref={profileRef}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="lg:col-span-2"
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="mb-12"
           >
+            <div className="flex items-center mb-6">
+              <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center mr-4">
+                <User className="w-5 h-5 text-primary-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-neutral-800">Profile Information</h2>
+            </div>
+            
             <Card>
-              <h2 className="text-xl font-semibold text-neutral-800 mb-6">Edit Profile</h2>
-              
               <div className="space-y-6">
                 <Input
                   label="Full Name"
@@ -571,20 +630,305 @@ export const Profile: React.FC = () => {
             </Card>
           </motion.div>
         </div>
+        
+        {/* Subscription Section */}
+        <div ref={subscriptionRef}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="mb-12"
+          >
+            <div className="flex items-center mb-6">
+              <div className="w-10 h-10 bg-secondary-100 rounded-xl flex items-center justify-center mr-4">
+                <Crown className="w-5 h-5 text-secondary-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-neutral-800">Subscription</h2>
+            </div>
+            
+            {/* Current Subscription Card */}
+            {subscription && (
+              <Card className="mb-6">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center">
+                      <Crown className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <h3 className="text-lg font-semibold text-neutral-800">{subscription.plan_name}</h3>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          subscription.status === 'active' 
+                            ? 'bg-success-100 text-success-700' 
+                            : 'bg-warning-100 text-warning-700'
+                        }`}>
+                          {subscription.status === 'active' ? 'Active' : 'Inactive'}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-4 text-sm text-neutral-600 mt-1">
+                        <div className="flex items-center space-x-1">
+                          <Calendar className="w-3 h-3" />
+                          <span>Renews: {new Date(subscription.current_period_end).toLocaleDateString()}</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Clock className="w-3 h-3" />
+                          <span>
+                            {subscription.plan_id.includes('annual') ? 'Annual' : 'Monthly'} billing
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <Button
+                    onClick={() => navigate('/subscription')}
+                    variant="outline"
+                    size="sm"
+                    icon={Edit}
+                  >
+                    Manage Plan
+                  </Button>
+                </div>
+              </Card>
+            )}
+            
+            {/* Usage Meter */}
+            {subscription && limits && (
+              <Card className="mb-6">
+                <h3 className="text-lg font-semibold text-neutral-800 mb-4">Usage Overview</h3>
+                <UsageMeter limits={limits} subscription={subscription} />
+              </Card>
+            )}
+            
+            {/* Available Plans */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-neutral-800">Available Plans</h3>
+              <div className="grid md:grid-cols-3 gap-6">
+                {Object.values(SUBSCRIPTION_PLANS).map((plan) => (
+                  <PlanCard
+                    key={plan.id}
+                    plan={plan}
+                    isCurrentPlan={currentPlan?.id === plan.id}
+                    isPopular={plan.name === 'reflect_plus'}
+                    onSelectPlan={() => navigate('/subscription')}
+                    loading={false}
+                  />
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </div>
+        
+        {/* Billing Section */}
+        <div ref={billingRef}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="mb-12"
+          >
+            <div className="flex items-center mb-6">
+              <div className="w-10 h-10 bg-accent-100 rounded-xl flex items-center justify-center mr-4">
+                <Receipt className="w-5 h-5 text-accent-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-neutral-800">Billing & Payment</h2>
+            </div>
+            
+            {/* Payment Methods */}
+            <Card className="mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-neutral-800">Payment Methods</h3>
+                <Button variant="outline" size="sm">
+                  Add Method
+                </Button>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 border border-neutral-200 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <CreditCard className="w-5 h-5 text-neutral-500" />
+                    <div>
+                      <div className="font-medium text-neutral-800">
+                        Visa ending in 4242
+                      </div>
+                      <div className="text-sm text-neutral-600">
+                        Expires 12/26
+                        <span className="ml-2 px-2 py-1 bg-primary-100 text-primary-700 rounded-full text-xs">
+                          Default
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="sm">
+                    Edit
+                  </Button>
+                </div>
+              </div>
+            </Card>
+            
+            {/* Billing History */}
+            <Card>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-neutral-800">Recent Transactions</h3>
+                <Button 
+                  onClick={() => navigate('/billing-history')}
+                  variant="outline" 
+                  size="sm"
+                >
+                  View All
+                </Button>
+              </div>
+              
+              {subscription?.plan_id !== 'awaknow_free' ? (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 border border-neutral-200 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                        <Receipt className="w-5 h-5 text-primary-600" />
+                      </div>
+                      <div>
+                        <div className="font-medium text-neutral-800">
+                          {subscription?.plan_name} Subscription
+                        </div>
+                        <div className="text-sm text-neutral-600">
+                          {new Date(subscription?.current_period_start || '').toLocaleDateString()}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-medium text-neutral-800">
+                        ${subscription?.plan_id === 'awaknow_growth' ? '9.99' : '19.99'}
+                      </div>
+                      <div className="inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium text-success-600 bg-success-50">
+                        <CheckCircle className="w-3 h-3" />
+                        <span>Paid</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <div className="w-16 h-16 bg-neutral-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                    <Receipt className="w-8 h-8 text-neutral-400" />
+                  </div>
+                  <h4 className="text-lg font-medium text-neutral-800 mb-2">No Billing History</h4>
+                  <p className="text-neutral-600 mb-4">
+                    You're currently on the free plan. Upgrade to see billing history.
+                  </p>
+                  <Button
+                    onClick={() => navigate('/subscription')}
+                    icon={Crown}
+                  >
+                    Upgrade Plan
+                  </Button>
+                </div>
+              )}
+            </Card>
+          </motion.div>
+        </div>
+        
+        {/* Analytics Section */}
+        <div ref={analyticsRef}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="mb-12"
+          >
+            <div className="flex items-center mb-6">
+              <div className="w-10 h-10 bg-success-100 rounded-xl flex items-center justify-center mr-4">
+                <BarChart3 className="w-5 h-5 text-success-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-neutral-800">Analytics & Insights</h2>
+            </div>
+            
+            <Card className="text-center p-8">
+              <div className="w-20 h-20 bg-gradient-to-br from-success-500 to-primary-500 rounded-full mx-auto mb-6 flex items-center justify-center">
+                <BarChart3 className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-neutral-800 mb-4">
+                View Your Wellness Analytics
+              </h3>
+              <p className="text-neutral-600 mb-6 max-w-md mx-auto">
+                Track your emotional wellness journey, session history, and AI-generated insights in our comprehensive analytics dashboard.
+              </p>
+              <Button
+                onClick={() => navigate('/analytics')}
+                size="lg"
+                icon={BarChart3}
+              >
+                View Analytics Dashboard
+              </Button>
+            </Card>
+          </motion.div>
+        </div>
+        
+        {/* Danger Zone */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.7 }}
+          className="mb-8"
+        >
+          <Card className="border-error-200 bg-error-50">
+            <div className="flex items-center mb-4">
+              <div className="w-10 h-10 bg-error-100 rounded-xl flex items-center justify-center mr-4">
+                <Settings className="w-5 h-5 text-error-600" />
+              </div>
+              <h2 className="text-xl font-bold text-error-800">Danger Zone</h2>
+            </div>
+            
+            <div className="p-4 bg-white rounded-xl">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-medium text-neutral-800 mb-1">Delete Account</h3>
+                  <p className="text-sm text-neutral-600">
+                    Permanently delete your account and all associated data. This action cannot be undone.
+                  </p>
+                </div>
+                <Button
+                  onClick={() => setShowAccountDeletion(true)}
+                  variant="outline"
+                  className="text-error-600 border-error-300 hover:bg-error-50"
+                  icon={Trash2}
+                >
+                  Delete Account
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
       </div>
       
       {/* Password Change Modal */}
       {showPasswordChange && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
-            <div className="text-center mb-6">
-              <div className="w-12 h-12 bg-primary-100 rounded-xl mx-auto mb-4 flex items-center justify-center">
-                <Lock className="w-6 h-6 text-primary-600" />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white rounded-2xl p-6 w-full max-w-md"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
+                  <Lock className="w-5 h-5 text-primary-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-neutral-800">Change Password</h3>
               </div>
-              <h3 className="text-lg font-semibold text-neutral-800 mb-2">Change Password</h3>
-              <p className="text-sm text-neutral-600">
-                Enter your new password below
-              </p>
+              <button
+                onClick={() => {
+                  setShowPasswordChange(false);
+                  setNewPassword('');
+                  setConfirmPassword('');
+                  setPasswordMessage('');
+                  setPasswordStatus('idle');
+                }}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100"
+              >
+                <X className="w-5 h-5 text-neutral-500" />
+              </button>
             </div>
 
             <div className="space-y-4">
@@ -646,22 +990,37 @@ export const Profile: React.FC = () => {
                 </button>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       )}
 
       {/* Account Deletion Modal */}
       {showAccountDeletion && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
-            <div className="text-center mb-6">
-              <div className="w-12 h-12 bg-error-100 rounded-xl mx-auto mb-4 flex items-center justify-center">
-                <Trash2 className="w-6 h-6 text-error-600" />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white rounded-2xl p-6 w-full max-w-md"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-error-100 rounded-xl flex items-center justify-center">
+                  <Trash2 className="w-5 h-5 text-error-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-neutral-800">Delete Account</h3>
               </div>
-              <h3 className="text-lg font-semibold text-neutral-800 mb-2">Delete Account</h3>
-              <p className="text-sm text-neutral-600">
-                This action cannot be undone. All your data will be permanently deleted.
-              </p>
+              <button
+                onClick={() => {
+                  setShowAccountDeletion(false);
+                  setDeleteConfirmation('');
+                  setDeleteMessage('');
+                }}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100"
+              >
+                <X className="w-5 h-5 text-neutral-500" />
+              </button>
             </div>
 
             <div className="space-y-4">
@@ -714,7 +1073,7 @@ export const Profile: React.FC = () => {
                 </button>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       )}
       
