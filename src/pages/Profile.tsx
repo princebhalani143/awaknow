@@ -698,7 +698,7 @@ export const Profile: React.FC = () => {
             )}
             
             {/* Available Plans */}
-            <div className="space-y-4">
+            <div className="space-y-4 mb-4">
               <h3 className="text-lg font-semibold text-neutral-800">Available Plans</h3>
               <div className="grid md:grid-cols-3 gap-6">
                 {Object.values(SUBSCRIPTION_PLANS).map((plan) => (
