@@ -185,7 +185,7 @@ export const Blog: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mb-12"
         >
-          <Card className="p-6">
+          <Card>
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
                 <Input
