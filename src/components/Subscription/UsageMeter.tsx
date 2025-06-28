@@ -12,21 +12,31 @@ interface UsageMeterProps {
   };
   subscription: {
     tavus_minutes_limit: number;
+    tavus_minutes_used: number;
     plan_name: string;
   };
 }
 
 export const UsageMeter: React.FC<UsageMeterProps> = ({ limits, subscription }) => {
-  const tavusPercentage = (limits.tavusMinutes / subscription.tavus_minutes_limit) * 100;
+  // Calculate percentage with proper handling of decimal values
+  const tavusPercentage = Math.min(
+    100, 
+    (subscription.tavus_minutes_used / subscription.tavus_minutes_limit) * 100
+  );
   
   const getUsageColor = (percentage: number) => {
-    if (percentage > 80) return 'text-success-600 bg-success-500';
+    if (percentage > 80) return 'text-error-600 bg-error-500';
     if (percentage > 50) return 'text-warning-600 bg-warning-500';
-    return 'text-error-600 bg-error-500';
+    return 'text-success-600 bg-success-500';
   };
 
   const formatLimit = (value: number | 'unlimited') => {
     return value === 'unlimited' ? '∞' : value.toString();
+  };
+
+  // Format minutes used with 2 decimal places if it's not a whole number
+  const formatMinutesUsed = (minutes: number) => {
+    return Number.isInteger(minutes) ? minutes.toString() : minutes.toFixed(2);
   };
 
   return (
@@ -47,18 +57,18 @@ export const UsageMeter: React.FC<UsageMeterProps> = ({ limits, subscription }) 
               <span className="text-sm font-medium text-neutral-700">AI Video Minutes</span>
             </div>
             <span className="text-sm text-neutral-600">
-              {limits.tavusMinutes} / {subscription.tavus_minutes_limit}
+              {formatMinutesUsed(subscription.tavus_minutes_used)} / {subscription.tavus_minutes_limit}
             </span>
           </div>
           <div className="w-full bg-neutral-200 rounded-full h-2">
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: `${Math.max(0, 100)}%` }}
+              animate={{ width: `${Math.max(0, Math.min(tavusPercentage, 100))}%` }}
               transition={{ duration: 0.8, ease: "easeOut" }}
               className={`h-2 rounded-full ${getUsageColor(tavusPercentage)}`}
             />
           </div>
-          {limits.tavusMinutes <= 5 && (
+          {subscription.tavus_minutes_used >= subscription.tavus_minutes_limit - 5 && (
             <p className="text-xs text-warning-600 mt-1">
               Running low on video minutes. Consider upgrading your plan.
             </p>

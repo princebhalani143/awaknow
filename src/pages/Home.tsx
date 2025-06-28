@@ -34,6 +34,9 @@ export const Home: React.FC = () => {
     if (user) {
       loadSubscription(user.id);
       loadUserStats();
+      
+      // Clean up any orphaned sessions
+      TavusService.cleanupOrphanedSessions(user.id);
     }
   }, [user, loadSubscription]);
 
@@ -159,7 +162,7 @@ export const Home: React.FC = () => {
     },
     { 
       label: 'AI Minutes Used', 
-      value: loadingStats ? '...' : stats?.totalMinutesUsed.toString() || '0', 
+      value: loadingStats ? '...' : stats?.totalMinutesUsed.toFixed(2) || '0', 
       icon: Brain,
       color: 'text-secondary-500',
       bgColor: 'bg-secondary-50'
@@ -391,9 +394,9 @@ export const Home: React.FC = () => {
                   <div className="space-y-4">
                     <div className="p-4 bg-neutral-50 rounded-xl">
                       <div className="text-2xl font-bold text-secondary-600">
-                        {limits.tavusMinutes}
+                        {limits.tavusMinutes.toFixed(2)}
                       </div>
-                      <div className="text-sm text-neutral-600">AI Minutes</div>
+                      <div className="text-sm text-neutral-600">AI Minutes Remaining</div>
                     </div>
                     
                     <div className="p-4 bg-secondary-50 rounded-xl">

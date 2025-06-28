@@ -47,6 +47,7 @@ export class TavusService {
   // Session management to prevent parallel sessions
   private static activeSessions = new Map<string, string>(); // userId -> sessionId
   private static sessionLocks = new Map<string, Promise<any>>(); // userId -> Promise
+  private static sessionStartTimes = new Map<string, number>(); // sessionId -> timestamp
 
   static async createConversationalVideo(request: TavusVideoRequest): Promise<TavusVideoResponse> {
     console.log('🎬 Creating Tavus conversation with persona:', this.PERSONA_ID);
@@ -103,6 +104,8 @@ export class TavusService {
       // If successful, track the active session
       if (result.success && result.tavusSessionId && result.tavusSessionId !== 'fallback') {
         this.activeSessions.set(request.userId, result.tavusSessionId);
+        // Record session start time for accurate usage tracking
+        this.sessionStartTimes.set(result.tavusSessionId, Date.now());
       }
       
       return result;
@@ -175,13 +178,13 @@ export class TavusService {
         .update({
           tavus_video_url: data.conversation_url || data.join_url,
           tavus_session_id: data.conversation_id,
-          tavus_minutes_used: 1,
+          tavus_minutes_used: 0, // Start with 0, will update on session end
           updated_at: new Date().toISOString(),
         })
         .eq('id', request.sessionId);
 
-      // Increment usage
-      await SubscriptionService.incrementTavusUsage(request.userId, 1);
+      // We don't increment usage yet - we'll do that when the session ends
+      // This allows for accurate tracking of actual time used
 
       console.log('✅ Tavus session created successfully:', data.conversation_id);
 
@@ -189,7 +192,7 @@ export class TavusService {
         success: true,
         tavusSessionId: data.conversation_id,
         videoUrl: data.conversation_url || data.join_url,
-        minutesUsed: 1,
+        minutesUsed: 0, // Will be updated on session end
         fallback: false,
       };
     } catch (error: any) {
@@ -261,6 +264,59 @@ export class TavusService {
     try {
       console.log('✅ Marking session as completed:', sessionId);
       
+      // Calculate actual session duration in seconds
+      let sessionDurationSeconds = 0;
+      const startTime = this.sessionStartTimes.get(sessionId);
+      
+      if (startTime) {
+        const endTime = Date.now();
+        sessionDurationSeconds = Math.round((endTime - startTime) / 1000);
+        console.log(`📊 Session duration: ${sessionDurationSeconds} seconds (${(sessionDurationSeconds / 60).toFixed(2)} minutes)`);
+        
+        // Remove from tracking
+        this.sessionStartTimes.delete(sessionId);
+      } else {
+        // If we don't have a start time, use a default of 1 minute
+        sessionDurationSeconds = 60;
+        console.log('⚠️ No session start time found, using default 60 seconds');
+      }
+      
+      // Track usage with precise seconds
+      if (userId) {
+        try {
+          // Get the session record to get the session_id
+          const { data: sessionData } = await supabase
+            .from('tavus_sessions')
+            .select('*')
+            .eq('tavus_session_id', sessionId)
+            .single();
+            
+          if (sessionData) {
+            // Use the new function to track partial minute usage
+            const { data, error } = await supabase.rpc('track_tavus_usage', {
+              user_id: userId,
+              session_id: sessionData.id,
+              seconds_used: sessionDurationSeconds
+            });
+            
+            if (error) {
+              console.error('❌ Error tracking usage with seconds:', error);
+              // Fallback to old method
+              await SubscriptionService.incrementTavusUsage(userId, Math.ceil(sessionDurationSeconds / 60));
+            } else {
+              console.log('✅ Tracked usage with seconds precision');
+            }
+          } else {
+            // Fallback to old method
+            await SubscriptionService.incrementTavusUsage(userId, Math.ceil(sessionDurationSeconds / 60));
+          }
+        } catch (error) {
+          console.error('❌ Error tracking usage:', error);
+          // Fallback to old method
+          await SubscriptionService.incrementTavusUsage(userId, Math.ceil(sessionDurationSeconds / 60));
+        }
+      }
+
       // Update database
       await supabase
         .from('tavus_sessions')
