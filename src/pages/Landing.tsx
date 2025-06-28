@@ -442,9 +442,6 @@ export const Landing: React.FC = () => {
               <p className="text-base sm:text-lg text-neutral-300 max-w-3xl mx-auto leading-relaxed px-4">
                 Explore different conflict types and their resolution stages with AI-powered guidance
               </p>
-              <p className="text-sm text-neutral-400 mt-2">
-                <span className="inline-block animate-pulse">⟺</span> Swipe or drag to explore conflict types <span className="inline-block animate-pulse">⟺</span>
-              </p>
             </motion.div>
 
             {/* Modern Carousel with Drag Interaction */}
@@ -479,11 +476,6 @@ export const Landing: React.FC = () => {
                               className="w-full h-full object-cover"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
-                            
-                            {/* Slide Number */}
-                            <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
-                              {currentSlide + 1}/{conflictSlides.length}
-                            </div>
                           </div>
                         </div>
                         
