@@ -23,6 +23,7 @@ export const TavusVideo: React.FC<TavusVideoProps> = ({
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting');
   const [personaInfo, setPersonaInfo] = useState<any>(null);
+  const [hasEnded, setHasEnded] = useState(false);
 
   useEffect(() => {
     // Load persona information
@@ -38,22 +39,36 @@ export const TavusVideo: React.FC<TavusVideoProps> = ({
   }, []);
 
   useEffect(() => {
-  const handleUnload = () => {
-    // Avoid awaiting here – instead trigger it and forget
-    if (sessionId) {
-      TavusService.endConversation(sessionId);
-      TavusService.markSessionCompleted(sessionId);
-    }
-  };
+    const handleUnload = () => {
+      // Avoid awaiting here – instead trigger it and forget
+      if (sessionId && !hasEnded) {
+        console.log('🔄 Page unload - ending session:', sessionId);
+        TavusService.endConversation(sessionId);
+        TavusService.markSessionCompleted(sessionId);
+      }
+    };
 
-  window.addEventListener('beforeunload', handleUnload);
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!hasEnded) {
+        // Show confirmation dialog
+        e.preventDefault();
+        e.returnValue = 'Are you sure you want to leave? Your session will be ended.';
+        return e.returnValue;
+      }
+    };
 
-  return () => {
-    window.removeEventListener('beforeunload', handleUnload);
-    // Optional: also call cleanup when component unmounts
-    handleUnload();
-  };
-}, [sessionId]);
+    window.addEventListener('beforeunload', handleUnload);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      // Optional: also call cleanup when component unmounts
+      if (!hasEnded) {
+        handleUnload();
+      }
+    };
+  }, [sessionId, hasEnded]);
 
   const loadPersonaInfo = async () => {
     try {
@@ -65,11 +80,16 @@ export const TavusVideo: React.FC<TavusVideoProps> = ({
   };
 
   const handleEndCall = async () => {
+    if (hasEnded) return;
+    
+    console.log('🛑 User ending call manually');
+    setHasEnded(true);
     setConnectionStatus('disconnected');
     
     // Try to end the conversation via API
     if (sessionId) {
       await TavusService.endConversation(sessionId);
+      await TavusService.markSessionCompleted(sessionId);
     }
     
     onSessionEnd?.();
@@ -107,7 +127,7 @@ export const TavusVideo: React.FC<TavusVideoProps> = ({
     );
   }
 
-  const isMockMode = videoUrl.includes('mock') || videoUrl.includes('awaknow.com');
+  const isMockMode = videoUrl.includes('mock') || videoUrl.includes('awaknow.com') || videoUrl.includes('.mp4') || videoUrl.includes('.webm');
 
   return (
     <Card className={`relative overflow-hidden ${className}`}>
@@ -115,8 +135,21 @@ export const TavusVideo: React.FC<TavusVideoProps> = ({
       <div className="aspect-video bg-black rounded-xl relative overflow-hidden">
         {isMockMode ? (
           // Mock video interface with persona information
-          <div className="w-full h-full bg-gradient-to-br from-neutral-800 to-neutral-900 flex items-center justify-center">
-            <div className="text-center text-white">
+          <div className="w-full h-full bg-gradient-to-br from-neutral-800 to-neutral-900 flex items-center justify-center relative">
+            {/* Fallback Video Background */}
+            {videoUrl.includes('.mp4') || videoUrl.includes('.webm') ? (
+              <video
+                autoPlay
+                loop
+                muted
+                className="absolute inset-0 w-full h-full object-cover opacity-30"
+              >
+                <source src={videoUrl} type="video/mp4" />
+                <source src="/tavus-fall-back.webm" type="video/webm" />
+              </video>
+            ) : null}
+            
+            <div className="text-center text-white relative z-10">
               <motion.div
                 animate={{ scale: [1, 1.1, 1] }}
                 transition={{ duration: 3, repeat: Infinity }}
@@ -135,6 +168,7 @@ export const TavusVideo: React.FC<TavusVideoProps> = ({
                   <div>Persona ID: {TavusService.personaId}</div>
                   <div>Replica ID: {TavusService.replicaId}</div>
                   <div>Mode: {personaInfo?.status === 'mock' ? 'Demo' : 'Live'}</div>
+                  <div>Status: {isMockMode ? 'Fallback Video' : 'Live Session'}</div>
                 </div>
               </div>
               
@@ -144,7 +178,7 @@ export const TavusVideo: React.FC<TavusVideoProps> = ({
               </div>
               
               <p className="text-xs text-neutral-400 mt-3">
-                Start speaking to begin your conversation
+                {isMockMode ? 'Demo mode - Start speaking to begin your conversation' : 'Start speaking to begin your conversation'}
               </p>
             </div>
           </div>
@@ -171,6 +205,13 @@ export const TavusVideo: React.FC<TavusVideoProps> = ({
           <div className="absolute top-4 left-4 bg-success-500 text-white px-3 py-1 rounded-full text-sm flex items-center space-x-2">
             <div className="w-2 h-2 bg-white rounded-full"></div>
             <span>Connected</span>
+          </div>
+        )}
+
+        {connectionStatus === 'disconnected' && (
+          <div className="absolute top-4 left-4 bg-error-500 text-white px-3 py-1 rounded-full text-sm flex items-center space-x-2">
+            <div className="w-2 h-2 bg-white rounded-full"></div>
+            <span>Disconnected</span>
           </div>
         )}
 
@@ -207,7 +248,8 @@ export const TavusVideo: React.FC<TavusVideoProps> = ({
 
             <button
               onClick={handleEndCall}
-              className="p-2 bg-error-500 text-white rounded-full hover:bg-error-600 transition-colors"
+              disabled={hasEnded}
+              className="p-2 bg-error-500 text-white rounded-full hover:bg-error-600 transition-colors disabled:opacity-50"
               title="End conversation"
             >
               <Phone className="w-4 h-4" />
@@ -228,7 +270,7 @@ export const TavusVideo: React.FC<TavusVideoProps> = ({
             <span className="text-sm text-neutral-600 capitalize">{connectionStatus}</span>
             {isMockMode && (
               <span className="text-xs bg-accent-100 text-accent-700 px-2 py-1 rounded-full">
-                Demo Mode
+                {videoUrl.includes('.mp4') ? 'Fallback Mode' : 'Demo Mode'}
               </span>
             )}
           </div>

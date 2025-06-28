@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, Send, Heart, Brain, Smile, Frown, Meh, ArrowLeft, Video, Play, Pause, Square } from 'lucide-react';
 import { Button } from '../components/UI/Button';
@@ -28,52 +28,79 @@ export const Reflect: React.FC = () => {
     anxious: { icon: Brain, color: 'text-warning-500' },
   };
 
+  // Cleanup any orphaned sessions when component mounts
+  useEffect(() => {
+    if (user) {
+      TavusService.cleanupOrphanedSessions(user.id);
+    }
+  }, [user]);
+
   const handleStartSession = async () => {
-	  if (!user || sessionId) return; // ✅ Prevents re-creation if session already exists
+    if (!user || sessionId) return; // ✅ Prevents re-creation if session already exists
 
-	  setStep('creating');
-	  setError(null);
+    setStep('creating');
+    setError(null);
 
-	  try {
-		const sessionResult = await SessionService.createSession(
-		  user.id,
-		  'reflect_alone',
-		  'Personal Reflection Session',
-		  input || 'Personal reflection and emotional exploration'
-		);
+    try {
+      console.log('🚀 Starting new reflection session...');
+      
+      const sessionResult = await SessionService.createSession(
+        user.id,
+        'reflect_alone',
+        'Personal Reflection Session',
+        input || 'Personal reflection and emotional exploration'
+      );
 
-		if (!sessionResult.success) {
-		  setError(sessionResult.error || 'Failed to create session');
-		  setStep('prompt');
-		  return;
-		}
+      if (!sessionResult.success) {
+        setError(sessionResult.error || 'Failed to create session');
+        setStep('prompt');
+        return;
+      }
 
-		setSessionId(sessionResult.sessionId!);
-		setStep('tavus-loading');
+      console.log('✅ Session created:', sessionResult.sessionId);
+      setSessionId(sessionResult.sessionId!);
+      setStep('tavus-loading');
 
-		const tavusResult = await TavusService.createConversationalVideo({
-		  sessionId: sessionResult.sessionId!,
-		  userId: user.id,
-		  prompt: input || 'I want to reflect on my thoughts and feelings',
-		  sessionType: 'reflect_alone',
-		  participantContext: `Personal emotional wellness and reflection session. User context: ${input || 'General reflection'}`
-		});
+      const tavusResult = await TavusService.createConversationalVideo({
+        sessionId: sessionResult.sessionId!,
+        userId: user.id,
+        prompt: input || 'I want to reflect on my thoughts and feelings',
+        sessionType: 'reflect_alone',
+        participantContext: `Personal emotional wellness and reflection session. User context: ${input || 'General reflection'}`
+      });
 
-		if (tavusResult.success && tavusResult.videoUrl) {
-		  setTavusVideoUrl(tavusResult.videoUrl);
-		  setStep('conversation');
-		} else {
-		  setError(tavusResult.error || 'Failed to create AI conversation');
-		  setStep('prompt');
-		}
-	  } catch (error) {
-		console.error('Error starting session:', error);
-		setError('Failed to start session. Please try again.');
-		setStep('prompt');
-	  }
+      if (tavusResult.success && tavusResult.videoUrl) {
+        console.log('✅ Tavus session created:', tavusResult.tavusSessionId);
+        setTavusVideoUrl(tavusResult.videoUrl);
+        setStep('conversation');
+        
+        if (tavusResult.fallback) {
+          console.log('⚠️ Using fallback mode:', tavusResult.error);
+        }
+      } else {
+        setError(tavusResult.error || 'Failed to create AI conversation');
+        setStep('prompt');
+      }
+    } catch (error) {
+      console.error('❌ Error starting session:', error);
+      setError('Failed to start session. Please try again.');
+      setStep('prompt');
+    }
   };
 
-  const handleEndSession = () => {
+  const handleEndSession = async () => {
+    console.log('🏁 Ending reflection session...');
+    
+    if (sessionId) {
+      // Mark session as completed in database
+      await SessionService.completeSession(sessionId, user?.id || '');
+      
+      // End Tavus session if it exists
+      if (tavusVideoUrl && !tavusVideoUrl.includes('fallback')) {
+        await TavusService.markSessionCompleted(sessionId, user?.id);
+      }
+    }
+    
     setStep('response');
     // Add mock emotion data
     setEmotions(prev => [...prev, {
@@ -84,6 +111,7 @@ export const Reflect: React.FC = () => {
   };
 
   const handleNewReflection = () => {
+    console.log('🔄 Starting new reflection...');
     setStep('prompt');
     setInput('');
     setIsRecording(false);
@@ -92,6 +120,16 @@ export const Reflect: React.FC = () => {
     setError(null);
     setEmotions([]);
   };
+
+  // Cleanup on component unmount
+  useEffect(() => {
+    return () => {
+      if (sessionId && user) {
+        console.log('🧹 Component unmounting - cleaning up session');
+        TavusService.markSessionCompleted(sessionId, user.id);
+      }
+    };
+  }, [sessionId, user]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50">
@@ -145,7 +183,7 @@ export const Reflect: React.FC = () => {
                   </div>
                 )}
 
-                {/* Tavus Info */}
+                {/* Updated Tavus Info */}
                 <div className="mb-6 p-4 bg-primary-50 border border-primary-200 rounded-xl">
                   <div className="flex items-center justify-center space-x-2 mb-2">
                     <Brain className="w-5 h-5 text-primary-600" />
@@ -155,6 +193,7 @@ export const Reflect: React.FC = () => {
                     <div>Persona ID: {TavusService.personaId}</div>
                     <div>Replica ID: {TavusService.replicaId}</div>
                     <div>Technology: Tavus Conversational AI</div>
+                    <div className="text-primary-600 font-medium">✨ Updated with new persona for enhanced conversations</div>
                   </div>
                 </div>
 
@@ -171,6 +210,7 @@ export const Reflect: React.FC = () => {
                     className="w-full"
                     icon={Video}
                     iconPosition="right"
+                    disabled={!!sessionId} // Prevent multiple sessions
                   >
                     Start AI Conversation
                   </Button>

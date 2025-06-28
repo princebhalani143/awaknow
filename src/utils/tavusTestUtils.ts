@@ -34,20 +34,20 @@ export class TavusTestUtils {
       });
     }
 
-    // Test 2: Persona ID Configuration
+    // Test 2: Updated Persona ID Configuration
     try {
       const personaId = TavusService.personaId;
-      if (personaId === 'ped1380851e4') {
+      if (personaId === 'p7e13c73f41f') {
         results.push({
           test: 'Persona ID Configuration',
           status: 'pass',
-          message: `Correct persona ID: ${personaId}`
+          message: `✅ Updated persona ID: ${personaId}`
         });
       } else {
         results.push({
           test: 'Persona ID Configuration',
           status: 'fail',
-          message: `Incorrect persona ID: ${personaId}, expected: ped1380851e4`
+          message: `❌ Incorrect persona ID: ${personaId}, expected: p7e13c73f41f`
         });
       }
     } catch (error) {
@@ -90,7 +90,7 @@ export class TavusTestUtils {
         results.push({
           test: 'Persona Verification',
           status: 'pass',
-          message: `Persona verified: ${personaInfo.name || personaInfo.persona_id}`
+          message: `✅ Persona verified: ${personaInfo.name || personaInfo.persona_id}`
         });
       } else {
         results.push({
@@ -107,9 +107,9 @@ export class TavusTestUtils {
       });
     }
 
-    // Test 5: Mock Conversation Creation
+    // Test 5: Session Management Test
     try {
-      console.log('🎭 Testing mock conversation creation...');
+      console.log('🔒 Testing session management...');
       
       // Generate a proper UUID for the session ID
       const generateUUID = () => {
@@ -132,24 +132,59 @@ export class TavusTestUtils {
       const response = await TavusService.createConversationalVideo(mockRequest);
       
       if (response.success && response.videoUrl) {
-        const isRealAPI = !response.videoUrl.includes('mock');
+        const isRealAPI = !response.videoUrl.includes('mock') && !response.videoUrl.includes('.mp4');
         results.push({
-          test: 'Conversation Creation',
+          test: 'Session Management',
           status: 'pass',
-          message: `${isRealAPI ? 'Real API' : 'Mock'} conversation created: ${response.tavusSessionId}`
+          message: `${isRealAPI ? 'Real API' : 'Fallback'} session created: ${response.tavusSessionId}`
         });
+        
+        // Test session cleanup
+        if (response.tavusSessionId && response.tavusSessionId !== 'fallback') {
+          await TavusService.markSessionCompleted(response.tavusSessionId, mockRequest.userId);
+          results.push({
+            test: 'Session Cleanup',
+            status: 'pass',
+            message: 'Session cleanup successful'
+          });
+        }
       } else {
         results.push({
-          test: 'Conversation Creation',
+          test: 'Session Management',
           status: 'fail',
-          message: response.error || 'Failed to create conversation'
+          message: response.error || 'Failed to create session'
         });
       }
     } catch (error) {
       results.push({
-        test: 'Conversation Creation',
+        test: 'Session Management',
         status: 'fail',
-        message: `Conversation creation error: ${error}`
+        message: `Session management error: ${error}`
+      });
+    }
+
+    // Test 6: Fallback Video Test
+    try {
+      console.log('🎬 Testing fallback video...');
+      const fallbackVideo = TavusService.fallbackVideo;
+      if (fallbackVideo === '/tavus-fall-back.mp4') {
+        results.push({
+          test: 'Fallback Video',
+          status: 'pass',
+          message: `Fallback video configured: ${fallbackVideo}`
+        });
+      } else {
+        results.push({
+          test: 'Fallback Video',
+          status: 'fail',
+          message: `Incorrect fallback video: ${fallbackVideo}`
+        });
+      }
+    } catch (error) {
+      results.push({
+        test: 'Fallback Video',
+        status: 'fail',
+        message: `Fallback video test error: ${error}`
       });
     }
 
@@ -180,6 +215,8 @@ export class TavusTestUtils {
     
     if (passCount === totalCount) {
       console.log('🎉 All tests passed! Tavus integration is ready.');
+      console.log('🔧 Updated with new persona: p7e13c73f41f');
+      console.log('🛡️ Session management and cleanup working properly');
     } else {
       console.log('⚠️  Some tests failed. Check the issues above.');
     }
