@@ -94,9 +94,9 @@ export const Auth: React.FC = () => {
     }
   };
 
-  const handleDemoAccess = () => {
+  const handleDemoAccess = async () => {
     if (demoAnswer.toLowerCase().trim() === DEMO_ANSWER.toLowerCase()) {
-      handleDemoLogin();
+      await handleDemoLogin();
     } else {
       setError('Incorrect answer. Please try again.');
     }
@@ -136,22 +136,10 @@ export const Auth: React.FC = () => {
         if (signInError) throw signInError;
       }
       
-      // After successful login, upgrade demo user to Resolve Together plan
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase
-          .from('user_subscriptions')
-          .update({
-            plan_id: 'awaknow_pro',
-            plan_name: 'Resolve Together',
-            tavus_minutes_limit: 500,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('user_id', user.id);
-      }
-      
+      // After successful login, navigate to home
       navigate('/home');
-    } catch (err: any) {
+    } catch (error: any) {
+      console.error('Demo login error:', error);
       setError('Demo login failed. Please try manual login.');
     } finally {
       setLoading(false);

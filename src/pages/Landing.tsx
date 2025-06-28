@@ -19,7 +19,7 @@ export const Landing: React.FC = () => {
       id: 'internal',
       title: 'Internal Conflict',
       subtitle: 'Personal conflicts within oneself due to competing values, desires, or decisions',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      image: 'https://images.pexels.com/photos/3807738/pexels-photo-3807738.jpeg?auto=compress&cs=tinysrgb&w=1200',
       techniques: [
         'Self-reflection and awareness',
         'Clarifying personal values',
@@ -32,7 +32,7 @@ export const Landing: React.FC = () => {
       id: 'interpersonal',
       title: 'Interpersonal Conflict',
       subtitle: 'Conflicts between individuals due to differences in values, goals, communication styles, or personalities',
-      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      image: 'https://images.pexels.com/photos/7516347/pexels-photo-7516347.jpeg?auto=compress&cs=tinysrgb&w=1200',
       techniques: [
         'Acknowledge the conflict exists',
         'Open communication between parties',
@@ -45,7 +45,7 @@ export const Landing: React.FC = () => {
       id: 'organizational',
       title: 'Organizational Conflict',
       subtitle: 'Conflicts within organizations due to competing goals, limited resources, or structural issues',
-      image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      image: 'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1200',
       techniques: [
         'Clarify roles and responsibilities',
         'Improve communication channels',
@@ -58,7 +58,7 @@ export const Landing: React.FC = () => {
       id: 'international',
       title: 'International Conflict',
       subtitle: 'Conflicts between nations over territory, resources, ideology, or power dynamics',
-      image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      image: 'https://images.pexels.com/photos/1250452/pexels-photo-1250452.jpeg?auto=compress&cs=tinysrgb&w=1200',
       techniques: [
         'Diplomatic negotiations',
         'International mediation',
@@ -71,7 +71,7 @@ export const Landing: React.FC = () => {
       id: 'environmental',
       title: 'Environmental Conflict',
       subtitle: 'Conflicts over natural resources, land use, pollution, and environmental conservation',
-      image: 'https://images.unsplash.com/photo-1704485862384-fdd0dc413f47?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      image: 'https://images.pexels.com/photos/2990650/pexels-photo-2990650.jpeg?auto=compress&cs=tinysrgb&w=1200',
       techniques: [
         'Sustainable resource management',
         'Stakeholder engagement',
@@ -377,7 +377,7 @@ export const Landing: React.FC = () => {
           </div>
         </section>
 
-        {/* Full-Width Conflict Types Slider - Responsive */}
+        {/* Full-Width Conflict Types Slider - Modernized */}
         <section className="w-full bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white py-16 sm:py-20 md:py-24 relative overflow-hidden">
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-5">
@@ -406,103 +406,147 @@ export const Landing: React.FC = () => {
               </p>
             </motion.div>
 
+            {/* Modern Carousel with 3D Effect */}
             <div className="relative">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentSlide}
-                  initial={{ opacity: 0, x: 100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -100 }}
-                  transition={{ duration: 0.6, ease: "easeInOut" }}
-                  className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center"
-                >
-                  {/* Content */}
-                  <div className="space-y-6 sm:space-y-8 order-2 lg:order-1">
-                    <div>
-                      <h3 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-white to-neutral-300 bg-clip-text text-transparent">
-                        {conflictSlides[currentSlide].title}
-                      </h3>
-                      <p className="text-base sm:text-lg text-neutral-300 leading-relaxed">
-                        {conflictSlides[currentSlide].subtitle}
-                      </p>
-                    </div>
-
-                    <div>
-                      <h4 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-accent-400">Resolution Techniques:</h4>
-                      <ul className="space-y-3 sm:space-y-4">
-                        {conflictSlides[currentSlide].techniques.map((technique, index) => (
-                          <motion.li
-                            key={index}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.4, delay: index * 0.1 }}
-                            className="flex items-start space-x-3 sm:space-x-4"
-                          >
-                            <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-accent-500 to-primary-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                              <CheckCircle className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
-                            </div>
-                            <span className="text-neutral-300 text-sm sm:text-base">{technique}</span>
-                          </motion.li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <Button
-                      onClick={() => navigate('/auth')}
-                      variant="accent"
-                      size="lg"
-                      icon={ArrowRight}
-                      iconPosition="right"
-                      className="mt-6 sm:mt-8 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+              <div className="overflow-hidden rounded-2xl">
+                <div className="relative">
+                  {/* Main Slide */}
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={currentSlide}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.5, ease: "easeInOut" }}
+                      className="relative"
                     >
-                      Start Resolving Conflicts
-                    </Button>
-                  </div>
+                      <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
+                        {/* Image */}
+                        <div className="relative order-1 lg:order-2">
+                          <div className="aspect-video rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl transform transition-transform duration-500 hover:scale-[1.02]">
+                            <img
+                              src={conflictSlides[currentSlide].image}
+                              alt={conflictSlides[currentSlide].title}
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+                            
+                            {/* Slide Number */}
+                            <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+                              {currentSlide + 1}/{conflictSlides.length}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Content */}
+                        <div className="space-y-6 sm:space-y-8 order-2 lg:order-1">
+                          <div>
+                            <motion.h3 
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.4 }}
+                              className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-white to-neutral-300 bg-clip-text text-transparent"
+                            >
+                              {conflictSlides[currentSlide].title}
+                            </motion.h3>
+                            <motion.p 
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.4, delay: 0.1 }}
+                              className="text-base sm:text-lg text-neutral-300 leading-relaxed"
+                            >
+                              {conflictSlides[currentSlide].subtitle}
+                            </motion.p>
+                          </div>
 
-                  {/* Image */}
-                  <div className="relative order-1 lg:order-2">
-                    <div className="aspect-video rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
-                      <img
-                        src={conflictSlides[currentSlide].image}
-                        alt={conflictSlides[currentSlide].title}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
-                    </div>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
+                          <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: 0.2 }}
+                          >
+                            <h4 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-accent-400">Resolution Techniques:</h4>
+                            <ul className="space-y-3 sm:space-y-4">
+                              {conflictSlides[currentSlide].techniques.map((technique, index) => (
+                                <motion.li
+                                  key={index}
+                                  initial={{ opacity: 0, x: -20 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
+                                  className="flex items-start space-x-3 sm:space-x-4"
+                                >
+                                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-accent-500 to-primary-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <CheckCircle className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
+                                  </div>
+                                  <span className="text-neutral-300 text-sm sm:text-base">{technique}</span>
+                                </motion.li>
+                              ))}
+                            </ul>
+                          </motion.div>
 
-              {/* Enhanced Navigation - Responsive */}
-              <div className="flex items-center justify-between mt-8 sm:mt-12">
-                <button
-                  onClick={prevSlide}
-                  className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 backdrop-blur-sm"
-                >
-                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
-                </button>
+                          <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: 0.8 }}
+                          >
+                            <Button
+                              onClick={() => navigate('/auth')}
+                              variant="accent"
+                              size="lg"
+                              icon={ArrowRight}
+                              iconPosition="right"
+                              className="mt-6 sm:mt-8 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                            >
+                              Start Resolving Conflicts
+                            </Button>
+                          </motion.div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </div>
 
-                <div className="flex space-x-2 sm:space-x-3">
+              {/* Modern Navigation Controls */}
+              <div className="flex items-center justify-center mt-8 sm:mt-12">
+                {/* Slide Indicators */}
+                <div className="flex space-x-3">
                   {conflictSlides.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentSlide(index)}
-                      className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full transition-all duration-300 ${
-                        index === currentSlide 
-                          ? 'bg-accent-400 scale-125' 
-                          : 'bg-white/30 hover:bg-white/50'
-                      }`}
-                    />
+                      className={`relative h-3 transition-all duration-300 ${
+                        index === currentSlide ? 'w-10 bg-accent-400' : 'w-3 bg-white/30 hover:bg-white/50'
+                      } rounded-full overflow-hidden`}
+                      aria-label={`Go to slide ${index + 1}`}
+                    >
+                      {index === currentSlide && (
+                        <motion.div 
+                          className="absolute inset-0 bg-gradient-to-r from-accent-400 to-primary-400"
+                          initial={{ x: '-100%' }}
+                          animate={{ x: '0%' }}
+                          transition={{ duration: 5, repeat: Infinity }}
+                        />
+                      )}
+                    </button>
                   ))}
                 </div>
-
-                <button
-                  onClick={nextSlide}
-                  className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 backdrop-blur-sm"
-                >
-                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
-                </button>
               </div>
+
+              {/* Arrow Navigation - Absolute Positioned */}
+              <button
+                onClick={prevSlide}
+                className="absolute top-1/2 left-4 transform -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-black/30 hover:bg-black/50 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 backdrop-blur-sm z-20"
+                aria-label="Previous slide"
+              >
+                <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" />
+              </button>
+              <button
+                onClick={nextSlide}
+                className="absolute top-1/2 right-4 transform -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-black/30 hover:bg-black/50 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 backdrop-blur-sm z-20"
+                aria-label="Next slide"
+              >
+                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" />
+              </button>
             </div>
           </div>
         </section>
