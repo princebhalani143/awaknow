@@ -275,7 +275,7 @@ export const Landing: React.FC = () => {
             
             {/* Tooltip - Enhanced Responsive */}
             <div className="absolute top-full right-0 mt-2 px-2 py-1 sm:px-3 sm:py-2 bg-black text-white text-xs sm:text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
-              🏆 Hackathon Winner
+              🏆 Next Hackathon Winner? Stay Tuned.
             </div>
           </a>
         </motion.div>
