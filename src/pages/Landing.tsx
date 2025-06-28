@@ -408,7 +408,7 @@ export const Landing: React.FC = () => {
 
             {/* Modern Carousel with 3D Effect */}
             <div className="relative">
-              <div className="overflow-hidden rounded-2xl">
+              <div className="overflow-hidden">
                 <div className="relative">
                   {/* Main Slide */}
                   <AnimatePresence mode="wait">
