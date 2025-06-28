@@ -11,7 +11,16 @@ import {
   Video,
   BarChart3,
   PieChart,
-  Activity
+  Activity,
+  Play,
+  Sparkles,
+  Crown,
+  Award,
+  Target,
+  Zap,
+  Shield,
+  ArrowRight,
+  TestTube
 } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
@@ -19,6 +28,7 @@ import { TopBar } from '../components/Layout/TopBar';
 import { Footer } from '../components/Layout/Footer';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
+import { useSubscriptionStore } from '../stores/subscriptionStore';
 import { SessionService } from '../services/sessionService';
 import { TavusService } from '../services/tavusService';
 import { supabase } from '../lib/supabase';
@@ -28,6 +38,7 @@ interface AnalyticsData {
   completedSessions: number;
   totalMinutesUsed: number;
   averageSessionDuration: number;
+  averageEmotionScore: number;
   emotionTrends: Array<{
     date: string;
     score: number;
@@ -57,6 +68,7 @@ interface AnalyticsData {
 export const Home: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const { subscription, limits } = useSubscriptionStore();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'year'>('month');
@@ -127,6 +139,11 @@ export const Home: React.FC = () => {
         }))
         .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()) || [];
 
+      // Calculate average emotion score
+      const averageEmotionScore = emotionTrends.length > 0 
+        ? emotionTrends.reduce((sum, trend) => sum + trend.score, 0) / emotionTrends.length
+        : 0;
+
       // Weekly activity
       const weeklyActivity = calculateWeeklyActivity(filteredSessions, startDate, now);
 
@@ -155,6 +172,7 @@ export const Home: React.FC = () => {
         completedSessions,
         totalMinutesUsed: tavusStats.totalMinutesUsed,
         averageSessionDuration: totalSessions > 0 ? tavusStats.totalMinutesUsed / totalSessions : 0,
+        averageEmotionScore,
         emotionTrends,
         sessionsByType,
         weeklyActivity,
