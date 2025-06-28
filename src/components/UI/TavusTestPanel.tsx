@@ -12,17 +12,30 @@ interface TestResult {
   message: string;
 }
 
-export const TavusTestPanel: React.FC = () => {
+interface TavusTestPanelProps {
+  userId?: string;
+}
+
+export const TavusTestPanel: React.FC<TavusTestPanelProps> = ({ userId }) => {
   const [isRunning, setIsRunning] = useState(false);
   const [results, setResults] = useState<TestResult[]>([]);
   const [showDetails, setShowDetails] = useState(false);
 
   const runTests = async () => {
+    if (!userId) {
+      setResults([{
+        test: 'User Authentication',
+        status: 'fail',
+        message: 'User not authenticated. Please log in to run tests.'
+      }]);
+      return;
+    }
+
     setIsRunning(true);
     setResults([]);
     
     try {
-      const testResults = await TavusTestUtils.runFullIntegrationTest();
+      const testResults = await TavusTestUtils.runFullIntegrationTest(userId);
       setResults(testResults.results);
       TavusTestUtils.logTestResults(testResults.results);
     } catch (error) {
@@ -112,13 +125,13 @@ export const TavusTestPanel: React.FC = () => {
       <div className="text-center mb-6">
         <Button
           onClick={runTests}
-          disabled={isRunning}
+          disabled={isRunning || !userId}
           loading={isRunning}
           icon={isRunning ? RefreshCw : Play}
           size="lg"
           className="w-full"
         >
-          {isRunning ? 'Running Tests...' : 'Run Integration Tests'}
+          {isRunning ? 'Running Tests...' : !userId ? 'Please Log In to Run Tests' : 'Run Integration Tests'}
         </Button>
       </div>
 

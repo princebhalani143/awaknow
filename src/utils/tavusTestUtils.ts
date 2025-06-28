@@ -3,7 +3,7 @@ import { TavusService } from '../services/tavusService';
 import { SubscriptionService } from '../services/subscriptionService';
 
 export class TavusTestUtils {
-  static async runFullIntegrationTest(): Promise<{
+  static async runFullIntegrationTest(userId: string): Promise<{
     success: boolean;
     results: Array<{ test: string; status: 'pass' | 'fail'; message: string }>;
   }> {
@@ -159,7 +159,7 @@ export class TavusTestUtils {
 
       const mockRequest = {
         sessionId: generateUUID(),
-        userId: '00000000-0000-4000-8000-000000000000', // Valid UUID format for testing
+        userId: userId, // Use the actual authenticated user ID
         prompt: 'Test reflection session',
         sessionType: 'reflect_alone' as const,
         participantContext: 'Test context'
@@ -265,15 +265,5 @@ export class TavusTestUtils {
   }
 }
 
-// Auto-run tests in development
-if (import.meta.env.DEV) {
-  // Run tests after a short delay to ensure everything is loaded
-  setTimeout(async () => {
-    try {
-      const testResults = await TavusTestUtils.runFullIntegrationTest();
-      TavusTestUtils.logTestResults(testResults.results);
-    } catch (error) {
-      console.error('Error running Tavus tests:', error);
-    }
-  }, 2000);
-}
+// Note: Auto-run tests removed to prevent foreign key constraint errors
+// Tests should only be run manually by authenticated users

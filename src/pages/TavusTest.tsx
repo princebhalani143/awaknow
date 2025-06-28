@@ -7,9 +7,11 @@ import { TopBar } from '../components/Layout/TopBar';
 import { Footer } from '../components/Layout/Footer';
 import { useNavigate } from 'react-router-dom';
 import { TavusService } from '../services/tavusService';
+import { useAuthStore } from '../stores/authStore';
 
 export const TavusTest: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex flex-col">
@@ -63,7 +65,7 @@ export const TavusTest: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mb-12"
         >
-          <TavusTestPanel />
+          <TavusTestPanel userId={user?.id} />
         </motion.div>
 
         {/* Information Cards */}
