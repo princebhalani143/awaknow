@@ -29,7 +29,7 @@ export const Blog: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   const categories = [
-    { id: 'all', name: 'All Posts', icon: Tag },
+    { id: 'all', name: 'All', icon: Tag },
     { id: 'emotional-wellness', name: 'Emotional Wellness', icon: Heart },
     { id: 'ai-insights', name: 'AI & Psychology', icon: Brain },
     { id: 'relationships', name: 'Relationships', icon: Users },
