@@ -19,6 +19,7 @@ import { TavusTest } from './pages/TavusTest';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsConditions } from './pages/TermsConditions';
 import { CookieConsent } from './components/UI/CookieConsent';
+import { Profile } from './pages/Profile';
 
 function App() {
   const { user, setUser, setLoading } = useAuthStore();
@@ -146,6 +147,10 @@ function App() {
         <Route 
           path="/tavus-test" 
           element={user ? <TavusTest /> : <Navigate to="/auth" />} 
+        />
+        <Route 
+          path="/profile" 
+          element={user ? <Profile /> : <Navigate to="/auth" />} 
         />
       </Routes>
       <CookieConsent />

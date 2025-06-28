@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Settings, Brain, Lock, LogOut, Shield, Crown, Trash2, Receipt, Menu, X } from 'lucide-react';
+import { User, Settings, Brain, Lock, LogOut, Shield, Crown, Trash2, Receipt, Menu, X, UserCircle } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -226,6 +226,17 @@ export const TopBar: React.FC = () => {
                       <button 
                         onClick={() => {
                           setShowProfileMenu(false);
+                          navigate('/profile');
+                        }}
+                        className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-neutral-100 transition-colors"
+                      >
+                        <UserCircle className="w-4 h-4 text-neutral-500" />
+                        <span className="text-sm text-neutral-700">Edit Profile</span>
+                      </button>
+                      
+                      <button 
+                        onClick={() => {
+                          setShowProfileMenu(false);
                           navigate('/subscription');
                         }}
                         className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-neutral-100 transition-colors"
@@ -318,6 +329,19 @@ export const TopBar: React.FC = () => {
                   {item.label}
                 </button>
               ))}
+              
+              {/* Add profile link for mobile when logged in */}
+              {user && (
+                <button
+                  onClick={() => {
+                    navigate('/profile');
+                    setShowMobileMenu(false);
+                  }}
+                  className="block w-full text-left px-3 py-2 text-neutral-600 hover:text-primary-600 hover:bg-neutral-50 rounded-lg transition-colors"
+                >
+                  Edit Profile
+                </button>
+              )}
               
               {/* Add auth button for mobile when not logged in */}
               {!user && (
