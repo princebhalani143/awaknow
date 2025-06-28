@@ -190,45 +190,58 @@ export class SubscriptionService {
     }
   }
 
-  static async canUseTavusMinutes(userId: string, minutesNeeded: number): Promise<boolean> {
+  static async canUseTavusMinutes(userId: string, minutesNeeded: number): Promise<{
+    canUse: boolean;
+    minutesUsed: number;
+    minutesLimit: number;
+  }> {
     try {
       const subscription = await this.getUserSubscription(userId);
-      if (!subscription) return false;
+      if (!subscription) {
+        return { canUse: false, minutesUsed: 0, minutesLimit: 0 };
+      }
 
-      const remainingMinutes = subscription.tavus_minutes_limit - subscription.tavus_minutes_used;
-      return remainingMinutes >= minutesNeeded;
+      const minutesUsed = subscription.tavus_minutes_used;
+      const minutesLimit = subscription.tavus_minutes_limit;
+      const remainingMinutes = minutesLimit - minutesUsed;
+      
+      return {
+        canUse: remainingMinutes >= minutesNeeded,
+        minutesUsed,
+        minutesLimit
+      };
     } catch (error) {
       console.error('Error checking Tavus minutes:', error);
-      return false;
+      return { canUse: false, minutesUsed: 0, minutesLimit: 0 };
     }
   }
 
   static async incrementSoloSessionCount(userId: string): Promise<boolean> {
-	  try {
-		const { error } = await supabase.rpc('increment_solo_session_count', { uid: userId });
-		if (error) {
-		  console.error('Error incrementing solo session count via RPC:', error);
-		  return false;
-		}
-		return true;
-	  } catch (error) {
-		console.error('Error in incrementSoloSessionCount:', error);
-		return false;
-	  }
+    try {
+      const { error } = await supabase.rpc('increment_solo_session_count', { uid: userId });
+      if (error) {
+        console.error('Error incrementing solo session count via RPC:', error);
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error('Error in incrementSoloSessionCount:', error);
+      return false;
+    }
   }
 
   static async incrementTavusUsage(userId: string, minutesUsed: number): Promise<boolean> {
-	  try {
-		const { error } = await supabase.rpc('increment_tavus_usage', { uid: userId, minutes: minutesUsed });
-		if (error) {
-		  console.error('Error incrementing Tavus usage via RPC:', error);
-		  return false;
-		}
-		return true;
-	  } catch (error) {
-		console.error('Error in incrementTavusUsage:', error);
-		return false;
-	  }
+    try {
+      const { error } = await supabase.rpc('increment_tavus_usage', { uid: userId, minutes: minutesUsed });
+      if (error) {
+        console.error('Error incrementing Tavus usage via RPC:', error);
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error('Error in incrementTavusUsage:', error);
+      return false;
+    }
   }
 
   static async getRemainingLimits(userId: string) {

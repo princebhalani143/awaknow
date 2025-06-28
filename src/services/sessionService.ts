@@ -1,6 +1,7 @@
 import { supabase } from '../lib/supabase';
 import { SessionData, SessionParticipant } from '../types/subscription';
 import { SubscriptionService } from './subscriptionService';
+import { TavusService } from './tavusService';
 
 export class SessionService {
   static async createSession(
@@ -290,6 +291,8 @@ export class SessionService {
 
   static async completeSession(sessionId: string, userId: string): Promise<boolean> {
     try {
+      console.log('📝 Marking session as completed:', sessionId);
+      
       // Only session creator can complete the session
       const { error } = await supabase
         .from('sessions')
@@ -303,6 +306,17 @@ export class SessionService {
       if (error) {
         console.error('Error completing session:', error);
         return false;
+      }
+
+      // Also end any associated Tavus session
+      const { data: sessionData } = await supabase
+        .from('sessions')
+        .select('tavus_session_id')
+        .eq('id', sessionId)
+        .single();
+
+      if (sessionData?.tavus_session_id && sessionData.tavus_session_id !== 'fallback') {
+        await TavusService.markSessionCompleted(sessionData.tavus_session_id, userId);
       }
 
       return true;

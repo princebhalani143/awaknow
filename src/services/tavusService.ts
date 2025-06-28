@@ -115,10 +115,10 @@ export class TavusService {
   private static async createSessionInternal(request: TavusVideoRequest): Promise<TavusVideoResponse> {
     try {
       // Check Tavus usage limits before creating session
-      const canUse = await SubscriptionService.canUseTavusMinutes(request.userId, 1);
+      const { canUse, minutesUsed, minutesLimit } = await SubscriptionService.canUseTavusMinutes(request.userId, 1);
       if (!canUse) {
-        console.log('❌ Insufficient Tavus credits');
-        return await this.useFallback(request, 'Insufficient AI video minutes. Please upgrade your plan or wait for your monthly reset.');
+        console.log(`❌ Insufficient Tavus credits: ${minutesUsed}/${minutesLimit}`);
+        return await this.useFallback(request, `Insufficient AI video minutes (${minutesUsed}/${minutesLimit}). Please upgrade your plan or wait for your monthly reset.`);
       }
 
       console.log('🚀 Creating Tavus conversation with persona:', this.PERSONA_ID);
