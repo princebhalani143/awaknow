@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExternalLink, Facebook, Instagram, Twitter, Linkedin, Mail } from 'lucide-react';
+import { ExternalLink, Facebook, Instagram, Twitter, Linkedin, Mail, Youtube } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const Footer: React.FC = () => {
@@ -31,6 +31,12 @@ export const Footer: React.FC = () => {
       color: 'hover:text-blue-700'
     },
     {
+      name: 'YouTube',
+      url: 'https://www.youtube.com/@Awak_Now',
+      icon: Youtube,
+      color: 'hover:text-red-600'
+    },
+    {
       name: 'Email',
       url: 'mailto:info@awaknow.org',
       icon: Mail,
@@ -44,18 +50,16 @@ export const Footer: React.FC = () => {
         <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
           {/* Copyright */}
           <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 text-sm text-neutral-600 text-center sm:text-left">
-            <span>© 2025 AwakNow |</span>
-            <span>Vision of
+            <span>© 2025 AwakNow | Vision of</span>
             <a
               href="https://linkedin.com/in/princebhalani"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary-600 hover:text-primary-700 font-medium transition-colors inline-flex items-center space-x-1 ml-1"
+              className="text-primary-600 hover:text-primary-700 font-medium transition-colors inline-flex items-center space-x-1"
             >
               <span>Prince Bhalani</span>
               <ExternalLink className="w-3 h-3" />
             </a>
-            </span>
           </div>
 
           {/* Legal Links & Social Media */}
