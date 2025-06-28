@@ -189,6 +189,7 @@ function App() {
         />
       </Routes>
       <CookieConsent />
+      <AccessibilityWidget />
     </Router>
   );
 }

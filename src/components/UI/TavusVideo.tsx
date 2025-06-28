@@ -24,8 +24,17 @@ export const TavusVideo: React.FC<TavusVideoProps> = ({
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting');
   const [personaInfo, setPersonaInfo] = useState<any>(null);
   const [hasEnded, setHasEnded] = useState(false);
+  const [isFallbackMode, setIsFallbackMode] = useState(false);
 
   useEffect(() => {
+    // Determine if we're in fallback mode
+    const fallbackDetected = 
+      videoUrl.includes('fallback') || 
+      videoUrl.includes('.mp4') || 
+      videoUrl.includes('.webm');
+    
+    setIsFallbackMode(fallbackDetected);
+    
     // Load persona information
     loadPersonaInfo();
     
@@ -36,7 +45,7 @@ export const TavusVideo: React.FC<TavusVideoProps> = ({
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [videoUrl]);
 
   useEffect(() => {
     const handleUnload = () => {
@@ -127,13 +136,11 @@ export const TavusVideo: React.FC<TavusVideoProps> = ({
     );
   }
 
-  const isMockMode = videoUrl.includes('mock') || videoUrl.includes('awaknow.com') || videoUrl.includes('.mp4') || videoUrl.includes('.webm');
-
   return (
     <Card className={`relative overflow-hidden ${className}`}>
       {/* Video Container */}
       <div className="aspect-video bg-black rounded-xl relative overflow-hidden">
-        {isMockMode ? (
+        {isFallbackMode ? (
           // Mock video interface with persona information
           <div className="w-full h-full bg-gradient-to-br from-neutral-800 to-neutral-900 flex items-center justify-center relative">
             {/* Fallback Video Background */}
@@ -168,7 +175,7 @@ export const TavusVideo: React.FC<TavusVideoProps> = ({
                   <div>Persona ID: {TavusService.personaId}</div>
                   <div>Replica ID: {TavusService.replicaId}</div>
                   <div>Mode: {personaInfo?.status === 'mock' ? 'Demo' : 'Live'}</div>
-                  <div>Status: {isMockMode ? 'Fallback Video' : 'Live Session'}</div>
+                  <div>Status: {isFallbackMode ? 'Fallback Video' : 'Live Session'}</div>
                 </div>
               </div>
               
@@ -178,7 +185,7 @@ export const TavusVideo: React.FC<TavusVideoProps> = ({
               </div>
               
               <p className="text-xs text-neutral-400 mt-3">
-                {isMockMode ? 'Demo mode - Start speaking to begin your conversation' : 'Start speaking to begin your conversation'}
+                {isFallbackMode ? 'Demo mode - Start speaking to begin your conversation' : 'Start speaking to begin your conversation'}
               </p>
             </div>
           </div>
@@ -268,7 +275,7 @@ export const TavusVideo: React.FC<TavusVideoProps> = ({
               'bg-error-500'
             }`}></div>
             <span className="text-sm text-neutral-600 capitalize">{connectionStatus}</span>
-            {isMockMode && (
+            {isFallbackMode && (
               <span className="text-xs bg-accent-100 text-accent-700 px-2 py-1 rounded-full">
                 {videoUrl.includes('.mp4') ? 'Fallback Mode' : 'Demo Mode'}
               </span>

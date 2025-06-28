@@ -405,6 +405,15 @@ export class TavusService {
         },
       });
 
+      if (!response.ok) {
+        console.error('❌ Error fetching persona info:', response.status, response.statusText);
+        return { 
+          persona_id: this.PERSONA_ID, 
+          name: 'AwakNow AI Companion',
+          status: 'error' 
+        };
+      }
+
       const data = await response.json();
       console.log('📋 Persona info:', data);
       return data;

@@ -20,6 +20,7 @@ export const Reflect: React.FC = () => {
   const [tavusVideoUrl, setTavusVideoUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [emotions, setEmotions] = useState<Array<{ emotion: string; timestamp: Date; intensity: number }>>([]);
+  const [isFallbackMode, setIsFallbackMode] = useState(false);
 
   const emotionIcons = {
     happy: { icon: Smile, color: 'text-success-500' },
@@ -74,6 +75,12 @@ export const Reflect: React.FC = () => {
         setTavusVideoUrl(tavusResult.videoUrl);
         setStep('conversation');
         
+        // Check if we're using fallback mode
+        setIsFallbackMode(!!tavusResult.fallback || 
+                         tavusResult.videoUrl.includes('fallback') || 
+                         tavusResult.videoUrl.includes('.mp4') || 
+                         tavusResult.videoUrl.includes('.webm'));
+        
         if (tavusResult.fallback) {
           console.log('⚠️ Using fallback mode:', tavusResult.error);
         }
@@ -96,7 +103,7 @@ export const Reflect: React.FC = () => {
       await SessionService.completeSession(sessionId, user?.id || '');
       
       // End Tavus session if it exists
-      if (tavusVideoUrl && !tavusVideoUrl.includes('fallback')) {
+      if (tavusVideoUrl && !isFallbackMode) {
         await TavusService.markSessionCompleted(sessionId, user?.id);
       }
     }
@@ -119,6 +126,7 @@ export const Reflect: React.FC = () => {
     setTavusVideoUrl(null);
     setError(null);
     setEmotions([]);
+    setIsFallbackMode(false);
   };
 
   // Cleanup on component unmount
