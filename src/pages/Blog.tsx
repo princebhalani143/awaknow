@@ -4,6 +4,7 @@ import { Calendar, User, ArrowRight, Search, Tag, Clock, Heart, Brain, Users, Li
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
 import { Input } from '../components/UI/Input';
+import { NewsletterSubscription } from '../components/UI/NewsletterSubscription';
 import { TopBar } from '../components/Layout/TopBar';
 import { Footer } from '../components/Layout/Footer';
 import { useNavigate } from 'react-router-dom';
@@ -335,31 +336,21 @@ export const Blog: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Newsletter Signup */}
+        {/* Newsletter Signup - Now Functional */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.2 }}
           className="mt-16"
         >
-          <Card className="bg-gradient-to-br from-primary-500 to-secondary-500 text-white border-0 text-center">
-            <h3 className="text-2xl font-bold mb-4">Stay Updated with Wellness Insights</h3>
-            <p className="text-primary-100 mb-6 max-w-2xl mx-auto">
-              Get the latest articles, research findings, and practical tips delivered to your inbox weekly.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-xl text-neutral-800 focus:outline-none focus:ring-2 focus:ring-accent-500"
-              />
-              <Button
-                variant="accent"
-                className="bg-white text-primary-600 hover:bg-primary-50"
-              >
-                Subscribe
-              </Button>
-            </div>
+          <Card className="bg-gradient-to-br from-primary-500 to-secondary-500 text-white border-0">
+            <NewsletterSubscription 
+              source="blog_page"
+              subscriptionType="wellness_insights"
+              title="Stay Updated with Wellness Insights"
+              description="Get the latest articles, research findings, and practical tips delivered to your inbox weekly."
+              placeholder="Enter your email address"
+            />
           </Card>
         </motion.div>
       </div>
