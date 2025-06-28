@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Accessibility, 
+  User, 
   X, 
   Eye, 
   EyeOff, 
@@ -482,7 +482,7 @@ export const AccessibilityWidget: React.FC = () => {
         aria-label="Explore your accessibility options"
         title="Explore your accessibility options"
       >
-        <Accessibility className="w-6 h-6" />
+        <User className="w-6 h-6" />
       </motion.button>
 
       {/* Widget Panel */}
@@ -506,7 +506,7 @@ export const AccessibilityWidget: React.FC = () => {
               <div className="flex items-center justify-between p-6 border-b border-neutral-200">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
-                    <Accessibility className="w-5 h-5 text-primary-600" />
+                    <User className="w-5 h-5 text-primary-600" />
                   </div>
                   <h2 className="text-xl font-semibold text-neutral-800">Accessibility Settings</h2>
                 </div>
@@ -693,8 +693,8 @@ export const AccessibilityWidget: React.FC = () => {
                 <p className="text-xs text-neutral-600 text-center">
                   These settings are saved locally and will persist across sessions. 
                   For additional accessibility support, contact{' '}
-                  <a href="mailto:accessibility@awaknow.org" className="text-primary-600 hover:underline">
-                    accessibility@awaknow.org
+                  <a href="mailto:info@awaknow.org" className="text-primary-600 hover:underline">
+                    info@awaknow.org
                   </a>
                 </p>
               </div>
