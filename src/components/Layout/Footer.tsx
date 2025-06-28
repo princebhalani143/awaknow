@@ -69,22 +69,6 @@ export const Footer: React.FC = () => {
             </div>
           </div>
           
-          {/* Center Section - Vision */}
-          <div className="text-center">
-            <div className="text-sm text-neutral-600">
-              Vision of
-              <a
-                href="https://linkedin.com/in/princebhalani"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary-600 hover:text-primary-700 font-medium transition-colors inline-flex items-center space-x-1 ml-1"
-              >
-                <span>Prince Bhalani</span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
-            </div>
-          </div>
-
           {/* Right Section - Social Media Icons */}
           <div className="flex items-center space-x-4">
             {socialLinks.map((social) => (
