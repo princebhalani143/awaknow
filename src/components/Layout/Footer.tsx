@@ -60,41 +60,34 @@ export const Footer: React.FC = () => {
               <span>Prince Bhalani</span>
               <ExternalLink className="w-3 h-3" />
             </a>
+            <button
+              onClick={() => navigate('/privacy-policy')}
+              className="text-neutral-600 hover:text-primary-600 transition-colors"
+            >
+              Privacy Policy
+            </button>
+            <button
+              onClick={() => navigate('/terms-conditions')}
+              className="text-neutral-600 hover:text-primary-600 transition-colors"
+            >
+              Terms & Conditions
+            </button>
           </div>
 
-          {/* Legal Links & Social Media */}
-          <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-8 text-center">
-            {/* Legal Links */}
-            <div className="flex items-center space-x-6 text-sm">
-              <button
-                onClick={() => navigate('/privacy-policy')}
-                className="text-neutral-600 hover:text-primary-600 transition-colors"
+          {/* Social Media Icons */}
+          <div className="flex items-center space-x-4">
+            {socialLinks.map((social) => (
+              <a
+                key={social.name}
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`text-neutral-500 ${social.color} transition-all duration-300 transform hover:scale-110`}
+                aria-label={social.name === 'Email' ? 'Email us at info@awaknow.org' : `Follow AwakNow on ${social.name}`}
               >
-                Privacy Policy
-              </button>
-              <button
-                onClick={() => navigate('/terms-conditions')}
-                className="text-neutral-600 hover:text-primary-600 transition-colors"
-              >
-                Terms & Conditions
-              </button>
-            </div>
-
-            {/* Social Media Icons */}
-            <div className="flex items-center space-x-4">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.name}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`text-neutral-500 ${social.color} transition-all duration-300 transform hover:scale-110`}
-                  aria-label={social.name === 'Email' ? 'Email us at info@awaknow.org' : `Follow AwakNow on ${social.name}`}
-                >
-                  <social.icon className="w-5 h-5" />
-                </a>
-              ))}
-            </div>
+                <social.icon className="w-5 h-5" />
+              </a>
+            ))}
           </div>
         </div>
       </div>

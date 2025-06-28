@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue } from 'framer-motion';
 import { Heart, Brain, Users, Shield, Target, Zap, ArrowRight, CheckCircle, Star, Award, Globe, Lightbulb, TrendingUp, Trophy, Rocket, Play, Sparkles, X, AlertTriangle, MessageCircle } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
@@ -116,17 +116,6 @@ export const Landing: React.FC = () => {
     // Reset position
     x.set(0);
   };
-
-  // Auto-advance slides every 8 seconds if not dragging
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (!isDragging) {
-        nextSlide();
-      }
-    }, 8000);
-    
-    return () => clearInterval(timer);
-  }, [isDragging]);
 
   const stats = [
     { value: 'Beta', label: 'Current Stage' },
@@ -565,7 +554,7 @@ export const Landing: React.FC = () => {
                           className="absolute inset-0 bg-gradient-to-r from-accent-400 to-primary-400"
                           initial={{ x: '-100%' }}
                           animate={{ x: '0%' }}
-                          transition={{ duration: 8, repeat: Infinity }}
+                          transition={{ duration: 8, repeat: 0 }}
                         />
                       )}
                     </button>
