@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, ExternalLink, Facebook, Instagram, Twitter, Linkedin } from 'lucide-react';
+import { ExternalLink, Facebook, Instagram, Twitter, Linkedin, Mail } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProtectedEmail } from '../../utils/emailProtection';
 
@@ -30,6 +30,12 @@ export const Footer: React.FC = () => {
       url: 'https://www.linkedin.com/company/awaknow',
       icon: Linkedin,
       color: 'hover:text-blue-700'
+    },
+    {
+      name: 'Email',
+      url: 'mailto:info@awaknow.org',
+      icon: Mail,
+      color: 'hover:text-green-600'
     }
   ];
 
@@ -39,20 +45,16 @@ export const Footer: React.FC = () => {
         <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
           {/* Copyright */}
           <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 text-sm text-neutral-600 text-center sm:text-left">
-            <span>© 2025 AwakNow</span>
-            <div className="flex items-center space-x-2">
-              <Heart className="w-4 h-4 text-primary-500" />
-              <span>Vision of</span>
-              <a
-                href="https://linkedin.com/in/princebhalani"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary-600 hover:text-primary-700 font-medium transition-colors inline-flex items-center space-x-1"
-              >
-                <span>Prince Bhalani</span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
-            </div>
+            <span>© 2025 AwakNow | Vision of</span>
+            <a
+              href="https://linkedin.com/in/princebhalani"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary-600 hover:text-primary-700 font-medium transition-colors inline-flex items-center space-x-1"
+            >
+              <span>Prince Bhalani</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
           </div>
 
           {/* Legal Links & Social Media */}
@@ -71,13 +73,6 @@ export const Footer: React.FC = () => {
               >
                 Terms & Conditions
               </button>
-              <ProtectedEmail
-                email="info@awaknow.org"
-                subject="Contact AwakNow"
-                className="text-neutral-600 hover:text-primary-600"
-              >
-                Contact Us
-              </ProtectedEmail>
             </div>
 
             {/* Social Media Icons */}
@@ -89,7 +84,7 @@ export const Footer: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`text-neutral-500 ${social.color} transition-all duration-300 transform hover:scale-110`}
-                  aria-label={`Follow AwakNow on ${social.name}`}
+                  aria-label={social.name === 'Email' ? 'Email us at info@awaknow.org' : `Follow AwakNow on ${social.name}`}
                 >
                   <social.icon className="w-5 h-5" />
                 </a>
