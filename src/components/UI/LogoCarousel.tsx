@@ -16,47 +16,95 @@ export const LogoCarousel: React.FC<LogoCarouselProps> = ({
     {
       name: 'Bolt',
       logo: '/bolt.jpg',
-      alt: 'Bolt - Development Platform'
+      alt: 'Bolt - Development Platform',
+      fallbackColor: 'bg-blue-100 text-blue-700'
     },
     {
       name: 'Tavus',
       logo: '/Tavus.png',
-      alt: 'Tavus - AI Video Technology'
+      alt: 'Tavus - AI Video Technology',
+      fallbackColor: 'bg-purple-100 text-purple-700'
     },
     {
       name: 'ElevenLabs',
       logo: '/ElevenLabs.png',
-      alt: 'ElevenLabs - Voice AI'
+      alt: 'ElevenLabs - Voice AI',
+      fallbackColor: 'bg-green-100 text-green-700'
     },
     {
       name: 'Supabase',
       logo: '/Supabase.png',
-      alt: 'Supabase - Backend Infrastructure'
+      alt: 'Supabase - Backend Infrastructure',
+      fallbackColor: 'bg-emerald-100 text-emerald-700'
     },
     {
       name: 'RevenueCat',
       logo: '/revenuecat.png',
-      alt: 'RevenueCat - Subscription Management'
+      alt: 'RevenueCat - Subscription Management',
+      fallbackColor: 'bg-orange-100 text-orange-700'
     },
     {
       name: 'Stripe',
       logo: '/stripe.jpg',
-      alt: 'Stripe - Payment Processing'
+      alt: 'Stripe - Payment Processing',
+      fallbackColor: 'bg-indigo-100 text-indigo-700'
     },
     {
       name: 'Netlify',
       logo: '/netlify.png',
-      alt: 'Netlify - Web Hosting'
+      alt: 'Netlify - Web Hosting',
+      fallbackColor: 'bg-teal-100 text-teal-700'
     },
     {
       name: 'Entri',
       logo: '/entri.png',
-      alt: 'Entri - Domain Management'
+      alt: 'Entri - Domain Management',
+      fallbackColor: 'bg-pink-100 text-pink-700'
     }
   ];
 
   // Triple the logos for seamless infinite scroll
   const tripleLogos = [...logos, ...logos, ...logos];
+
+  const LogoItem: React.FC<{ logo: typeof logos[0]; index: number }> = ({ logo, index }) => {
+    const [imageError, setImageError] = React.useState(false);
+    const [imageLoaded, setImageLoaded] = React.useState(false);
+
+    return (
+      <motion.div
+        key={`${logo.name}-${index}`}
+        className="flex-shrink-0 w-28 h-16 sm:w-32 sm:h-18 md:w-36 md:h-20 flex items-center justify-center group"
+        whileHover={{ scale: 1.05 }}
+        transition={{ duration: 0.2 }}
+      >
+        <div className="w-full h-full flex items-center justify-center bg-white rounded-lg shadow-sm border border-neutral-100 group-hover:shadow-md transition-all duration-300">
+          {!imageError ? (
+            <img
+              src={logo.logo}
+              alt={logo.alt}
+              className={`max-w-full max-h-full object-contain transition-all duration-300 ${
+                imageLoaded 
+                  ? 'opacity-70 group-hover:opacity-100 filter grayscale group-hover:grayscale-0' 
+                  : 'opacity-0'
+              }`}
+              onLoad={() => setImageLoaded(true)}
+              onError={() => {
+                setImageError(true);
+                setImageLoaded(false);
+              }}
+              style={{ maxWidth: '80%', maxHeight: '60%' }}
+            />
+          ) : (
+            <div className={`w-full h-full flex items-center justify-center rounded-lg ${logo.fallbackColor} transition-all duration-300 group-hover:scale-105`}>
+              <span className="text-sm font-bold tracking-wide">
+                {logo.name}
+              </span>
+            </div>
+          )}
+        </div>
+      </motion.div>
+    );
+  };
 
   return (
     <section className={`py-16 sm:py-20 md:py-24 ${className}`}>
@@ -77,23 +125,23 @@ export const LogoCarousel: React.FC<LogoCarouselProps> = ({
         </motion.div>
 
         {/* Logo Carousel Container */}
-        <div className="relative overflow-hidden bg-white rounded-2xl py-8">
+        <div className="relative overflow-hidden bg-gradient-to-r from-neutral-50 via-white to-neutral-50 rounded-2xl py-8 border border-neutral-100">
           {/* Gradient Overlays for smooth fade effect */}
-          <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-24 bg-gradient-to-r from-white via-white to-transparent z-10 pointer-events-none"></div>
-          <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-24 bg-gradient-to-l from-white via-white to-transparent z-10 pointer-events-none"></div>
+          <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-r from-neutral-50 via-neutral-50/80 to-transparent z-10 pointer-events-none"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-l from-neutral-50 via-neutral-50/80 to-transparent z-10 pointer-events-none"></div>
           
           {/* Scrolling Logos */}
           <div className="flex items-center">
             <motion.div
-              className="flex items-center space-x-8 sm:space-x-12 md:space-x-16"
+              className="flex items-center space-x-6 sm:space-x-8 md:space-x-10"
               animate={{
-                x: [0, -100 / 3 + '%'] // Move by exactly one-third (one set of logos)
+                x: [0, `-${100/3}%`] // Move by exactly one-third (one set of logos)
               }}
               transition={{
                 x: {
                   repeat: Infinity,
                   repeatType: "loop",
-                  duration: 25,
+                  duration: 30,
                   ease: "linear",
                 },
               }}
@@ -103,33 +151,7 @@ export const LogoCarousel: React.FC<LogoCarouselProps> = ({
               }}
             >
               {tripleLogos.map((logo, index) => (
-                <motion.div
-                  key={`${logo.name}-${index}`}
-                  className="flex-shrink-0 w-24 h-12 sm:w-32 sm:h-16 md:w-36 md:h-18 flex items-center justify-center group"
-                  whileHover={{ scale: 1.1 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <img
-                    src={logo.logo}
-                    alt={logo.alt}
-                    className="max-w-full max-h-full object-contain opacity-60 group-hover:opacity-100 transition-all duration-300 filter grayscale group-hover:grayscale-0"
-                    style={{
-                      filter: 'brightness(0) saturate(100%) invert(45%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(85%)'
-                    }}
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const parent = target.parentElement;
-                      if (parent) {
-                        parent.innerHTML = `
-                          <div class="w-full h-full flex items-center justify-center bg-neutral-100 rounded-lg">
-                            <span class="text-sm font-semibold text-neutral-600">${logo.name}</span>
-                          </div>
-                        `;
-                      }
-                    }}
-                  />
-                </motion.div>
+                <LogoItem key={`${logo.name}-${index}`} logo={logo} index={index} />
               ))}
             </motion.div>
           </div>
