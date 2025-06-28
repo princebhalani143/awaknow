@@ -48,8 +48,8 @@ export const NewsletterSubscription: React.FC<NewsletterSubscriptionProps> = ({
         setEmail(''); // Clear email on success
         
         // Track subscription event (for analytics)
-        if (typeof gtag !== 'undefined') {
-          gtag('event', 'newsletter_subscribe', {
+        if (typeof window !== 'undefined' && 'gtag' in window) {
+          (window as any).gtag?.('event', 'newsletter_subscribe', {
             event_category: 'engagement',
             event_label: source,
             value: 1

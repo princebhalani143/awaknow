@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Check, Star, Zap } from 'lucide-react';
+import { Check, Star, Zap, Crown } from 'lucide-react';
 import { Button } from '../UI/Button';
 import { Card } from '../UI/Card';
 import { SubscriptionPlan } from '../../types/subscription';
@@ -138,7 +138,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
                 variant={shouldShowDowngrade ? 'outline' : isPopular ? 'primary' : 'secondary'}
                 className="w-full"
                 loading={loading}
-                icon={isPopular && !shouldShowDowngrade ? Zap : undefined}
+                icon={isPopular && !shouldShowDowngrade ? Zap : plan.name === 'resolve_together' ? Crown : undefined}
               >
                 {getButtonText()}
               </Button>

@@ -10,7 +10,8 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  DollarSign
+  DollarSign,
+  RefreshCw
 } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
@@ -19,7 +20,7 @@ import { Footer } from '../components/Layout/Footer';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useSubscriptionStore } from '../stores/subscriptionStore';
-import { supabase } from '../lib/supabase';
+import { RevenueCatService } from '../services/revenueCatService';
 
 interface BillingRecord {
   id: string;
@@ -50,6 +51,7 @@ export const BillingHistory: React.FC = () => {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [loading, setLoading] = useState(true);
   const [downloadingInvoice, setDownloadingInvoice] = useState<string | null>(null);
+  const [restoring, setRestoring] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -63,44 +65,31 @@ export const BillingHistory: React.FC = () => {
     try {
       setLoading(true);
 
-      // In a real implementation, this would fetch from your billing provider (Stripe, RevenueCat, etc.)
-      // For now, we'll create mock data based on the user's subscription
-      const mockBillingHistory: BillingRecord[] = [
-        {
-          id: 'inv_001',
-          date: '2024-12-15',
-          amount: 9.99,
+      // Get purchase history from RevenueCat service
+      const purchaseHistory = await RevenueCatService.getPurchaseHistory(user.id);
+      
+      // Convert purchase history to billing records
+      const billingRecords: BillingRecord[] = purchaseHistory.map((purchase, index) => {
+        const planName = purchase.packageIdentifier.includes('reflect_plus') 
+          ? 'Reflect+' 
+          : purchase.packageIdentifier.includes('resolve_together') 
+            ? 'Resolve Together' 
+            : 'Unknown Plan';
+            
+        return {
+          id: `inv_${index + 1}`,
+          date: purchase.purchaseDate,
+          amount: purchase.price,
           status: 'paid',
-          description: 'Reflect+ Monthly Subscription',
-          invoice_url: 'https://example.com/invoice/inv_001.pdf',
+          description: `${planName} ${purchase.periodType === 'annual' ? 'Annual' : 'Monthly'} Subscription`,
+          invoice_url: `https://example.com/invoice/inv_${index + 1}.pdf`,
           payment_method: '**** 4242',
-          plan_name: 'Reflect+',
-          billing_period: 'monthly',
-        },
-        {
-          id: 'inv_002',
-          date: '2024-11-15',
-          amount: 9.99,
-          status: 'paid',
-          description: 'Reflect+ Monthly Subscription',
-          invoice_url: 'https://example.com/invoice/inv_002.pdf',
-          payment_method: '**** 4242',
-          plan_name: 'Reflect+',
-          billing_period: 'monthly',
-        },
-        {
-          id: 'inv_003',
-          date: '2024-10-15',
-          amount: 9.99,
-          status: 'paid',
-          description: 'Reflect+ Monthly Subscription',
-          invoice_url: 'https://example.com/invoice/inv_003.pdf',
-          payment_method: '**** 4242',
-          plan_name: 'Reflect+',
-          billing_period: 'monthly',
-        },
-      ];
+          plan_name: planName,
+          billing_period: purchase.periodType === 'annual' ? 'annual' : 'monthly',
+        };
+      });
 
+      // Generate mock payment method
       const mockPaymentMethods: PaymentMethod[] = [
         {
           id: 'pm_001',
@@ -114,7 +103,7 @@ export const BillingHistory: React.FC = () => {
 
       // Only show billing history if user has a paid subscription
       if (subscription && subscription.plan_id !== 'awaknow_free') {
-        setBillingHistory(mockBillingHistory);
+        setBillingHistory(billingRecords);
         setPaymentMethods(mockPaymentMethods);
       } else {
         setBillingHistory([]);
@@ -124,6 +113,21 @@ export const BillingHistory: React.FC = () => {
       console.error('Error loading billing data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRestorePurchases = async () => {
+    if (!user) return;
+    
+    setRestoring(true);
+    
+    try {
+      await RevenueCatService.restorePurchases(user.id);
+      await loadBillingData();
+    } catch (error) {
+      console.error('Error restoring purchases:', error);
+    } finally {
+      setRestoring(false);
     }
   };
 
@@ -230,13 +234,24 @@ export const BillingHistory: React.FC = () => {
           <Card>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-neutral-800">Current Subscription</h3>
-              <Button
-                onClick={() => navigate('/subscription')}
-                variant="outline"
-                size="sm"
-              >
-                Manage Plan
-              </Button>
+              <div className="flex space-x-2">
+                <Button
+                  onClick={handleRestorePurchases}
+                  variant="outline"
+                  size="sm"
+                  icon={RefreshCw}
+                  loading={restoring}
+                >
+                  Restore
+                </Button>
+                <Button
+                  onClick={() => navigate('/subscription')}
+                  variant="outline"
+                  size="sm"
+                >
+                  Manage Plan
+                </Button>
+              </div>
             </div>
             
             {subscription ? (
