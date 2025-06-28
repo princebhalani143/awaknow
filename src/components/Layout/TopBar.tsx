@@ -134,8 +134,8 @@ export const TopBar: React.FC = () => {
     { label: 'Insights', path: '/blog' },
   ];
 
+  // Removed "Home" from logged-in navigation - users can click logo to go home
   const loggedInNavigationItems = [
-    { label: 'Home', path: '/home' },
     { label: 'Reflect', path: '/reflect' },
     { label: 'Resolve', path: '/resolve' },
     { label: 'Analytics', path: '/analytics' },
