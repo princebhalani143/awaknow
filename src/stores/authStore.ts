@@ -8,13 +8,20 @@ interface AuthState {
   setUser: (user: User | null) => void;
   setLoading: (loading: boolean) => void;
   signOut: () => Promise<void>;
+  updateUserProfile: (updates: Partial<User>) => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   loading: true,
   setUser: (user) => set({ user }),
   setLoading: (loading) => set({ loading }),
+  updateUserProfile: (updates) => {
+    const currentUser = get().user;
+    if (currentUser) {
+      set({ user: { ...currentUser, ...updates } });
+    }
+  },
   signOut: async () => {
     try {
       // Clear user state immediately for better UX

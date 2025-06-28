@@ -30,7 +30,7 @@ export const TopBar: React.FC = () => {
   const loggedInNavigationItems = [
     { label: 'Reflect', path: '/reflect' },
     { label: 'Resolve', path: '/resolve' },
-    { label: 'Analytics', path: '/analytics' },
+    { label: 'Reports', path: '/analytics' },
   ];
 
   const navigationItems = user ? loggedInNavigationItems : publicNavigationItems;

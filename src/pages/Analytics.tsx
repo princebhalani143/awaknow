@@ -251,7 +251,7 @@ export const Analytics: React.FC = () => {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-neutral-600">Loading your analytics...</p>
+            <p className="text-neutral-600">Loading your reports...</p>
           </div>
         </div>
       </div>
@@ -264,7 +264,7 @@ export const Analytics: React.FC = () => {
         <TopBar />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-neutral-600">Unable to load analytics data</p>
+            <p className="text-neutral-600">Unable to load reports data</p>
             <Button onClick={() => navigate('/home')} className="mt-4">
               Back to Home
             </Button>
@@ -293,7 +293,7 @@ export const Analytics: React.FC = () => {
             className="!p-2"
           />
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-neutral-800">Analytics Dashboard</h1>
+            <h1 className="text-3xl font-bold text-neutral-800">Reports Dashboard</h1>
             <p className="text-neutral-600">Your wellness journey insights</p>
           </div>
           <div className="flex space-x-2">
@@ -334,7 +334,7 @@ export const Analytics: React.FC = () => {
 
           <Card className="text-center p-4">
             <Video className="w-6 h-6 text-secondary-500 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-neutral-800">{analytics.totalMinutesUsed}</div>
+            <div className="text-2xl font-bold text-neutral-800">{analytics.totalMinutesUsed.toFixed(2)}</div>
             <div className="text-xs text-neutral-500">AI Minutes Used</div>
           </Card>
 
@@ -466,7 +466,7 @@ export const Analytics: React.FC = () => {
                       </div>
                     </div>
                     <span className="text-xs text-neutral-500 w-16 text-right">
-                      {week.minutes}m
+                      {week.minutes.toFixed(2)}m
                     </span>
                   </div>
                 ))}

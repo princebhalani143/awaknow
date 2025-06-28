@@ -7,6 +7,7 @@ import { Input } from '../components/UI/Input';
 import { TopBar } from '../components/Layout/TopBar';
 import { Footer } from '../components/Layout/Footer';
 import { useNavigate } from 'react-router-dom';
+import { NewsletterSignup } from '../components/UI/NewsletterSignup';
 
 interface BlogPost {
   id: string;
@@ -333,6 +334,19 @@ export const Blog: React.FC = () => {
               </motion.div>
             ))}
           </div>
+        </motion.div>
+
+        {/* Newsletter Signup */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.2 }}
+          className="mt-16"
+        >
+          <NewsletterSignup 
+            source="blog_page"
+            subscriptionType="wellness_insights"
+          />
         </motion.div>
       </div>
 

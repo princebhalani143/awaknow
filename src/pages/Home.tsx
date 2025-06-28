@@ -1,180 +1,251 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Users, Sparkles, TrendingUp, Clock, Star, Play, Crown, ArrowRight, Shield, Zap, Heart, Award, Target, BarChart3, X, TestTube } from 'lucide-react';
+import { 
+  ArrowLeft, 
+  TrendingUp, 
+  Calendar, 
+  Clock, 
+  Heart, 
+  Brain, 
+  Users,
+  Video,
+  BarChart3,
+  PieChart,
+  Activity
+} from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
-import { TranslatedText } from '../components/UI/TranslatedText';
 import { TopBar } from '../components/Layout/TopBar';
 import { Footer } from '../components/Layout/Footer';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
-import { useSubscriptionStore } from '../stores/subscriptionStore';
 import { SessionService } from '../services/sessionService';
 import { TavusService } from '../services/tavusService';
 import { supabase } from '../lib/supabase';
 
-interface UserStats {
+interface AnalyticsData {
   totalSessions: number;
-  totalMinutesUsed: number;
-  averageEmotionScore: number;
   completedSessions: number;
-  insightsGenerated: number;
-  currentStreak: number;
+  totalMinutesUsed: number;
+  averageSessionDuration: number;
+  emotionTrends: Array<{
+    date: string;
+    score: number;
+    sentiment: string;
+  }>;
+  sessionsByType: {
+    reflect_alone: number;
+    resolve_together: number;
+  };
+  weeklyActivity: Array<{
+    week: string;
+    sessions: number;
+    minutes: number;
+  }>;
+  topInsights: Array<{
+    type: string;
+    count: number;
+    averageConfidence: number;
+  }>;
+  streakData: {
+    currentStreak: number;
+    longestStreak: number;
+    streakDates: string[];
+  };
 }
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const { subscription, limits, loading, loadSubscription } = useSubscriptionStore();
-  const [stats, setStats] = useState<UserStats | null>(null);
-  const [loadingStats, setLoadingStats] = useState(true);
-  const [showVideo, setShowVideo] = useState(false);
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [timeRange, setTimeRange] = useState<'week' | 'month' | 'year'>('month');
 
   useEffect(() => {
     if (user) {
-      loadSubscription(user.id);
-      loadUserStats();
+      loadAnalytics();
       
       // Clean up any orphaned sessions
       TavusService.cleanupOrphanedSessions(user.id);
     }
-  }, [user, loadSubscription]);
+  }, [user, timeRange]);
 
-  const loadUserStats = async () => {
+  const loadAnalytics = async () => {
     if (!user) return;
 
     try {
-      setLoadingStats(true);
+      setLoading(true);
 
-      // Get user sessions
+      // Get date range
+      const now = new Date();
+      const startDate = new Date();
+      switch (timeRange) {
+        case 'week':
+          startDate.setDate(now.getDate() - 7);
+          break;
+        case 'month':
+          startDate.setMonth(now.getMonth() - 1);
+          break;
+        case 'year':
+          startDate.setFullYear(now.getFullYear() - 1);
+          break;
+      }
+
+      // Fetch sessions
       const sessions = await SessionService.getUserSessions(user.id);
-      
-      // Get Tavus usage stats
+      const filteredSessions = sessions.filter(
+        s => new Date(s.created_at) >= startDate
+      );
+
+      // Fetch Tavus usage
       const tavusStats = await TavusService.getTavusUsageStats(user.id);
-      
-      // Get insights count
-      const { count: insightsCount } = await supabase
-        .from('insights')
-        .select('*', { count: 'exact' })
-        .eq('user_id', user.id);
 
-      // Get average emotion score from insights
-      const { data: emotionData } = await supabase
+      // Fetch insights
+      const { data: insights } = await supabase
         .from('insights')
-        .select('emotion_score')
+        .select('*')
         .eq('user_id', user.id)
-        .not('emotion_score', 'is', null);
+        .gte('created_at', startDate.toISOString());
 
-      const averageEmotionScore = emotionData && emotionData.length > 0
-        ? emotionData.reduce((sum, insight) => sum + (insight.emotion_score || 0), 0) / emotionData.length
-        : 0;
-
-      // Calculate current streak (consecutive days with sessions)
-      const currentStreak = calculateStreak(sessions);
-
-      const userStats: UserStats = {
-        totalSessions: sessions.length,
-        totalMinutesUsed: tavusStats.totalMinutesUsed,
-        averageEmotionScore: Math.round(averageEmotionScore * 10) / 10,
-        completedSessions: sessions.filter(s => s.status === 'completed').length,
-        insightsGenerated: insightsCount || 0,
-        currentStreak,
+      // Calculate analytics
+      const totalSessions = filteredSessions.length;
+      const completedSessions = filteredSessions.filter(s => s.status === 'completed').length;
+      
+      // Session types
+      const sessionsByType = {
+        reflect_alone: filteredSessions.filter(s => s.session_type === 'reflect_alone').length,
+        resolve_together: filteredSessions.filter(s => s.session_type === 'resolve_together').length,
       };
 
-      setStats(userStats);
+      // Emotion trends from insights
+      const emotionTrends = insights
+        ?.filter(i => i.emotion_score !== null)
+        .map(i => ({
+          date: new Date(i.created_at).toISOString().split('T')[0],
+          score: i.emotion_score || 0,
+          sentiment: i.sentiment || 'neutral',
+        }))
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()) || [];
+
+      // Weekly activity
+      const weeklyActivity = calculateWeeklyActivity(filteredSessions, startDate, now);
+
+      // Top insights by type
+      const insightTypes = insights?.reduce((acc, insight) => {
+        const type = insight.insight_type;
+        if (!acc[type]) {
+          acc[type] = { count: 0, totalConfidence: 0 };
+        }
+        acc[type].count++;
+        acc[type].totalConfidence += insight.ai_confidence || 0;
+        return acc;
+      }, {} as Record<string, { count: number; totalConfidence: number }>) || {};
+
+      const topInsights = Object.entries(insightTypes).map(([type, data]) => ({
+        type,
+        count: data.count,
+        averageConfidence: data.count > 0 ? data.totalConfidence / data.count : 0,
+      }));
+
+      // Streak calculation
+      const streakData = calculateStreakData(sessions);
+
+      const analyticsData: AnalyticsData = {
+        totalSessions,
+        completedSessions,
+        totalMinutesUsed: tavusStats.totalMinutesUsed,
+        averageSessionDuration: totalSessions > 0 ? tavusStats.totalMinutesUsed / totalSessions : 0,
+        emotionTrends,
+        sessionsByType,
+        weeklyActivity,
+        topInsights,
+        streakData,
+      };
+
+      setAnalytics(analyticsData);
     } catch (error) {
-      console.error('Error loading user stats:', error);
+      console.error('Error loading analytics:', error);
     } finally {
-      setLoadingStats(false);
+      setLoading(false);
     }
   };
 
-  const calculateStreak = (sessions: any[]): number => {
-    if (sessions.length === 0) return 0;
+  const calculateWeeklyActivity = (sessions: any[], startDate: Date, endDate: Date) => {
+    const weeks: Array<{ week: string; sessions: number; minutes: number }> = [];
+    const currentDate = new Date(startDate);
 
+    while (currentDate <= endDate) {
+      const weekStart = new Date(currentDate);
+      const weekEnd = new Date(currentDate);
+      weekEnd.setDate(weekEnd.getDate() + 6);
+
+      const weekSessions = sessions.filter(s => {
+        const sessionDate = new Date(s.created_at);
+        return sessionDate >= weekStart && sessionDate <= weekEnd;
+      });
+
+      const weekMinutes = weekSessions.reduce((sum, s) => sum + (s.tavus_minutes_used || 0), 0);
+
+      weeks.push({
+        week: `${weekStart.getMonth() + 1}/${weekStart.getDate()}`,
+        sessions: weekSessions.length,
+        minutes: weekMinutes,
+      });
+
+      currentDate.setDate(currentDate.getDate() + 7);
+    }
+
+    return weeks;
+  };
+
+  const calculateStreakData = (sessions: any[]) => {
     const sessionDates = sessions
       .map(s => new Date(s.created_at).toDateString())
       .filter((date, index, arr) => arr.indexOf(date) === index)
       .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
 
-    let streak = 0;
+    let currentStreak = 0;
+    let longestStreak = 0;
+    let tempStreak = 0;
     const today = new Date().toDateString();
     let currentDate = new Date();
 
+    // Calculate current streak
     for (const sessionDate of sessionDates) {
       const checkDate = currentDate.toDateString();
       if (sessionDate === checkDate) {
-        streak++;
+        currentStreak++;
         currentDate.setDate(currentDate.getDate() - 1);
       } else {
         break;
       }
     }
 
-    return streak;
-  };
-
-  const options = [
-    {
-      id: 'reflect',
-      title: 'Reflect Alone',
-      description: 'Private AI-powered sessions for personal emotional exploration and growth',
-      icon: Brain,
-      color: 'from-primary-500 to-primary-600',
-      features: ['AI Video Conversations', 'Emotion Tracking', 'Personal Insights', 'Voice Analysis'],
-      route: '/reflect',
-      available: true,
-    },
-    {
-      id: 'resolve',
-      title: 'Resolve With Someone',
-      description: 'Guided conflict resolution sessions with AI mediation for better relationships',
-      icon: Users,
-      color: 'from-secondary-500 to-secondary-600',
-      features: ['AI Mediation', 'Safe Environment', 'Communication Tools', 'Shared Insights'],
-      route: '/resolve',
-      available: limits?.canCreateGroupSessions || false,
+    // Calculate longest streak
+    for (let i = 0; i < sessionDates.length; i++) {
+      if (i === 0) {
+        tempStreak = 1;
+      } else {
+        const prevDate = new Date(sessionDates[i - 1]);
+        const currDate = new Date(sessionDates[i]);
+        const diffDays = Math.abs(prevDate.getTime() - currDate.getTime()) / (1000 * 60 * 60 * 24);
+        
+        if (diffDays === 1) {
+          tempStreak++;
+        } else {
+          longestStreak = Math.max(longestStreak, tempStreak);
+          tempStreak = 1;
+        }
+      }
     }
-  ];
+    longestStreak = Math.max(longestStreak, tempStreak);
 
-  const displayStats = [
-    { 
-      label: 'Sessions Completed', 
-      value: loadingStats ? '...' : stats?.completedSessions.toString() || '0', 
-      icon: Clock,
-      color: 'text-primary-500',
-      bgColor: 'bg-primary-50'
-    },
-    { 
-      label: 'Current Streak', 
-      value: loadingStats ? '...' : `${stats?.currentStreak || 0}`, 
-      unit: 'days',
-      icon: TrendingUp,
-      color: 'text-success-500',
-      bgColor: 'bg-success-50'
-    },
-    { 
-      label: 'Wellness Score', 
-      value: loadingStats ? '...' : stats?.averageEmotionScore.toFixed(1) || '0.0', 
-      icon: Star,
-      color: 'text-accent-500',
-      bgColor: 'bg-accent-50'
-    },
-    { 
-      label: 'AI Minutes Used', 
-      value: loadingStats ? '...' : stats?.totalMinutesUsed.toFixed(2) || '0', 
-      icon: Brain,
-      color: 'text-secondary-500',
-      bgColor: 'bg-secondary-50'
-    },
-  ];
-
-  const achievements = [
-    { icon: Award, title: 'First Session', description: 'Completed your first reflection', unlocked: (stats?.totalSessions || 0) > 0 },
-    { icon: Target, title: 'Consistent Practice', description: '7-day streak achieved', unlocked: (stats?.currentStreak || 0) >= 7 },
-    { icon: Heart, title: 'Emotional Growth', description: 'Wellness score above 7.0', unlocked: (stats?.averageEmotionScore || 0) >= 7.0 },
-    { icon: BarChart3, title: 'Data Driven', description: '10+ insights generated', unlocked: (stats?.insightsGenerated || 0) >= 10 },
-  ];
+    return {
+      currentStreak,
+      longestStreak,
+      streakDates: sessionDates,
+    };
+  };
 
   if (loading) {
     return (
@@ -204,16 +275,46 @@ export const Home: React.FC = () => {
         >
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold text-neutral-800 mb-4">
-              <TranslatedText>Welcome back, {user?.email?.split('@')[0] || 'Friend'}! 👋</TranslatedText>
+              Welcome, {user?.full_name || user?.email?.split('@')[0] || 'Friend'}! 👋
             </h1>
             <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              <TranslatedText>Continue your journey of emotional wellness and personal growth with AI-powered insights</TranslatedText>
+              Continue your journey of emotional wellness and personal growth with AI-powered insights
             </p>
           </div>
 
           {/* Premium Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            {displayStats.map((stat, index) => (
+            {[
+              { 
+                label: 'Sessions Completed', 
+                value: loading ? '...' : analytics?.completedSessions.toString() || '0', 
+                icon: Clock,
+                color: 'text-primary-500',
+                bgColor: 'bg-primary-50'
+              },
+              { 
+                label: 'Current Streak', 
+                value: loading ? '...' : `${analytics?.streakData.currentStreak || 0}`, 
+                unit: 'days',
+                icon: TrendingUp,
+                color: 'text-success-500',
+                bgColor: 'bg-success-50'
+              },
+              { 
+                label: 'Wellness Score', 
+                value: loading ? '...' : analytics?.averageEmotionScore.toFixed(1) || '0.0', 
+                icon: Heart,
+                color: 'text-accent-500',
+                bgColor: 'bg-accent-50'
+              },
+              { 
+                label: 'AI Minutes Used', 
+                value: loading ? '...' : analytics?.totalMinutesUsed.toFixed(2) || '0', 
+                icon: Brain,
+                color: 'text-secondary-500',
+                bgColor: 'bg-secondary-50'
+              },
+            ].map((stat, index) => (
               <motion.div
                 key={stat.label}
                 initial={{ opacity: 0, y: 20 }}
@@ -229,7 +330,7 @@ export const Home: React.FC = () => {
                     {stat.unit && <span className="text-lg font-normal text-neutral-600 ml-1">{stat.unit}</span>}
                   </div>
                   <div className="text-sm text-neutral-500">
-                    <TranslatedText>{stat.label}</TranslatedText>
+                    {stat.label}
                   </div>
                 </Card>
               </motion.div>
@@ -286,13 +387,11 @@ export const Home: React.FC = () => {
                     <span className="text-accent-400 text-sm font-medium uppercase tracking-wide">AI-Powered Sessions</span>
                   </div>
                   <h2 className="text-3xl md:text-4xl font-bold leading-tight">
-                    <TranslatedText>Your Personal AI Wellness Companion</TranslatedText>
+                    Your Personal AI Wellness Companion
                   </h2>
                   <p className="text-neutral-300 text-lg leading-relaxed">
-                    <TranslatedText>
-                      Experience personalized conversations that understand your unique emotional patterns, 
-                      provide real-time insights, and guide you toward meaningful growth and healing.
-                    </TranslatedText>
+                    Experience personalized conversations that understand your unique emotional patterns, 
+                    provide real-time insights, and guide you toward meaningful growth and healing.
                   </p>
                 </div>
 
@@ -301,7 +400,7 @@ export const Home: React.FC = () => {
                     <div key={index} className="flex items-center space-x-2">
                       <Sparkles className="w-4 h-4 text-accent-400" />
                       <span className="text-sm text-neutral-300">
-                        <TranslatedText>{feature}</TranslatedText>
+                        {feature}
                       </span>
                     </div>
                   ))}
@@ -315,7 +414,7 @@ export const Home: React.FC = () => {
                     icon={Play}
                     className="bg-accent-500 hover:bg-accent-600"
                   >
-                    <TranslatedText>Start Session</TranslatedText>
+                    Start Session
                   </Button>
                   <Button
                     onClick={() => navigate('/analytics')}
@@ -323,7 +422,7 @@ export const Home: React.FC = () => {
                     size="lg"
                     className="text-white border-white/20 hover:bg-white/10"
                   >
-                    <TranslatedText>View Analytics</TranslatedText>
+                    View Reports
                   </Button>
                 </div>
               </div>
@@ -344,7 +443,7 @@ export const Home: React.FC = () => {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => setShowVideo(true)}
+                      onClick={() => navigate('/reflect')}
                       className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-large hover:bg-white/30 transition-colors group"
                     >
                       <Play className="w-8 h-8 text-white ml-1 group-hover:text-accent-200" />
@@ -438,7 +537,12 @@ export const Home: React.FC = () => {
             <Card className="h-full">
               <h3 className="text-xl font-semibold text-neutral-800 mb-6">Achievements</h3>
               <div className="space-y-4">
-                {achievements.map((achievement, index) => (
+                {[
+                  { icon: Award, title: 'First Session', description: 'Completed your first reflection', unlocked: (analytics?.totalSessions || 0) > 0 },
+                  { icon: Target, title: 'Consistent Practice', description: '7-day streak achieved', unlocked: (analytics?.streakData.currentStreak || 0) >= 7 },
+                  { icon: Heart, title: 'Emotional Growth', description: 'Wellness score above 7.0', unlocked: (analytics?.averageEmotionScore || 0) >= 7.0 },
+                  { icon: BarChart3, title: 'Data Driven', description: '10+ insights generated', unlocked: (analytics?.topInsights.reduce((sum, insight) => sum + insight.count, 0) || 0) >= 10 },
+                ].map((achievement, index) => (
                   <div 
                     key={index}
                     className={`flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 ${
@@ -480,7 +584,28 @@ export const Home: React.FC = () => {
           transition={{ duration: 0.8, delay: 1.0 }}
           className="grid md:grid-cols-2 gap-8 mb-12"
         >
-          {options.map((option, index) => (
+          {[
+            {
+              id: 'reflect',
+              title: 'Reflect Alone',
+              description: 'Private AI-powered sessions for personal emotional exploration and growth',
+              icon: Brain,
+              color: 'from-primary-500 to-primary-600',
+              features: ['AI Video Conversations', 'Emotion Tracking', 'Personal Insights', 'Voice Analysis'],
+              route: '/reflect',
+              available: true,
+            },
+            {
+              id: 'resolve',
+              title: 'Resolve With Someone',
+              description: 'Guided conflict resolution sessions with AI mediation for better relationships',
+              icon: Users,
+              color: 'from-secondary-500 to-secondary-600',
+              features: ['AI Mediation', 'Safe Environment', 'Communication Tools', 'Shared Insights'],
+              route: '/resolve',
+              available: limits?.canCreateGroupSessions || false,
+            }
+          ].map((option, index) => (
             <motion.div
               key={option.id}
               initial={{ opacity: 0, y: 20 }}
@@ -499,10 +624,10 @@ export const Home: React.FC = () => {
                     </div>
                     <div className="flex-1">
                       <h3 className="text-xl font-semibold text-neutral-800 mb-2">
-                        <TranslatedText>{option.title}</TranslatedText>
+                        {option.title}
                       </h3>
                       <p className="text-neutral-600 leading-relaxed">
-                        <TranslatedText>{option.description}</TranslatedText>
+                        {option.description}
                       </p>
                     </div>
                   </div>
@@ -512,7 +637,7 @@ export const Home: React.FC = () => {
                       <div key={idx} className="flex items-center space-x-2">
                         <Sparkles className="w-4 h-4 text-accent-500" />
                         <span className="text-sm text-neutral-600">
-                          <TranslatedText>{feature}</TranslatedText>
+                          {feature}
                         </span>
                       </div>
                     ))}
@@ -520,7 +645,7 @@ export const Home: React.FC = () => {
 
                   {option.available ? (
                     <Button className="w-full" variant={index === 0 ? 'primary' : 'secondary'} size="lg">
-                      <TranslatedText>Start Session</TranslatedText>
+                      Start Session
                     </Button>
                   ) : (
                     <Button 
@@ -533,7 +658,7 @@ export const Home: React.FC = () => {
                       size="lg"
                       icon={Crown}
                     >
-                      <TranslatedText>Upgrade Required</TranslatedText>
+                      Upgrade Required
                     </Button>
                   )}
                 </div>
@@ -568,13 +693,11 @@ export const Home: React.FC = () => {
                       <span className="text-accent-200 text-sm font-medium uppercase tracking-wide">Premium Experience</span>
                     </div>
                     <h3 className="text-2xl font-bold mb-2">
-                      <TranslatedText>Unlock Your Full Potential</TranslatedText>
+                      Unlock Your Full Potential
                     </h3>
                     <p className="text-accent-100 mb-4 max-w-2xl">
-                      <TranslatedText>
-                        Get unlimited sessions, advanced AI insights, group conflict resolution, 
-                        and priority support. Transform your emotional wellness journey today.
-                      </TranslatedText>
+                      Get unlimited sessions, advanced AI insights, group conflict resolution, 
+                      and priority support. Transform your emotional wellness journey today.
                     </p>
                     <div className="flex items-center space-x-6 text-sm text-accent-100">
                       <div className="flex items-center space-x-1">
@@ -583,7 +706,7 @@ export const Home: React.FC = () => {
                       </div>
                       <div className="flex items-center space-x-1">
                         <Shield className="w-4 h-4" />
-                        <span>Advanced Analytics</span>
+                        <span>Advanced Reports</span>
                       </div>
                       <div className="flex items-center space-x-1">
                         <Users className="w-4 h-4" />
@@ -599,7 +722,7 @@ export const Home: React.FC = () => {
                       className="bg-white text-accent-600 hover:bg-accent-50 shadow-large"
                       icon={ArrowRight}
                     >
-                      <TranslatedText>Upgrade Now</TranslatedText>
+                      Upgrade Now
                     </Button>
                   </div>
                 </div>
@@ -618,47 +741,11 @@ export const Home: React.FC = () => {
           <div className="flex items-center justify-center space-x-2 text-neutral-600">
             <Shield className="w-5 h-5 text-success-500" />
             <p className="text-sm">
-              <TranslatedText>Your data is private, encrypted, and yours alone; even we can't see it. You can cancel anytime, no questions asked.</TranslatedText>
+              Your data is private, encrypted, and yours alone; even we can't see it. You can cancel anytime, no questions asked.
             </p>
           </div>
         </motion.div>
       </div>
-
-      {/* Video Modal */}
-      {showVideo && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
-          onClick={() => setShowVideo(false)}
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="relative w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setShowVideo(false)}
-              className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            
-            {/* Embedded Video */}
-            <iframe
-              src="https://www.youtube.com/embed/ZcdwGRnV1Fs?autoplay=1&rel=0&modestbranding=1"
-              title="AwakNow Personal Dashboard Demo"
-              className="w-full h-full"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </motion.div>
-        </motion.div>
-      )}
 
       <Footer />
     </div>

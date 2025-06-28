@@ -22,7 +22,7 @@ import { CookieConsent } from './components/UI/CookieConsent';
 import { Profile } from './pages/Profile';
 
 function App() {
-  const { user, setUser, setLoading } = useAuthStore();
+  const { user, setUser, updateUserProfile, setLoading } = useAuthStore();
 
   useEffect(() => {
     let mounted = true;
@@ -42,13 +42,26 @@ function App() {
         }
 
         if (session?.user && mounted) {
+          // Get user profile data from public.users table
+          const { data: profileData, error: profileError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+            
+          if (profileError) {
+            console.error('Error fetching user profile:', profileError);
+          }
+          
           setUser({
             id: session.user.id,
             email: session.user.email,
             phone: session.user.phone,
-            language: 'en',
-            subscription_tier: 'free',
+            language: profileData?.language || 'en',
+            subscription_tier: profileData?.subscription_tier || 'free',
             created_at: session.user.created_at || new Date().toISOString(),
+            full_name: profileData?.full_name || '',
+            avatar_url: profileData?.avatar_url || '',
           });
         } else if (mounted) {
           setUser(null);
@@ -80,13 +93,34 @@ function App() {
             setUser(null);
           } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
             if (session?.user) {
+              // Get user profile data from public.users table
+              const { data: profileData, error: profileError } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', session.user.id)
+                .single();
+                
+              if (profileError) {
+                console.error('Error fetching user profile:', profileError);
+              }
+              
               setUser({
                 id: session.user.id,
                 email: session.user.email,
                 phone: session.user.phone,
-                language: 'en',
-                subscription_tier: 'free',
+                language: profileData?.language || 'en',
+                subscription_tier: profileData?.subscription_tier || 'free',
                 created_at: session.user.created_at || new Date().toISOString(),
+                full_name: profileData?.full_name || '',
+                avatar_url: profileData?.avatar_url || '',
+              });
+            }
+          } else if (event === 'USER_UPDATED') {
+            if (session?.user) {
+              // Update just the auth-related fields
+              updateUserProfile({
+                email: session.user.email,
+                phone: session.user.phone,
               });
             }
           }
@@ -103,7 +137,7 @@ function App() {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [setUser, setLoading]);
+  }, [setUser, setLoading, updateUserProfile]);
 
   return (
     <Router>
