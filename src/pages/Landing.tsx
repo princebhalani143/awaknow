@@ -324,7 +324,7 @@ export const Landing: React.FC = () => {
                     <div className="text-xs sm:text-sm text-neutral-600 font-medium">{stat.label}</div>
                   </motion.div>
                 ))}
-              </div>
+              </motion.div>
             </motion.div>
           </div>
         </section>
