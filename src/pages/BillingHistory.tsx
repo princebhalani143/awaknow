@@ -14,7 +14,8 @@ import {
   RefreshCw,
   Plus,
   Edit,
-  Trash
+  Trash,
+  AlertTriangle
 } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
@@ -57,11 +58,13 @@ export const BillingHistory: React.FC = () => {
   const [restoring, setRestoring] = useState(false);
   const [showAddPaymentMethod, setShowAddPaymentMethod] = useState(false);
   const [showEditPaymentMethod, setShowEditPaymentMethod] = useState<string | null>(null);
+  const [showConfirmDelete, setShowConfirmDelete] = useState<string | null>(null);
   const [newCardNumber, setNewCardNumber] = useState('');
   const [newCardExpiry, setNewCardExpiry] = useState('');
   const [newCardCvv, setNewCardCvv] = useState('');
   const [newCardName, setNewCardName] = useState('');
   const [isDefault, setIsDefault] = useState(false);
+  const [cardError, setCardError] = useState('');
 
   useEffect(() => {
     if (user) {
@@ -141,11 +144,90 @@ export const BillingHistory: React.FC = () => {
     }
   };
 
+  const validateCardNumber = (cardNumber: string): boolean => {
+    // Basic validation - remove spaces and check length
+    const cleaned = cardNumber.replace(/\s+/g, '');
+    if (cleaned.length < 13 || cleaned.length > 19) {
+      setCardError('Card number must be between 13 and 19 digits');
+      return false;
+    }
+    
+    // Luhn algorithm check
+    let sum = 0;
+    let shouldDouble = false;
+    
+    // Loop through values starting from the rightmost digit
+    for (let i = cleaned.length - 1; i >= 0; i--) {
+      let digit = parseInt(cleaned.charAt(i));
+      
+      if (shouldDouble) {
+        digit *= 2;
+        if (digit > 9) digit -= 9;
+      }
+      
+      sum += digit;
+      shouldDouble = !shouldDouble;
+    }
+    
+    const isValid = (sum % 10) === 0;
+    if (!isValid) {
+      setCardError('Invalid card number');
+    } else {
+      setCardError('');
+    }
+    
+    return isValid;
+  };
+
+  const validateExpiry = (expiry: string): boolean => {
+    // Format should be MM/YY
+    const parts = expiry.split('/');
+    if (parts.length !== 2) return false;
+    
+    const month = parseInt(parts[0], 10);
+    const year = parseInt(parts[1], 10) + 2000; // Convert to 20YY
+    
+    // Check if month is valid
+    if (month < 1 || month > 12) {
+      setCardError('Invalid expiration month');
+      return false;
+    }
+    
+    // Check if date is in the future
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1; // JS months are 0-indexed
+    
+    if (year < currentYear || (year === currentYear && month < currentMonth)) {
+      setCardError('Card has expired');
+      return false;
+    }
+    
+    setCardError('');
+    return true;
+  };
+
   const handleAddPaymentMethod = () => {
     // Validate inputs
-    if (newCardNumber.length < 16 || !newCardExpiry || newCardCvv.length < 3 || !newCardName) {
+    if (!validateCardNumber(newCardNumber)) {
       return;
     }
+    
+    if (!validateExpiry(newCardExpiry)) {
+      return;
+    }
+    
+    if (newCardCvv.length < 3) {
+      setCardError('CVV must be at least 3 digits');
+      return;
+    }
+    
+    if (!newCardName.trim()) {
+      setCardError('Cardholder name is required');
+      return;
+    }
+
+    setCardError('');
 
     // Create a new payment method
     const newMethod: PaymentMethod = {
@@ -199,6 +281,7 @@ export const BillingHistory: React.FC = () => {
 
     // Don't allow deleting the default payment method if it's the only one
     if (method.is_default && paymentMethods.length === 1) {
+      setCardError("You can't delete your only payment method");
       return;
     }
 
@@ -211,15 +294,25 @@ export const BillingHistory: React.FC = () => {
     }
 
     setPaymentMethods(updatedMethods);
+    setShowConfirmDelete(null);
   };
 
   const getCardBrand = (cardNumber: string): string => {
-    // Very basic card brand detection
-    if (cardNumber.startsWith('4')) return 'Visa';
-    if (cardNumber.startsWith('5')) return 'Mastercard';
-    if (cardNumber.startsWith('3')) return 'Amex';
-    if (cardNumber.startsWith('6')) return 'Discover';
-    return 'Card';
+    // Card brand detection based on first digit
+    const firstDigit = cardNumber.replace(/\s+/g, '').charAt(0);
+    
+    switch (firstDigit) {
+      case '4':
+        return 'Visa';
+      case '5':
+        return 'Mastercard';
+      case '3':
+        return 'Amex';
+      case '6':
+        return 'Discover';
+      default:
+        return 'Card';
+    }
   };
 
   const formatCardNumber = (value: string): string => {
@@ -253,145 +346,12 @@ export const BillingHistory: React.FC = () => {
     setDownloadingInvoice(invoiceId);
     
     try {
-      // In a real implementation, this would download the actual invoice
-      // For now, we'll generate a simple PDF invoice
-      
-      // Create a mock invoice with proper formatting
+      // Get invoice data
       const invoiceData = billingHistory.find(record => record.id === invoiceId);
       if (!invoiceData) throw new Error('Invoice not found');
       
-      // Generate PDF content
-      const invoiceContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="utf-8" />
-          <title>Invoice ${invoiceId}</title>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              margin: 0;
-              padding: 0;
-              color: #333;
-            }
-            .invoice-box {
-              max-width: 800px;
-              margin: auto;
-              padding: 30px;
-              border: 1px solid #eee;
-              box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-              font-size: 16px;
-              line-height: 24px;
-            }
-            .invoice-box table {
-              width: 100%;
-              line-height: inherit;
-              text-align: left;
-              border-collapse: collapse;
-            }
-            .invoice-box table td {
-              padding: 5px;
-              vertical-align: top;
-            }
-            .invoice-box table tr td:nth-child(2) {
-              text-align: right;
-            }
-            .invoice-box table tr.top table td {
-              padding-bottom: 20px;
-            }
-            .invoice-box table tr.top table td.title {
-              font-size: 45px;
-              line-height: 45px;
-              color: #333;
-            }
-            .invoice-box table tr.information table td {
-              padding-bottom: 40px;
-            }
-            .invoice-box table tr.heading td {
-              background: #eee;
-              border-bottom: 1px solid #ddd;
-              font-weight: bold;
-            }
-            .invoice-box table tr.details td {
-              padding-bottom: 20px;
-            }
-            .invoice-box table tr.item td {
-              border-bottom: 1px solid #eee;
-            }
-            .invoice-box table tr.item.last td {
-              border-bottom: none;
-            }
-            .invoice-box table tr.total td:nth-child(2) {
-              border-top: 2px solid #eee;
-              font-weight: bold;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="invoice-box">
-            <table>
-              <tr class="top">
-                <td colspan="2">
-                  <table>
-                    <tr>
-                      <td class="title">
-                        <img src="https://awaknow.org/favicon.svg" alt="AwakNow Logo" style="width: 100%; max-width: 300px" />
-                      </td>
-                      <td>
-                        Invoice #: ${invoiceId}<br />
-                        Created: ${new Date().toLocaleDateString()}<br />
-                        Due: ${new Date().toLocaleDateString()}
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-              <tr class="information">
-                <td colspan="2">
-                  <table>
-                    <tr>
-                      <td>
-                        AwakNow, Inc.<br />
-                        123 Wellness Way<br />
-                        San Francisco, CA 94103
-                      </td>
-                      <td>
-                        ${user?.email}<br />
-                        Customer ID: ${user?.id.substring(0, 8)}
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-              <tr class="heading">
-                <td>Payment Method</td>
-                <td></td>
-              </tr>
-              <tr class="details">
-                <td>${invoiceData.payment_method}</td>
-                <td></td>
-              </tr>
-              <tr class="heading">
-                <td>Item</td>
-                <td>Price</td>
-              </tr>
-              <tr class="item">
-                <td>${invoiceData.description}</td>
-                <td>$${invoiceData.amount.toFixed(2)}</td>
-              </tr>
-              <tr class="total">
-                <td></td>
-                <td>Total: $${invoiceData.amount.toFixed(2)}</td>
-              </tr>
-            </table>
-            <div style="margin-top: 40px; font-size: 14px; color: #777; text-align: center;">
-              <p>Thank you for your business with AwakNow!</p>
-              <p>If you have any questions, please contact us at support@awaknow.org</p>
-            </div>
-          </div>
-        </body>
-        </html>
-      `;
+      // Generate HTML invoice content
+      const invoiceContent = generateInvoiceHTML(invoiceData);
       
       // Create a Blob from the HTML content
       const blob = new Blob([invoiceContent], { type: 'text/html' });
@@ -399,7 +359,7 @@ export const BillingHistory: React.FC = () => {
       // Create a download link
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = `invoice-${invoiceId}.html`;
+      link.download = `awaknow-invoice-${invoiceId}.html`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -409,6 +369,313 @@ export const BillingHistory: React.FC = () => {
     } finally {
       setDownloadingInvoice(null);
     }
+  };
+
+  const generateInvoiceHTML = (invoice: BillingRecord): string => {
+    const invoiceDate = new Date(invoice.date);
+    const formattedDate = invoiceDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    
+    const dueDate = new Date(invoiceDate);
+    dueDate.setDate(dueDate.getDate() + 14);
+    const formattedDueDate = dueDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    
+    // Generate a unique invoice number
+    const invoiceNumber = invoice.id.replace('inv_', 'AWK-');
+    
+    return `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Invoice ${invoiceNumber}</title>
+        <style>
+          body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+          }
+          .invoice-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 40px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+          }
+          .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+          }
+          .company-details h2 {
+            color: #0ea5e9;
+            margin: 0 0 5px 0;
+          }
+          .company-details p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+          }
+          .invoice-info {
+            text-align: right;
+          }
+          .invoice-info h1 {
+            color: #0ea5e9;
+            margin: 0 0 10px 0;
+            font-size: 28px;
+          }
+          .invoice-info p {
+            margin: 0;
+            font-size: 14px;
+          }
+          .client-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+          }
+          .client-details div {
+            flex: 1;
+          }
+          .client-details h3 {
+            color: #0ea5e9;
+            margin: 0 0 10px 0;
+            font-size: 16px;
+          }
+          .client-details p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+          }
+          .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+          }
+          .invoice-table th {
+            background-color: #f3f4f6;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+          }
+          .invoice-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+          }
+          .invoice-table .amount {
+            text-align: right;
+          }
+          .invoice-summary {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 40px;
+          }
+          .invoice-summary-table {
+            width: 300px;
+          }
+          .invoice-summary-table td {
+            padding: 8px 0;
+          }
+          .invoice-summary-table .label {
+            font-weight: 600;
+          }
+          .invoice-summary-table .amount {
+            text-align: right;
+          }
+          .invoice-summary-table .total {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0ea5e9;
+          }
+          .invoice-notes {
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+          }
+          .invoice-notes h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: #374151;
+          }
+          .invoice-notes p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+          }
+          .invoice-footer {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+          }
+          .payment-method {
+            margin-bottom: 40px;
+          }
+          .payment-method h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: #374151;
+          }
+          .payment-method p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+          }
+          .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+          }
+          .status-paid {
+            background-color: #dcfce7;
+            color: #16a34a;
+          }
+          .status-pending {
+            background-color: #fef3c7;
+            color: #d97706;
+          }
+          .status-failed {
+            background-color: #fee2e2;
+            color: #dc2626;
+          }
+          .status-refunded {
+            background-color: #f3f4f6;
+            color: #6b7280;
+          }
+          @media print {
+            body {
+              background-color: #fff;
+            }
+            .invoice-container {
+              box-shadow: none;
+              margin: 0;
+              padding: 20px;
+              max-width: 100%;
+            }
+            .no-print {
+              display: none;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="invoice-container">
+          <div class="invoice-header">
+            <div class="company-details">
+              <h2>AwakNow</h2>
+              <p>123 Wellness Way</p>
+              <p>San Francisco, CA 94103</p>
+              <p>support@awaknow.org</p>
+            </div>
+            <div class="invoice-info">
+              <h1>INVOICE</h1>
+              <p><strong>Invoice Number:</strong> ${invoiceNumber}</p>
+              <p><strong>Date:</strong> ${formattedDate}</p>
+              <p><strong>Due Date:</strong> ${formattedDueDate}</p>
+              <p>
+                <span class="status-badge status-${invoice.status}">
+                  ${invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
+                </span>
+              </p>
+            </div>
+          </div>
+          
+          <div class="client-details">
+            <div>
+              <h3>Billed To</h3>
+              <p>${user?.email || 'Customer'}</p>
+              <p>Customer ID: ${user?.id.substring(0, 8) || 'Unknown'}</p>
+            </div>
+            <div>
+              <h3>Payment Method</h3>
+              <p>${invoice.payment_method}</p>
+              <p>Payment Date: ${formattedDate}</p>
+            </div>
+          </div>
+          
+          <table class="invoice-table">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Period</th>
+                <th>Plan</th>
+                <th class="amount">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>${invoice.description}</td>
+                <td>${invoice.billing_period.charAt(0).toUpperCase() + invoice.billing_period.slice(1)}</td>
+                <td>${invoice.plan_name}</td>
+                <td class="amount">$${invoice.amount.toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <div class="invoice-summary">
+            <table class="invoice-summary-table">
+              <tr>
+                <td class="label">Subtotal</td>
+                <td class="amount">$${invoice.amount.toFixed(2)}</td>
+              </tr>
+              <tr>
+                <td class="label">Tax</td>
+                <td class="amount">$0.00</td>
+              </tr>
+              <tr>
+                <td class="label total">Total</td>
+                <td class="amount total">$${invoice.amount.toFixed(2)}</td>
+              </tr>
+            </table>
+          </div>
+          
+          <div class="payment-method">
+            <h3>Payment Information</h3>
+            <p>Payment Method: ${invoice.payment_method}</p>
+            <p>Transaction ID: txn_${Math.random().toString(36).substring(2, 10)}</p>
+          </div>
+          
+          <div class="invoice-notes">
+            <h3>Notes</h3>
+            <p>Thank you for your business! This subscription gives you access to premium features including AI-powered emotional wellness tools, unlimited sessions, and personalized insights.</p>
+            <p>Your subscription will automatically renew on ${new Date(subscription?.current_period_end || '').toLocaleDateString()}. You can manage your subscription at any time from your account settings.</p>
+          </div>
+          
+          <div class="invoice-footer">
+            <p>AwakNow, Inc. • EIN: 12-3456789 • support@awaknow.org • awaknow.org</p>
+          </div>
+          
+          <div class="no-print" style="text-align: center; margin-top: 30px;">
+            <button onclick="window.print()" style="padding: 10px 20px; background-color: #0ea5e9; color: white; border: none; border-radius: 4px; cursor: pointer;">
+              Print Invoice
+            </button>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
   };
 
   const getStatusIcon = (status: BillingRecord['status']) => {
@@ -595,7 +862,7 @@ export const BillingHistory: React.FC = () => {
                           variant="ghost" 
                           size="sm"
                           icon={Trash}
-                          onClick={() => handleDeletePaymentMethod(method.id)}
+                          onClick={() => setShowConfirmDelete(method.id)}
                         >
                           Delete
                         </Button>
@@ -691,18 +958,29 @@ export const BillingHistory: React.FC = () => {
                       Set as default payment method
                     </label>
                   </div>
+                  
+                  {cardError && (
+                    <div className="p-3 bg-error-50 border border-error-200 rounded-lg flex items-start space-x-2">
+                      <AlertTriangle className="w-4 h-4 text-error-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-error-700">{cardError}</span>
+                    </div>
+                  )}
+                  
                   <div className="flex space-x-3">
                     <Button
                       variant="outline"
                       className="flex-1"
-                      onClick={() => setShowAddPaymentMethod(false)}
+                      onClick={() => {
+                        setShowAddPaymentMethod(false);
+                        setCardError('');
+                      }}
                     >
                       Cancel
                     </Button>
                     <Button
                       className="flex-1"
                       onClick={handleAddPaymentMethod}
-                      disabled={newCardNumber.length < 16 || !newCardExpiry || newCardCvv.length < 3 || !newCardName}
+                      disabled={!newCardNumber || !newCardExpiry || !newCardCvv || !newCardName}
                     >
                       Add Card
                     </Button>
@@ -743,6 +1021,32 @@ export const BillingHistory: React.FC = () => {
                       Save Changes
                     </Button>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* Confirm Delete Modal */}
+            {showConfirmDelete && (
+              <div className="mt-6 p-4 border border-error-200 bg-error-50 rounded-lg">
+                <h4 className="font-medium text-error-800 mb-2">Confirm Deletion</h4>
+                <p className="text-sm text-error-700 mb-4">
+                  Are you sure you want to delete this payment method? This action cannot be undone.
+                </p>
+                <div className="flex space-x-3">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => setShowConfirmDelete(null)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="error"
+                    className="flex-1"
+                    onClick={() => handleDeletePaymentMethod(showConfirmDelete)}
+                  >
+                    Delete
+                  </Button>
                 </div>
               </div>
             )}
@@ -799,17 +1103,15 @@ export const BillingHistory: React.FC = () => {
                         </div>
                       </div>
                       
-                      {record.invoice_url && (
-                        <Button
-                          onClick={() => handleDownloadInvoice(record.id, record.invoice_url)}
-                          variant="ghost"
-                          size="sm"
-                          icon={Download}
-                          loading={downloadingInvoice === record.id}
-                        >
-                          Invoice
-                        </Button>
-                      )}
+                      <Button
+                        onClick={() => handleDownloadInvoice(record.id, record.invoice_url)}
+                        variant="ghost"
+                        size="sm"
+                        icon={Download}
+                        loading={downloadingInvoice === record.id}
+                      >
+                        Invoice
+                      </Button>
                     </div>
                   </div>
                 ))}
