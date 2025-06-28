@@ -10,6 +10,9 @@ export default defineConfig({
   // Fix for SPA routing - serve index.html for all routes
   build: {
     rollupOptions: {
+      input: {
+        main: 'index.html'
+      },
       output: {
         manualChunks: undefined,
       },
