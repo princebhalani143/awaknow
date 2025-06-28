@@ -24,25 +24,23 @@ function App() {
   const { user, setUser, setLoading } = useAuthStore();
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setUser({
-          id: session.user.id,
-          email: session.user.email,
-          phone: session.user.phone,
-          language: 'en',
-          subscription_tier: 'free',
-          created_at: session.user.created_at || new Date().toISOString(),
-        });
-      }
-      setLoading(false);
-    });
+    let mounted = true;
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (session?.user) {
+    // Get initial session
+    const getInitialSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error getting session:', error);
+          if (mounted) {
+            setUser(null);
+            setLoading(false);
+          }
+          return;
+        }
+
+        if (session?.user && mounted) {
           setUser({
             id: session.user.id,
             email: session.user.email,
@@ -51,14 +49,59 @@ function App() {
             subscription_tier: 'free',
             created_at: session.user.created_at || new Date().toISOString(),
           });
-        } else {
+        } else if (mounted) {
           setUser(null);
         }
-        setLoading(false);
+        
+        if (mounted) {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error in getInitialSession:', error);
+        if (mounted) {
+          setUser(null);
+          setLoading(false);
+        }
+      }
+    };
+
+    getInitialSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (!mounted) return;
+
+        console.log('Auth state changed:', event, session?.user?.id);
+
+        try {
+          if (event === 'SIGNED_OUT' || !session?.user) {
+            setUser(null);
+          } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+            if (session?.user) {
+              setUser({
+                id: session.user.id,
+                email: session.user.email,
+                phone: session.user.phone,
+                language: 'en',
+                subscription_tier: 'free',
+                created_at: session.user.created_at || new Date().toISOString(),
+              });
+            }
+          }
+        } catch (error) {
+          console.error('Error handling auth state change:', error);
+          setUser(null);
+        } finally {
+          setLoading(false);
+        }
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, [setUser, setLoading]);
 
   return (
