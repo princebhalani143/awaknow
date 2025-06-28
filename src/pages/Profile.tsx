@@ -691,14 +691,16 @@ export const Profile: React.FC = () => {
                 </div>
               </Card>
             )}
-            
+            <div class="mb-6">
             {/* Usage Meter */}
             {subscription && limits && (
                 <UsageMeter limits={limits} subscription={subscription} />
             )}
+            </div>
             
             {/* Available Plans */}
             <div className="space-y-4 mb-4">
+              <h3 className="text-lg font-semibold text-neutral-800">Available Plans</h3>
               <div className="grid md:grid-cols-3 gap-6">
                 {Object.values(SUBSCRIPTION_PLANS).map((plan) => (
                   <PlanCard
