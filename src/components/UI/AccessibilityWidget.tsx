@@ -63,24 +63,15 @@ const defaultSettings: AccessibilitySettings = {
   enhanceFocus: false,
 };
 
-// Person icon with arms stretched outward
-const PersonIcon = ({ className = "w-6 h-6" }: { className?: string }) => (
+// Accessibility icon - person in a circle with arms outstretched
+const AccessibilityIcon = ({ className = "w-6 h-6" }: { className?: string }) => (
   <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
+    viewBox="0 0 122.88 122.88" 
     className={className}
+    fill="currentColor"
+    aria-hidden="true"
   >
-    <circle cx="12" cy="5" r="3" />
-    <path d="M12 8v9" />
-    <path d="M8 12H4" />
-    <path d="M20 12h-4" />
-    <path d="M8 17l-2 4" />
-    <path d="M16 17l2 4" />
+    <path d="M61.44,0A61.46,61.46,0,1,1,18,18,61.21,61.21,0,0,1,61.44,0Zm-.39,74.18L52.1,98.91a4.94,4.94,0,0,1-2.58,2.83A5,5,0,0,1,42.7,95.5l6.24-17.28a26.3,26.3,0,0,0,1.17-4,40.64,40.64,0,0,0,.54-4.18c.24-2.53.41-5.27.54-7.9s.22-5.18.29-7.29c.09-2.63-.62-2.8-2.73-3.3l-.44-.1-18-3.39A5,5,0,0,1,27.08,46a5,5,0,0,1,5.05-7.74l19.34,3.63c.77.07,1.52.16,2.31.25a57.64,57.64,0,0,0,7.18.53A81.13,81.13,0,0,0,69.9,42c.9-.1,1.75-.21,2.6-.29l18.25-3.42A5,5,0,0,1,94.5,39a5,5,0,0,1,1.3,7,5,5,0,0,1-3.21,2.09L75.15,51.37c-.58.13-1.1.22-1.56.29-1.82.31-2.72.47-2.61,3.06.08,1.89.31,4.15.61,6.51.35,2.77.81,5.71,1.29,8.4.31,1.77.6,3.19,1,4.55s.79,2.75,1.39,4.42l6.11,16.9a5,5,0,0,1-6.82,6.24,4.94,4.94,0,0,1-2.58-2.83L63,74.23,62,72.4l-1,1.78Zm.39-53.52a8.83,8.83,0,1,1-6.24,2.59,8.79,8.79,0,0,1,6.24-2.59Zm36.35,4.43a51.42,51.42,0,1,0,15,36.35,51.27,51.27,0,0,0-15-36.35Z"/>
   </svg>
 );
 
@@ -277,213 +268,6 @@ export const AccessibilityWidget: React.FC = () => {
 
   return (
     <>
-      {/* Accessibility Styles */}
-      <style jsx global>{`
-        /* High Contrast */
-        .high-contrast {
-          filter: contrast(1.5);
-        }
-        .high-contrast img,
-        .high-contrast video {
-          filter: contrast(1.2);
-        }
-        .high-contrast button,
-        .high-contrast a {
-          filter: contrast(1.3);
-        }
-
-        /* Dark Mode */
-        .dark-mode {
-          filter: invert(1) hue-rotate(180deg);
-        }
-        .dark-mode img,
-        .dark-mode video {
-          filter: invert(1) hue-rotate(180deg);
-        }
-
-        /* Large Text */
-        .large-text {
-          font-size: 120% !important;
-          line-height: 1.5 !important;
-        }
-        .large-text h1 {
-          font-size: 2.5rem !important;
-        }
-        .large-text h2 {
-          font-size: 2rem !important;
-        }
-        .large-text h3 {
-          font-size: 1.75rem !important;
-        }
-        .large-text p, 
-        .large-text span, 
-        .large-text div, 
-        .large-text button {
-          font-size: 1.2rem !important;
-        }
-
-        /* Dyslexia Font */
-        .dyslexia-font,
-        .dyslexia-font * {
-          font-family: 'OpenDyslexic', 'Comic Sans MS', 'Arial', sans-serif !important;
-          letter-spacing: 0.05em !important;
-          word-spacing: 0.1em !important;
-          line-height: 1.5 !important;
-        }
-
-        /* Reduce Motion */
-        .reduce-motion *,
-        .reduce-motion *::before,
-        .reduce-motion *::after {
-          animation-duration: 0.001s !important;
-          animation-iteration-count: 1 !important;
-          transition-duration: 0.001s !important;
-          scroll-behavior: auto !important;
-        }
-
-        /* Hide Images */
-        .hide-images img {
-          opacity: 0 !important;
-          filter: grayscale(100%) !important;
-        }
-        .hide-images [style*="background-image"] {
-          background-image: none !important;
-        }
-        .hide-images video {
-          display: none !important;
-        }
-        .hide-images svg {
-          visibility: visible !important;
-        }
-
-        /* Big Cursor */
-        .big-cursor,
-        .big-cursor * {
-          cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='12' fill='%230ea5e9' fill-opacity='0.5'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%230ea5e9'/%3E%3C/svg%3E"), auto !important;
-        }
-        .big-cursor a,
-        .big-cursor button {
-          cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='12' fill='%23f97316' fill-opacity='0.5'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23f97316'/%3E%3C/svg%3E"), pointer !important;
-        }
-
-        /* Keyboard Navigation */
-        .keyboard-navigation *:focus {
-          outline: 3px solid #0ea5e9 !important;
-          outline-offset: 3px !important;
-          box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.4) !important;
-        }
-        .keyboard-navigation button:focus,
-        .keyboard-navigation a:focus {
-          background-color: rgba(14, 165, 233, 0.1) !important;
-        }
-
-        /* Click Assist */
-        .click-assist a,
-        .click-assist button,
-        .click-assist input,
-        .click-assist select,
-        .click-assist textarea {
-          padding: 0.5rem !important;
-          min-height: 44px !important;
-          min-width: 44px !important;
-        }
-
-        /* Reading Guide */
-        .reading-guide-line {
-          position: fixed;
-          left: 0;
-          right: 0;
-          height: 2px;
-          background-color: rgba(14, 165, 233, 0.7);
-          z-index: 9999;
-          pointer-events: none;
-          box-shadow: 0 0 4px rgba(14, 165, 233, 0.5), 0 0 10px rgba(14, 165, 233, 0.3);
-        }
-
-        /* Focus Mode */
-        .focus-mode p,
-        .focus-mode h1,
-        .focus-mode h2,
-        .focus-mode h3,
-        .focus-mode h4,
-        .focus-mode h5,
-        .focus-mode h6,
-        .focus-mode span,
-        .focus-mode div {
-          color: #000000 !important;
-          background-color: #ffffff !important;
-        }
-        .focus-mode p:hover,
-        .focus-mode h1:hover,
-        .focus-mode h2:hover,
-        .focus-mode h3:hover,
-        .focus-mode h4:hover,
-        .focus-mode h5:hover,
-        .focus-mode h6:hover,
-        .focus-mode span:hover,
-        .focus-mode div:hover {
-          background-color: #f0f9ff !important;
-        }
-
-        /* Simplified UI */
-        .simplified-ui * {
-          border-radius: 4px !important;
-          box-shadow: none !important;
-          background-image: none !important;
-        }
-        .simplified-ui .bg-gradient-to-r,
-        .simplified-ui .bg-gradient-to-br,
-        .simplified-ui .bg-gradient-to-l,
-        .simplified-ui .bg-gradient-to-bl,
-        .simplified-ui .bg-gradient-to-t,
-        .simplified-ui .bg-gradient-to-tr {
-          background: #f3f4f6 !important;
-        }
-
-        /* Pause Animations */
-        .pause-animations * {
-          animation-play-state: paused !important;
-          transition: none !important;
-        }
-
-        /* Reduce Flashing */
-        .reduce-flashing .animate-pulse,
-        .reduce-flashing .animate-spin,
-        .reduce-flashing .animate-ping,
-        .reduce-flashing .animate-bounce {
-          animation: none !important;
-        }
-        .reduce-flashing [class*="bg-gradient"] {
-          background: #f3f4f6 !important;
-        }
-
-        /* Minimize Distractions */
-        .minimize-distractions .bg-gradient-to-r,
-        .minimize-distractions .bg-gradient-to-br,
-        .minimize-distractions .bg-gradient-to-l {
-          background: #f3f4f6 !important;
-        }
-        .minimize-distractions .animate-pulse,
-        .minimize-distractions .animate-spin,
-        .minimize-distractions .animate-ping,
-        .minimize-distractions .animate-bounce {
-          animation: none !important;
-        }
-
-        /* Enhance Focus */
-        .enhance-focus *:focus {
-          outline: 4px solid #f97316 !important;
-          outline-offset: 4px !important;
-          background-color: rgba(249, 115, 22, 0.1) !important;
-        }
-        .enhance-focus h1, 
-        .enhance-focus h2, 
-        .enhance-focus h3 {
-          border-left: 4px solid #f97316 !important;
-          padding-left: 8px !important;
-        }
-      `}</style>
-
       {/* Reading Guide Line */}
       {settings.readingGuide && (
         <div 
@@ -502,7 +286,7 @@ export const AccessibilityWidget: React.FC = () => {
         aria-label="Explore your accessibility options"
         title="Explore your accessibility options"
       >
-        <PersonIcon className="w-6 h-6" />
+        <AccessibilityIcon className="w-7 h-7" />
       </motion.button>
 
       {/* Widget Panel */}
@@ -526,7 +310,7 @@ export const AccessibilityWidget: React.FC = () => {
               <div className="flex items-center justify-between p-6 border-b border-neutral-200">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
-                    <PersonIcon className="w-5 h-5 text-primary-600" />
+                    <AccessibilityIcon className="w-6 h-6 text-primary-600" />
                   </div>
                   <h2 className="text-xl font-semibold text-neutral-800">Accessibility Settings</h2>
                 </div>
