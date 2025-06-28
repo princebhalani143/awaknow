@@ -1,5 +1,6 @@
 // Tavus Integration Testing Utilities
 import { TavusService } from '../services/tavusService';
+import { SubscriptionService } from '../services/subscriptionService';
 
 export class TavusTestUtils {
   static async runFullIntegrationTest(): Promise<{
@@ -138,8 +139,14 @@ export class TavusTestUtils {
     }
 
     // Test 6: Session Management Test
+    let originalCanUseTavusMinutes: typeof SubscriptionService.canUseTavusMinutes | null = null;
+    
     try {
       console.log('🔒 Testing session management...');
+      
+      // Temporarily mock the subscription service to avoid authentication issues during testing
+      originalCanUseTavusMinutes = SubscriptionService.canUseTavusMinutes;
+      SubscriptionService.canUseTavusMinutes = async () => ({ canUse: true, minutesUsed: 0, minutesLimit: 25 });
       
       // Generate a proper UUID for the session ID
       const generateUUID = () => {
@@ -191,6 +198,11 @@ export class TavusTestUtils {
         status: 'fail',
         message: `Session management error: ${error}`
       });
+    } finally {
+      // Restore the original method to avoid side effects
+      if (originalCanUseTavusMinutes) {
+        SubscriptionService.canUseTavusMinutes = originalCanUseTavusMinutes;
+      }
     }
 
     // Test 7: Fallback Video Test
