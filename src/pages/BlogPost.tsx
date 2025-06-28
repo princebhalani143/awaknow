@@ -152,7 +152,7 @@ export const BlogPost: React.FC = () => {
               />
 
               {/* Author Bio */}
-              <div className="mt-12 p-6 bg-neutral-50 rounded-xl">
+              <div className="mt-12 bg-neutral-50 rounded-xl">
                 <div className="flex items-start space-x-4">
                   <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center">
                     <User className="w-8 h-8 text-white" />
