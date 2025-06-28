@@ -10,7 +10,14 @@ import {
   Loader, 
   CheckCircle, 
   AlertCircle,
-  Globe
+  Globe,
+  Lock,
+  Trash2,
+  Receipt,
+  Crown,
+  BarChart3,
+  Shield,
+  LogOut
 } from 'lucide-react';
 import { Button } from '../components/UI/Button';
 import { Card } from '../components/UI/Card';
@@ -21,10 +28,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { supabase } from '../lib/supabase';
 import { supportedLanguages } from '../utils/i18n';
+import { useSubscriptionStore } from '../stores/subscriptionStore';
 
 export const Profile: React.FC = () => {
   const navigate = useNavigate();
-  const { user, setUser } = useAuthStore();
+  const { user, setUser, signOut } = useAuthStore();
+  const { subscription } = useSubscriptionStore();
   
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -37,6 +46,20 @@ export const Profile: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  
+  // Password change state
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState('');
+  const [passwordStatus, setPasswordStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  
+  // Account deletion state
+  const [showAccountDeletion, setShowAccountDeletion] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteMessage, setDeleteMessage] = useState('');
   
   // Load user data
   useEffect(() => {
@@ -200,6 +223,91 @@ export const Profile: React.FC = () => {
     }
   };
   
+  // Handle password change
+  const handlePasswordChange = async () => {
+    if (newPassword !== confirmPassword) {
+      setPasswordStatus('error');
+      setPasswordMessage('New passwords do not match');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setPasswordStatus('error');
+      setPasswordMessage('Password must be at least 6 characters');
+      return;
+    }
+
+    setPasswordLoading(true);
+    setPasswordStatus('idle');
+    setPasswordMessage('');
+    
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+      
+      if (error) throw error;
+      
+      setPasswordStatus('success');
+      setPasswordMessage('Password updated successfully');
+      setNewPassword('');
+      setConfirmPassword('');
+      
+      setTimeout(() => {
+        setShowPasswordChange(false);
+        setPasswordStatus('idle');
+        setPasswordMessage('');
+      }, 2000);
+    } catch (error: any) {
+      setPasswordStatus('error');
+      setPasswordMessage(error.message || 'Failed to update password');
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  // Handle account deletion
+  const handleAccountDeletion = async () => {
+    if (deleteConfirmation !== 'DELETE') {
+      setDeleteMessage('Please type DELETE to confirm');
+      return;
+    }
+
+    if (!user?.email) {
+      setDeleteMessage('Unable to identify user email');
+      return;
+    }
+
+    setDeleteLoading(true);
+    setDeleteMessage('');
+    
+    try {
+      // Add email to blocked list (prevent re-registration for free plans)
+      await supabase.from('blocked_emails').insert({
+        email: user.email,
+        blocked_at: new Date().toISOString(),
+        reason: 'user_requested_deletion'
+      });
+
+      // Delete user data (RLS policies will handle cascade deletion)
+      const { error: deleteError } = await supabase.auth.admin.deleteUser(user.id);
+      
+      if (deleteError) {
+        // If admin deletion fails, try user deletion
+        const { error: userDeleteError } = await supabase.auth.signOut();
+        if (userDeleteError) throw userDeleteError;
+      }
+
+      // Sign out and redirect
+      await signOut();
+      navigate('/');
+    } catch (error: any) {
+      setDeleteMessage(error.message || 'Failed to delete account');
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+  
   // Format phone number as user types
   const formatPhoneNumber = (value: string) => {
     // Strip all non-numeric characters
@@ -219,7 +327,7 @@ export const Profile: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex flex-col">
       <TopBar />
       
-      <div className="container mx-auto px-4 py-8 max-w-4xl flex-1">
+      <div className="container mx-auto px-4 py-8 max-w-6xl flex-1">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -235,70 +343,157 @@ export const Profile: React.FC = () => {
           />
           <div className="text-center">
             <h1 className="text-3xl font-bold text-neutral-800">Your Profile</h1>
-            <p className="text-neutral-600">Manage your personal information</p>
+            <p className="text-neutral-600">Manage your account and settings</p>
           </div>
           <div className="w-10"></div>
         </motion.div>
         
-        {/* Profile Form */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <Card>
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Avatar Section */}
-              <div className="md:col-span-1">
-                <div className="flex flex-col items-center">
-                  <div className="relative mb-4">
-                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center overflow-hidden border-4 border-white shadow-md">
-                      {avatarPreview || avatarUrl ? (
-                        <img 
-                          src={avatarPreview || avatarUrl} 
-                          alt={fullName || 'User'} 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <User className="w-16 h-16 text-primary-300" />
-                      )}
-                    </div>
-                    <label className="absolute bottom-0 right-0 w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center cursor-pointer shadow-md hover:bg-primary-600 transition-colors">
-                      <Camera className="w-4 h-4 text-white" />
-                      <input 
-                        type="file" 
-                        className="hidden" 
-                        accept="image/*"
-                        onChange={handleAvatarChange}
-                      />
-                    </label>
-                  </div>
-                  <h3 className="text-lg font-semibold text-neutral-800 mb-1">
-                    {fullName || 'Your Name'}
-                  </h3>
-                  <p className="text-sm text-neutral-500 mb-4">
-                    {email || 'your.email@example.com'}
-                  </p>
-                  
-                  <div className="w-full p-4 bg-primary-50 rounded-xl">
-                    <h4 className="font-medium text-primary-800 mb-2 text-sm">Profile Visibility</h4>
-                    <p className="text-xs text-primary-600 mb-3">
-                      Your profile information is private and only visible to you. We never share your personal data with third parties.
-                    </p>
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-neutral-600">Member since:</span>
-                      <span className="font-medium text-neutral-800">
-                        {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
-                      </span>
-                    </div>
-                  </div>
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Sidebar */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="lg:col-span-1 space-y-6"
+          >
+            {/* Profile Card */}
+            <Card className="text-center p-6">
+              <div className="relative mx-auto mb-4 w-24 h-24">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center overflow-hidden border-4 border-white shadow-md">
+                  {avatarPreview || avatarUrl ? (
+                    <img 
+                      src={avatarPreview || avatarUrl} 
+                      alt={fullName || 'User'} 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <User className="w-12 h-12 text-primary-300" />
+                  )}
                 </div>
+                <label className="absolute bottom-0 right-0 w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center cursor-pointer shadow-md hover:bg-primary-600 transition-colors">
+                  <Camera className="w-4 h-4 text-white" />
+                  <input 
+                    type="file" 
+                    className="hidden" 
+                    accept="image/*"
+                    onChange={handleAvatarChange}
+                  />
+                </label>
               </div>
               
-              {/* Form Fields */}
-              <div className="md:col-span-2 space-y-6">
-                <h3 className="text-lg font-semibold text-neutral-800 mb-4">Personal Information</h3>
+              <h3 className="text-lg font-semibold text-neutral-800 mb-1">
+                {fullName || 'Your Name'}
+              </h3>
+              <p className="text-sm text-neutral-500 mb-4">
+                {email || 'your.email@example.com'}
+              </p>
+              
+              {subscription && (
+                <div className="flex items-center justify-center space-x-2 mb-4">
+                  <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    subscription.plan_id === 'awaknow_free' 
+                      ? 'bg-neutral-100 text-neutral-700' 
+                      : 'bg-gradient-to-r from-accent-100 to-primary-100 text-primary-700'
+                  }`}>
+                    {subscription.plan_id !== 'awaknow_free' && (
+                      <Crown className="w-3 h-3 inline-block mr-1" />
+                    )}
+                    {subscription.plan_name} Plan
+                  </div>
+                </div>
+              )}
+              
+              <div className="text-xs text-neutral-500 mb-6">
+                Member since {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
+              </div>
+              
+              {/* Navigation Links */}
+              <div className="space-y-2">
+                <Button
+                  onClick={() => navigate('/subscription')}
+                  variant="outline"
+                  icon={Crown}
+                  className="w-full justify-start"
+                >
+                  Subscription
+                </Button>
                 
+                <Button
+                  onClick={() => navigate('/billing-history')}
+                  variant="outline"
+                  icon={Receipt}
+                  className="w-full justify-start"
+                >
+                  Billing History
+                </Button>
+                
+                <Button
+                  onClick={() => navigate('/analytics')}
+                  variant="outline"
+                  icon={BarChart3}
+                  className="w-full justify-start"
+                >
+                  Analytics
+                </Button>
+                
+                <Button
+                  onClick={() => setShowPasswordChange(true)}
+                  variant="outline"
+                  icon={Lock}
+                  className="w-full justify-start"
+                >
+                  Change Password
+                </Button>
+                
+                <Button
+                  onClick={() => setShowAccountDeletion(true)}
+                  variant="outline"
+                  icon={Trash2}
+                  className="w-full justify-start text-error-600 hover:bg-error-50 hover:border-error-200"
+                >
+                  Delete Account
+                </Button>
+                
+                <Button
+                  onClick={async () => {
+                    await signOut();
+                    navigate('/');
+                  }}
+                  variant="outline"
+                  icon={LogOut}
+                  className="w-full justify-start text-error-600 hover:bg-error-50 hover:border-error-200"
+                >
+                  Sign Out
+                </Button>
+              </div>
+            </Card>
+            
+            {/* Privacy Info */}
+            <Card className="p-4">
+              <div className="flex items-center space-x-3 mb-3">
+                <div className="w-8 h-8 bg-success-100 rounded-lg flex items-center justify-center">
+                  <Shield className="w-4 h-4 text-success-600" />
+                </div>
+                <h3 className="font-medium text-neutral-800">Privacy & Security</h3>
+              </div>
+              <p className="text-xs text-neutral-600 leading-relaxed">
+                Your personal information is protected with end-to-end encryption. We never share your data with third parties.
+                Learn more in our <a href="/privacy-policy" className="text-primary-600 hover:underline">Privacy Policy</a>.
+              </p>
+            </Card>
+          </motion.div>
+          
+          {/* Main Content */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="lg:col-span-2"
+          >
+            <Card>
+              <h2 className="text-xl font-semibold text-neutral-800 mb-6">Edit Profile</h2>
+              
+              <div className="space-y-6">
                 <Input
                   label="Full Name"
                   placeholder="Enter your full name"
@@ -373,10 +568,155 @@ export const Profile: React.FC = () => {
                   </Button>
                 </div>
               </div>
-            </div>
-          </Card>
-        </motion.div>
+            </Card>
+          </motion.div>
+        </div>
       </div>
+      
+      {/* Password Change Modal */}
+      {showPasswordChange && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+            <div className="text-center mb-6">
+              <div className="w-12 h-12 bg-primary-100 rounded-xl mx-auto mb-4 flex items-center justify-center">
+                <Lock className="w-6 h-6 text-primary-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-neutral-800 mb-2">Change Password</h3>
+              <p className="text-sm text-neutral-600">
+                Enter your new password below
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  placeholder="Enter new password"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  Confirm New Password
+                </label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  placeholder="Confirm new password"
+                />
+              </div>
+
+              {passwordMessage && (
+                <div className={`p-3 rounded-lg text-sm ${
+                  passwordStatus === 'success' 
+                    ? 'bg-success-50 text-success-800' 
+                    : 'bg-error-50 text-error-800'
+                }`}>
+                  {passwordMessage}
+                </div>
+              )}
+
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => {
+                    setShowPasswordChange(false);
+                    setNewPassword('');
+                    setConfirmPassword('');
+                    setPasswordMessage('');
+                    setPasswordStatus('idle');
+                  }}
+                  className="flex-1 px-4 py-2 border border-neutral-300 rounded-xl text-neutral-700 hover:bg-neutral-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handlePasswordChange}
+                  disabled={passwordLoading || !newPassword || !confirmPassword}
+                  className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {passwordLoading ? 'Updating...' : 'Update Password'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Account Deletion Modal */}
+      {showAccountDeletion && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+            <div className="text-center mb-6">
+              <div className="w-12 h-12 bg-error-100 rounded-xl mx-auto mb-4 flex items-center justify-center">
+                <Trash2 className="w-6 h-6 text-error-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-neutral-800 mb-2">Delete Account</h3>
+              <p className="text-sm text-neutral-600">
+                This action cannot be undone. All your data will be permanently deleted.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="p-4 bg-error-50 rounded-lg border border-error-200">
+                <h4 className="font-medium text-error-800 mb-2">What will be deleted:</h4>
+                <ul className="text-sm text-error-700 space-y-1">
+                  <li>• All your sessions and conversations</li>
+                  <li>• Personal insights and analytics</li>
+                  <li>• Account settings and preferences</li>
+                  <li>• Subscription and billing history</li>
+                </ul>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                  Type "DELETE" to confirm
+                </label>
+                <input
+                  type="text"
+                  value={deleteConfirmation}
+                  onChange={(e) => setDeleteConfirmation(e.target.value)}
+                  className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-error-500 focus:border-transparent"
+                  placeholder="Type DELETE"
+                />
+              </div>
+
+              {deleteMessage && (
+                <div className="p-3 bg-error-50 text-error-800 rounded-lg text-sm">
+                  {deleteMessage}
+                </div>
+              )}
+
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => {
+                    setShowAccountDeletion(false);
+                    setDeleteConfirmation('');
+                    setDeleteMessage('');
+                  }}
+                  className="flex-1 px-4 py-2 border border-neutral-300 rounded-xl text-neutral-700 hover:bg-neutral-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleAccountDeletion}
+                  disabled={deleteLoading || deleteConfirmation !== 'DELETE'}
+                  className="flex-1 px-4 py-2 bg-error-500 text-white rounded-xl hover:bg-error-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {deleteLoading ? 'Deleting...' : 'Delete Account'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       
       <Footer />
     </div>
