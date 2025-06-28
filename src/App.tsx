@@ -20,6 +20,7 @@ import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsConditions } from './pages/TermsConditions';
 import { CookieConsent } from './components/UI/CookieConsent';
 import { Profile } from './pages/Profile';
+import { AccessibilityWidget } from './components/UI/AccessibilityWidget';
 
 function App() {
   const { user, setUser, updateUserProfile, setLoading } = useAuthStore();

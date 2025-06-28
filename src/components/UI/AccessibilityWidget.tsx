@@ -68,6 +68,7 @@ export const AccessibilityWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [settings, setSettings] = useState<AccessibilitySettings>(defaultSettings);
   const [activeTab, setActiveTab] = useState<'visual' | 'motor' | 'cognitive' | 'seizure' | 'adhd'>('visual');
+  const [readingGuidePosition, setReadingGuidePosition] = useState(0);
 
   // Load settings from localStorage on mount
   useEffect(() => {
@@ -89,103 +90,113 @@ export const AccessibilityWidget: React.FC = () => {
 
     // Visual settings
     if (settings.highContrast) {
-      root.style.setProperty('--contrast-multiplier', '1.5');
-      body.classList.add('high-contrast');
+      root.classList.add('high-contrast');
     } else {
-      root.style.removeProperty('--contrast-multiplier');
-      body.classList.remove('high-contrast');
+      root.classList.remove('high-contrast');
     }
 
     if (settings.darkMode) {
-      body.classList.add('dark-mode');
+      root.classList.add('dark-mode');
     } else {
-      body.classList.remove('dark-mode');
+      root.classList.remove('dark-mode');
     }
 
     if (settings.largeText) {
-      root.style.setProperty('--text-scale', '1.25');
-      body.classList.add('large-text');
+      root.classList.add('large-text');
     } else {
-      root.style.removeProperty('--text-scale');
-      body.classList.remove('large-text');
+      root.classList.remove('large-text');
     }
 
     if (settings.dyslexiaFont) {
-      body.classList.add('dyslexia-font');
+      root.classList.add('dyslexia-font');
     } else {
-      body.classList.remove('dyslexia-font');
+      root.classList.remove('dyslexia-font');
     }
 
     if (settings.reduceMotion) {
-      root.style.setProperty('--animation-duration', '0.01ms');
-      body.classList.add('reduce-motion');
+      root.classList.add('reduce-motion');
     } else {
-      root.style.removeProperty('--animation-duration');
-      body.classList.remove('reduce-motion');
+      root.classList.remove('reduce-motion');
     }
 
     if (settings.hideImages) {
-      body.classList.add('hide-images');
+      root.classList.add('hide-images');
     } else {
-      body.classList.remove('hide-images');
+      root.classList.remove('hide-images');
     }
 
     // Motor settings
     if (settings.bigCursor) {
-      body.classList.add('big-cursor');
+      root.classList.add('big-cursor');
     } else {
-      body.classList.remove('big-cursor');
+      root.classList.remove('big-cursor');
     }
 
     if (settings.keyboardNavigation) {
-      body.classList.add('keyboard-navigation');
+      root.classList.add('keyboard-navigation');
     } else {
-      body.classList.remove('keyboard-navigation');
+      root.classList.remove('keyboard-navigation');
+    }
+
+    if (settings.clickAssist) {
+      root.classList.add('click-assist');
+    } else {
+      root.classList.remove('click-assist');
     }
 
     // Cognitive settings
     if (settings.readingGuide) {
-      body.classList.add('reading-guide');
+      root.classList.add('reading-guide');
+      
+      // Add mouse move event listener for reading guide
+      const handleMouseMove = (e: MouseEvent) => {
+        setReadingGuidePosition(e.clientY);
+      };
+      
+      document.addEventListener('mousemove', handleMouseMove);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+      };
     } else {
-      body.classList.remove('reading-guide');
+      root.classList.remove('reading-guide');
     }
 
     if (settings.focusMode) {
-      body.classList.add('focus-mode');
+      root.classList.add('focus-mode');
     } else {
-      body.classList.remove('focus-mode');
+      root.classList.remove('focus-mode');
     }
 
     if (settings.simplifiedUI) {
-      body.classList.add('simplified-ui');
+      root.classList.add('simplified-ui');
     } else {
-      body.classList.remove('simplified-ui');
+      root.classList.remove('simplified-ui');
     }
 
     // Seizure/Epileptic settings
     if (settings.pauseAnimations) {
-      body.classList.add('pause-animations');
+      root.classList.add('pause-animations');
     } else {
-      body.classList.remove('pause-animations');
+      root.classList.remove('pause-animations');
     }
 
     if (settings.reduceFlashing) {
-      body.classList.add('reduce-flashing');
+      root.classList.add('reduce-flashing');
     } else {
-      body.classList.remove('reduce-flashing');
+      root.classList.remove('reduce-flashing');
     }
 
     // ADHD settings
     if (settings.minimizeDistractions) {
-      body.classList.add('minimize-distractions');
+      root.classList.add('minimize-distractions');
     } else {
-      body.classList.remove('minimize-distractions');
+      root.classList.remove('minimize-distractions');
     }
 
     if (settings.enhanceFocus) {
-      body.classList.add('enhance-focus');
+      root.classList.add('enhance-focus');
     } else {
-      body.classList.remove('enhance-focus');
+      root.classList.remove('enhance-focus');
     }
 
     // Save to localStorage
@@ -229,6 +240,8 @@ export const AccessibilityWidget: React.FC = () => {
               checked ? 'bg-primary-500' : 'bg-neutral-300'
             }`}
             aria-label={`Toggle ${label}`}
+            role="switch"
+            aria-checked={checked}
           >
             <div
               className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${
@@ -248,110 +261,180 @@ export const AccessibilityWidget: React.FC = () => {
       <style jsx global>{`
         /* High Contrast */
         .high-contrast {
-          filter: contrast(150%);
+          filter: contrast(1.5);
+        }
+        .high-contrast img,
+        .high-contrast video {
+          filter: contrast(1.2);
+        }
+        .high-contrast button,
+        .high-contrast a {
+          filter: contrast(1.3);
         }
 
         /* Dark Mode */
         .dark-mode {
-          background-color: #1a1a1a !important;
-          color: #ffffff !important;
+          filter: invert(1) hue-rotate(180deg);
         }
-        .dark-mode * {
-          background-color: inherit;
-          color: inherit;
+        .dark-mode img,
+        .dark-mode video {
+          filter: invert(1) hue-rotate(180deg);
         }
 
         /* Large Text */
         .large-text {
-          font-size: 125% !important;
+          font-size: 120% !important;
+          line-height: 1.5 !important;
         }
-        .large-text * {
-          font-size: inherit !important;
+        .large-text h1 {
+          font-size: 2.5rem !important;
+        }
+        .large-text h2 {
+          font-size: 2rem !important;
+        }
+        .large-text h3 {
+          font-size: 1.75rem !important;
+        }
+        .large-text p, 
+        .large-text span, 
+        .large-text div, 
+        .large-text button {
+          font-size: 1.2rem !important;
         }
 
         /* Dyslexia Font */
-        .dyslexia-font {
-          font-family: 'Comic Sans MS', 'Arial', sans-serif !important;
-        }
+        .dyslexia-font,
         .dyslexia-font * {
-          font-family: inherit !important;
+          font-family: 'OpenDyslexic', 'Comic Sans MS', 'Arial', sans-serif !important;
+          letter-spacing: 0.05em !important;
+          word-spacing: 0.1em !important;
+          line-height: 1.5 !important;
         }
 
         /* Reduce Motion */
         .reduce-motion *,
         .reduce-motion *::before,
         .reduce-motion *::after {
-          animation-duration: 0.01ms !important;
+          animation-duration: 0.001s !important;
           animation-iteration-count: 1 !important;
-          transition-duration: 0.01ms !important;
+          transition-duration: 0.001s !important;
           scroll-behavior: auto !important;
         }
 
         /* Hide Images */
-        .hide-images img,
-        .hide-images video,
+        .hide-images img {
+          opacity: 0 !important;
+          filter: grayscale(100%) !important;
+        }
         .hide-images [style*="background-image"] {
-          opacity: 0.1 !important;
+          background-image: none !important;
+        }
+        .hide-images video {
+          display: none !important;
+        }
+        .hide-images svg {
+          visibility: visible !important;
         }
 
         /* Big Cursor */
         .big-cursor,
         .big-cursor * {
-          cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="10" fill="black"/></svg>') 16 16, auto !important;
+          cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='12' fill='%230ea5e9' fill-opacity='0.5'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%230ea5e9'/%3E%3C/svg%3E"), auto !important;
+        }
+        .big-cursor a,
+        .big-cursor button {
+          cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='12' fill='%23f97316' fill-opacity='0.5'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23f97316'/%3E%3C/svg%3E"), pointer !important;
         }
 
         /* Keyboard Navigation */
         .keyboard-navigation *:focus {
           outline: 3px solid #0ea5e9 !important;
-          outline-offset: 2px !important;
+          outline-offset: 3px !important;
+          box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.4) !important;
+        }
+        .keyboard-navigation button:focus,
+        .keyboard-navigation a:focus {
+          background-color: rgba(14, 165, 233, 0.1) !important;
+        }
+
+        /* Click Assist */
+        .click-assist a,
+        .click-assist button,
+        .click-assist input,
+        .click-assist select,
+        .click-assist textarea {
+          padding: 0.5rem !important;
+          min-height: 44px !important;
+          min-width: 44px !important;
         }
 
         /* Reading Guide */
-        .reading-guide {
-          position: relative;
-        }
-        .reading-guide::before {
-          content: '';
+        .reading-guide-line {
           position: fixed;
-          top: 50%;
           left: 0;
           right: 0;
           height: 2px;
-          background: #0ea5e9;
+          background-color: rgba(14, 165, 233, 0.7);
           z-index: 9999;
           pointer-events: none;
+          box-shadow: 0 0 4px rgba(14, 165, 233, 0.5), 0 0 10px rgba(14, 165, 233, 0.3);
         }
 
         /* Focus Mode */
-        .focus-mode * {
-          background-color: #f9f9f9 !important;
-          color: #333333 !important;
+        .focus-mode p,
+        .focus-mode h1,
+        .focus-mode h2,
+        .focus-mode h3,
+        .focus-mode h4,
+        .focus-mode h5,
+        .focus-mode h6,
+        .focus-mode span,
+        .focus-mode div {
+          color: #000000 !important;
+          background-color: #ffffff !important;
+        }
+        .focus-mode p:hover,
+        .focus-mode h1:hover,
+        .focus-mode h2:hover,
+        .focus-mode h3:hover,
+        .focus-mode h4:hover,
+        .focus-mode h5:hover,
+        .focus-mode h6:hover,
+        .focus-mode span:hover,
+        .focus-mode div:hover {
+          background-color: #f0f9ff !important;
         }
 
         /* Simplified UI */
-        .simplified-ui .shadow-soft,
-        .simplified-ui .shadow-medium,
-        .simplified-ui .shadow-large {
-          box-shadow: none !important;
-        }
-        .simplified-ui .rounded-xl,
-        .simplified-ui .rounded-2xl,
-        .simplified-ui .rounded-3xl {
+        .simplified-ui * {
           border-radius: 4px !important;
+          box-shadow: none !important;
+          background-image: none !important;
+        }
+        .simplified-ui .bg-gradient-to-r,
+        .simplified-ui .bg-gradient-to-br,
+        .simplified-ui .bg-gradient-to-l,
+        .simplified-ui .bg-gradient-to-bl,
+        .simplified-ui .bg-gradient-to-t,
+        .simplified-ui .bg-gradient-to-tr {
+          background: #f3f4f6 !important;
         }
 
         /* Pause Animations */
-        .pause-animations *,
-        .pause-animations *::before,
-        .pause-animations *::after {
+        .pause-animations * {
           animation-play-state: paused !important;
+          transition: none !important;
         }
 
         /* Reduce Flashing */
         .reduce-flashing .animate-pulse,
         .reduce-flashing .animate-spin,
+        .reduce-flashing .animate-ping,
         .reduce-flashing .animate-bounce {
           animation: none !important;
+        }
+        .reduce-flashing [class*="bg-gradient"] {
+          background: #f3f4f6 !important;
         }
 
         /* Minimize Distractions */
@@ -360,13 +443,35 @@ export const AccessibilityWidget: React.FC = () => {
         .minimize-distractions .bg-gradient-to-l {
           background: #f3f4f6 !important;
         }
+        .minimize-distractions .animate-pulse,
+        .minimize-distractions .animate-spin,
+        .minimize-distractions .animate-ping,
+        .minimize-distractions .animate-bounce {
+          animation: none !important;
+        }
 
         /* Enhance Focus */
         .enhance-focus *:focus {
-          background-color: #fef3c7 !important;
-          outline: 3px solid #f59e0b !important;
+          outline: 4px solid #f97316 !important;
+          outline-offset: 4px !important;
+          background-color: rgba(249, 115, 22, 0.1) !important;
+        }
+        .enhance-focus h1, 
+        .enhance-focus h2, 
+        .enhance-focus h3 {
+          border-left: 4px solid #f97316 !important;
+          padding-left: 8px !important;
         }
       `}</style>
+
+      {/* Reading Guide Line */}
+      {settings.readingGuide && (
+        <div 
+          className="reading-guide-line" 
+          style={{ top: `${readingGuidePosition}px` }}
+          aria-hidden="true"
+        />
+      )}
 
       {/* Widget Button */}
       <motion.button
@@ -374,7 +479,8 @@ export const AccessibilityWidget: React.FC = () => {
         className="fixed bottom-4 left-4 w-14 h-14 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-large flex items-center justify-center z-50 transition-all duration-300 hover:scale-110"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
-        aria-label="Open accessibility settings"
+        aria-label="Explore your accessibility options"
+        title="Explore your accessibility options"
       >
         <Accessibility className="w-6 h-6" />
       </motion.button>
@@ -433,6 +539,8 @@ export const AccessibilityWidget: React.FC = () => {
                         ? 'text-primary-600 border-b-2 border-primary-600'
                         : 'text-neutral-600 hover:text-neutral-800'
                     }`}
+                    aria-selected={activeTab === tab.id}
+                    role="tab"
                   >
                     <tab.icon className="w-4 h-4" />
                     <span>{tab.label}</span>

@@ -14,3 +14,217 @@
 .tavus-video-controls {
   display: none;
 }
+
+/* Accessibility Styles */
+:root {
+  --text-scale: 1;
+  --contrast-multiplier: 1;
+  --animation-duration: 1;
+}
+
+/* High Contrast */
+.high-contrast {
+  filter: contrast(var(--contrast-multiplier));
+}
+.high-contrast img,
+.high-contrast video {
+  filter: contrast(1.2);
+}
+.high-contrast button,
+.high-contrast a {
+  filter: contrast(1.3);
+}
+
+/* Dark Mode */
+.dark-mode {
+  filter: invert(1) hue-rotate(180deg);
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+}
+.dark-mode img,
+.dark-mode video,
+.dark-mode svg {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Large Text */
+.large-text {
+  font-size: calc(1rem * var(--text-scale)) !important;
+  line-height: 1.5 !important;
+}
+.large-text h1 {
+  font-size: calc(2.5rem * var(--text-scale)) !important;
+}
+.large-text h2 {
+  font-size: calc(2rem * var(--text-scale)) !important;
+}
+.large-text h3 {
+  font-size: calc(1.75rem * var(--text-scale)) !important;
+}
+.large-text p, 
+.large-text span, 
+.large-text div, 
+.large-text button {
+  font-size: calc(1rem * var(--text-scale)) !important;
+}
+
+/* Dyslexia Font */
+.dyslexia-font,
+.dyslexia-font * {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', 'Arial', sans-serif !important;
+  letter-spacing: 0.05em !important;
+  word-spacing: 0.1em !important;
+  line-height: 1.5 !important;
+}
+
+/* Reduce Motion */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: calc(0.001s * var(--animation-duration)) !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: calc(0.001s * var(--animation-duration)) !important;
+  scroll-behavior: auto !important;
+}
+
+/* Hide Images */
+.hide-images img {
+  opacity: 0 !important;
+  filter: grayscale(100%) !important;
+}
+.hide-images [style*="background-image"] {
+  background-image: none !important;
+}
+.hide-images video {
+  display: none !important;
+}
+.hide-images svg {
+  visibility: visible !important;
+}
+
+/* Big Cursor */
+.big-cursor,
+.big-cursor * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='12' fill='%230ea5e9' fill-opacity='0.5'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%230ea5e9'/%3E%3C/svg%3E"), auto !important;
+}
+.big-cursor a,
+.big-cursor button {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='12' fill='%23f97316' fill-opacity='0.5'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23f97316'/%3E%3C/svg%3E"), pointer !important;
+}
+
+/* Keyboard Navigation */
+.keyboard-navigation *:focus {
+  outline: 3px solid #0ea5e9 !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.4) !important;
+}
+.keyboard-navigation button:focus,
+.keyboard-navigation a:focus {
+  background-color: rgba(14, 165, 233, 0.1) !important;
+}
+
+/* Click Assist */
+.click-assist a,
+.click-assist button,
+.click-assist input,
+.click-assist select,
+.click-assist textarea {
+  padding: 0.5rem !important;
+  min-height: 44px !important;
+  min-width: 44px !important;
+}
+
+/* Reading Guide */
+.reading-guide-line {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: rgba(14, 165, 233, 0.7);
+  z-index: 9999;
+  pointer-events: none;
+  box-shadow: 0 0 4px rgba(14, 165, 233, 0.5), 0 0 10px rgba(14, 165, 233, 0.3);
+}
+
+/* Focus Mode */
+.focus-mode p,
+.focus-mode h1,
+.focus-mode h2,
+.focus-mode h3,
+.focus-mode h4,
+.focus-mode h5,
+.focus-mode h6,
+.focus-mode span,
+.focus-mode div {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+.focus-mode p:hover,
+.focus-mode h1:hover,
+.focus-mode h2:hover,
+.focus-mode h3:hover,
+.focus-mode h4:hover,
+.focus-mode h5:hover,
+.focus-mode h6:hover,
+.focus-mode span:hover,
+.focus-mode div:hover {
+  background-color: #f0f9ff !important;
+}
+
+/* Simplified UI */
+.simplified-ui * {
+  border-radius: 4px !important;
+  box-shadow: none !important;
+  background-image: none !important;
+}
+.simplified-ui .bg-gradient-to-r,
+.simplified-ui .bg-gradient-to-br,
+.simplified-ui .bg-gradient-to-l,
+.simplified-ui .bg-gradient-to-bl,
+.simplified-ui .bg-gradient-to-t,
+.simplified-ui .bg-gradient-to-tr {
+  background: #f3f4f6 !important;
+}
+
+/* Pause Animations */
+.pause-animations * {
+  animation-play-state: paused !important;
+  transition: none !important;
+}
+
+/* Reduce Flashing */
+.reduce-flashing .animate-pulse,
+.reduce-flashing .animate-spin,
+.reduce-flashing .animate-ping,
+.reduce-flashing .animate-bounce {
+  animation: none !important;
+}
+.reduce-flashing [class*="bg-gradient"] {
+  background: #f3f4f6 !important;
+}
+
+/* Minimize Distractions */
+.minimize-distractions .bg-gradient-to-r,
+.minimize-distractions .bg-gradient-to-br,
+.minimize-distractions .bg-gradient-to-l {
+  background: #f3f4f6 !important;
+}
+.minimize-distractions .animate-pulse,
+.minimize-distractions .animate-spin,
+.minimize-distractions .animate-ping,
+.minimize-distractions .animate-bounce {
+  animation: none !important;
+}
+
+/* Enhance Focus */
+.enhance-focus *:focus {
+  outline: 4px solid #f97316 !important;
+  outline-offset: 4px !important;
+  background-color: rgba(249, 115, 22, 0.1) !important;
+}
+.enhance-focus h1, 
+.enhance-focus h2, 
+.enhance-focus h3 {
+  border-left: 4px solid #f97316 !important;
+  padding-left: 8px !important;
+}
