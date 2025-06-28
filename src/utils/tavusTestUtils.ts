@@ -110,8 +110,18 @@ export class TavusTestUtils {
     // Test 5: Mock Conversation Creation
     try {
       console.log('🎭 Testing mock conversation creation...');
+      
+      // Generate a proper UUID for the session ID
+      const generateUUID = () => {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          const r = Math.random() * 16 | 0;
+          const v = c == 'x' ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+        });
+      };
+
       const mockRequest = {
-        sessionId: 'test-session-' + Date.now(),
+        sessionId: generateUUID(),
         userId: '00000000-0000-4000-8000-000000000000', // Valid UUID format for testing
         prompt: 'Test reflection session',
         sessionType: 'reflect_alone' as const,
