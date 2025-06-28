@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  User, 
   X, 
   Eye, 
   EyeOff, 
@@ -63,6 +62,27 @@ const defaultSettings: AccessibilitySettings = {
   minimizeDistractions: false,
   enhanceFocus: false,
 };
+
+// Person icon with arms stretched outward
+const PersonIcon = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <circle cx="12" cy="5" r="3" />
+    <path d="M12 8v9" />
+    <path d="M8 12H4" />
+    <path d="M20 12h-4" />
+    <path d="M8 17l-2 4" />
+    <path d="M16 17l2 4" />
+  </svg>
+);
 
 export const AccessibilityWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -482,7 +502,7 @@ export const AccessibilityWidget: React.FC = () => {
         aria-label="Explore your accessibility options"
         title="Explore your accessibility options"
       >
-        <User className="w-6 h-6" />
+        <PersonIcon className="w-6 h-6" />
       </motion.button>
 
       {/* Widget Panel */}
@@ -506,7 +526,7 @@ export const AccessibilityWidget: React.FC = () => {
               <div className="flex items-center justify-between p-6 border-b border-neutral-200">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
-                    <User className="w-5 h-5 text-primary-600" />
+                    <PersonIcon className="w-5 h-5 text-primary-600" />
                   </div>
                   <h2 className="text-xl font-semibold text-neutral-800">Accessibility Settings</h2>
                 </div>
